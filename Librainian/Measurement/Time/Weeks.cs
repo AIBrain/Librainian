@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Weeks.cs" last touched on 2022-01-14 at 6:40 AM by Protiguous.
+// File "Weeks.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 #nullable enable
 
@@ -36,7 +36,7 @@ using Exceptions;
 using ExtendedNumerics;
 using Newtonsoft.Json;
 using Parsing;
-using SortingOrder = SortingOrder;
+using SortingOrder = Measurement.SortingOrder;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]

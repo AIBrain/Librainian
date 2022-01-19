@@ -1,26 +1,29 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
-// derived) from our binaries, libraries, projects, solutions, or applications.
-//
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
-// avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
-// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
-// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
-//
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
-// contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software" Our GitHub address is "https://github.com/Protiguous".
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.com/Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Wallet.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 #nullable enable
 
@@ -41,8 +44,9 @@ using Newtonsoft.Json;
 using Utilities.Disposables;
 
 /// <summary>
-/// My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for production.. Use at your own risk. Any tips or
-/// ideas? Any dos or don'ts? Email me!
+///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for
+///     production.. Use at your own risk. Any tips or
+///     ideas? Any dos or don'ts? Email me!
 /// </summary>
 /// <remarks>A database with proper locking would be better than this, although not as fun to create.</remarks>
 /// <see cref="SimpleWallet" />
@@ -67,6 +71,10 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 	[JsonProperty]
 	public WalletStatistics Statistics { get; } = new();
 
+	public IEnumerator<(IDenomination, UInt64)> GetEnumerator() => this.GetGroups().GetEnumerator();
+
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
 	private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
 		try {
 			lock ( this.BankNotes ) {
@@ -86,11 +94,11 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 	}
 
 	/// <summary>Create an empty wallet with a new random id.</summary>
-	public static Wallet Create() => new( Guid.NewGuid() );
+	public static Wallet Create() => new(Guid.NewGuid());
 
 	/// <summary>Create an empty wallet with the given <paramref name="id" />.</summary>
 	/// <param name="id"></param>
-	public static Wallet Create( Guid id ) => new( id );
+	public static Wallet Create( Guid id ) => new(id);
 
 	//private ActionBlock<TransactionMessage> Messages {get;}
 	public void ClearBankNotes() {
@@ -145,7 +153,7 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 	public void Deposit( Decimal amount, out Decimal leftOver ) {
 		var money = amount.ToOptimal( out leftOver );
 
-		foreach ( (var key, var value) in money ) {
+		foreach ( ( var key, var value ) in money ) {
 			this.Deposit( key, value );
 		}
 	}
@@ -235,25 +243,24 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 
 	public IEnumerable<KeyValuePair<ICoin, UInt64>> GetCoinsGrouped() => this.Coins;
 
-	public IEnumerator<(IDenomination, UInt64)> GetEnumerator() => this.GetGroups().GetEnumerator();
-
-	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
 	/// <summary>Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.</summary>
 	public IEnumerable<(IDenomination, UInt64)> GetGroups() {
-		foreach ( (var key, var value) in this.BankNotes ) {
-			yield return (key, value);
+		foreach ( ( var key, var value ) in this.BankNotes ) {
+			yield return ( key, value );
 		}
 
-		foreach ( (var key, var value) in this.Coins ) {
-			yield return (key, value);
+		foreach ( ( var key, var value ) in this.Coins ) {
+			yield return ( key, value );
 		}
 	}
 
 	/// <summary>Return each <see cref="IBankNote" /> in this <see cref="Wallet" />.</summary>
 	public IEnumerable<IBankNote> GetNotes() => this.BankNotes.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
-	/// <summary>Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" /> .</summary>
+	/// <summary>
+	///     Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" />
+	///     .
+	/// </summary>
 	public IEnumerable<IDenomination> GetNotesAndCoins() => this.GetCoins().Concat<IDenomination>( this.GetNotes() );
 
 	public IEnumerable<KeyValuePair<IBankNote, UInt64>> GetNotesGrouped() => this.BankNotes;
@@ -285,7 +292,10 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		return total;
 	}
 
-	/// <summary>Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this <see cref="Wallet" />.</summary>
+	/// <summary>
+	///     Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this
+	///     <see cref="Wallet" />.
+	/// </summary>
 	/// <param name="bankNote"></param>
 	/// <param name="quantity"></param>
 	/// <remarks>Locks the wallet.</remarks>
@@ -309,7 +319,10 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		}
 	}
 
-	/// <summary>Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this <see cref="Wallet" /> .</summary>
+	/// <summary>
+	///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
+	///     <see cref="Wallet" /> .
+	/// </summary>
 	/// <param name="coin"></param>
 	/// <param name="quantity"></param>
 	/// <remarks>Locks the wallet.</remarks>
@@ -355,4 +368,5 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 			var _ => throw new WalletException( $"Unknown denomination {message.Denomination}" )
 		};
 	}
+
 }

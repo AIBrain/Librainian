@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ABetterClassDisposeReactive.cs" last touched on 2021-09-11 at 3:30 AM by Protiguous.
+// File "ABetterClassDisposeReactive.cs" last formatted on 2022-12-22 at 5:21 PM by Protiguous.
 
 namespace Librainian.Utilities.Disposables;
 

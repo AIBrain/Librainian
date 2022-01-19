@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UniversalDateTime.cs" last touched on 2021-10-02 at 7:09 AM by Protiguous.
+// File "UniversalDateTime.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 namespace Librainian.Measurement.Time;
 
@@ -62,7 +62,7 @@ public record UniversalDateTime : IComparable<UniversalDateTime> {
 		var span = CalcSpanSince( dateTime );
 
 		this.Value = span.CalcTotalPlanckTimes().Value;
-		this.Date = new Date( new Years( dateTime.Year ), new Months( ( Byte )dateTime.Month ), new Days( ( Byte )dateTime.Day ) );
+		this.Date = new Date( new Years( dateTime.Year ), new Months( ( Byte ) dateTime.Month ), new Days( ( Byte ) dateTime.Day ) );
 
 		this.Hours = span.Hours;
 		this.Minutes = span.Minutes;

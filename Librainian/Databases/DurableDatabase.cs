@@ -1,25 +1,29 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
-// derived) from our binaries, libraries, projects, solutions, or applications.
-//
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
-// avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
-// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you
-// want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
-// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
-//
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
-// contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
-//
-// File "DurableDatabase.cs" last touched on 2022-01-18 at 3:06 PM by Protiguous.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.com/Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "DurableDatabase.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
 
@@ -45,8 +49,9 @@ public class DurableDatabase : ABetterClassDispose {
 	/// <param name="retries"></param>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <remarks>
-	/// This has not been tested if it makes a noticable difference versus SQL Server connection pooling. It probably doesn't help, as experience shows a
-	/// database connection should be as short as possible.
+	///     This has not been tested if it makes a noticable difference versus SQL Server connection pooling. It probably
+	///     doesn't help, as experience shows a
+	///     database connection should be as short as possible.
 	/// </remarks>
 	public DurableDatabase( String connectionString, UInt16 retries ) {
 		if ( String.IsNullOrWhiteSpace( connectionString ) ) {
@@ -268,7 +273,6 @@ public class DurableDatabase : ABetterClassDispose {
 			return command.ExecuteNonQuery();
 		}
 		catch ( InvalidOperationException ) {
-
 			//timeout probably
 			retries--;
 
@@ -503,7 +507,7 @@ public class DurableDatabase : ABetterClassDispose {
 	}
 
 	/// <summary>
-	/// <para>Returns the first column of the first row.</para>
+	///     <para>Returns the first column of the first row.</para>
 	/// </summary>
 	/// <param name="query"></param>
 	/// <param name="commandType"></param>
@@ -521,18 +525,18 @@ public class DurableDatabase : ABetterClassDispose {
 			var scalar = command.ExecuteScalar();
 
 			if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-				return (Status.Success, default( TResult ));
+				return ( Status.Success, default( TResult ) );
 			}
 
 			if ( scalar is TResult result1 ) {
-				return (Status.Success, result1);
+				return ( Status.Success, result1 );
 			}
 
 			if ( scalar.TryCast<TResult>( out var result ) ) {
-				return (Status.Success, result);
+				return ( Status.Success, result );
 			}
 
-			return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
+			return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
 		}
 		catch ( SqlException exception ) {
 			exception.Log();
@@ -545,7 +549,7 @@ public class DurableDatabase : ABetterClassDispose {
 	}
 
 	/// <summary>
-	/// <para>Returns the first column of the first row.</para>
+	///     <para>Returns the first column of the first row.</para>
 	/// </summary>
 	/// <param name="query"></param>
 	/// <param name="commandType"></param>
@@ -581,21 +585,20 @@ public class DurableDatabase : ABetterClassDispose {
 			}
 
 			if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-				return (Status.Success, default( TResult ));
+				return ( Status.Success, default( TResult ) );
 			}
 
 			if ( scalar is TResult scalarAsync ) {
-				return (Status.Success, scalarAsync);
+				return ( Status.Success, scalarAsync );
 			}
 
 			if ( scalar.TryCast<TResult>( out var result ) ) {
-				return (Status.Success, result);
+				return ( Status.Success, result );
 			}
 
-			return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
+			return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
 		}
 		catch ( InvalidCastException exception ) {
-
 			//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 			exception.Log();
 		}
@@ -637,4 +640,5 @@ public class DurableDatabase : ABetterClassDispose {
 
 		return default( IEnumerable<TResult> );
 	}
+
 }

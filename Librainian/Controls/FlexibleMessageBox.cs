@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "FlexibleMessageBox.cs" last formatted on 2020-08-14 at 8:32 PM.
+// 
+// File "FlexibleMessageBox.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
 
@@ -166,13 +169,7 @@ public static class FlexibleMessageBox {
 	/// <param name="buttons">The buttons.</param>
 	/// <param name="icon">   The icon.</param>
 	/// <returns>The dialog result.</returns>
-	public static DialogResult? Show(
-		IWin32Window? owner,
-		String? text,
-		String? caption,
-		MessageBoxButtons buttons,
-		MessageBoxIcon icon
-	) =>
+	public static DialogResult? Show( IWin32Window? owner, String? text, String? caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
 		FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
 
 	/// <summary>Shows the specified message box.</summary>
@@ -182,13 +179,7 @@ public static class FlexibleMessageBox {
 	/// <param name="icon">         The icon.</param>
 	/// <param name="defaultButton">The default button.</param>
 	/// <returns>The dialog result.</returns>
-	public static DialogResult? Show(
-		String? text,
-		String? caption,
-		MessageBoxButtons buttons,
-		MessageBoxIcon icon,
-		MessageBoxDefaultButton defaultButton
-	) =>
+	public static DialogResult? Show( String? text, String? caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton ) =>
 		FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, defaultButton );
 
 	/// <summary>Shows the specified message box.</summary>
@@ -243,12 +234,6 @@ public static class FlexibleMessageBox {
 		/// <summary>Erforderliche Designervariable.</summary>
 		private IContainer? components;
 
-		/// <summary>The text that is been used for the heading.</summary>
-		public String? CaptionText { get; set; }
-
-		/// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
-		public String? MessageText { get; set; }
-
 		/// <summary>Initializes a new instance of the <see cref="FlexibleMessageBoxForm" /> class.</summary>
 		private FlexibleMessageBoxForm() {
 			this.InitializeComponent();
@@ -256,24 +241,11 @@ public static class FlexibleMessageBox {
 			this.KeyUp += this.FlexibleMessageBoxForm_KeyUp;
 		}
 
-		//These are the possible buttons (in a standard MessageBox)
-		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-		private enum ButtonID {
+		/// <summary>The text that is been used for the heading.</summary>
+		public String? CaptionText { get; set; }
 
-			OK = 0,
-
-			CANCEL,
-
-			YES,
-
-			NO,
-
-			ABORT,
-
-			RETRY,
-
-			IGNORE
-		}
+		/// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
+		public String? MessageText { get; set; }
 
 		/// <summary>Gets the button text for the CurrentUICulture language. Note: The fallback language is English</summary>
 		/// <param name="buttonID">The ID of the button.</param>
@@ -281,7 +253,7 @@ public static class FlexibleMessageBox {
 		private static String GetButtonText( ButtonID buttonID ) {
 			var buttonTextArrayIndex = Convert.ToInt32( buttonID );
 
-			return ButtonTextsEnglish[buttonTextArrayIndex];
+			return ButtonTextsEnglish[ buttonTextArrayIndex ];
 		}
 
 		/// <summary>
@@ -337,12 +309,7 @@ public static class FlexibleMessageBox {
 		/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 		/// <param name="buttons">               The buttons.</param>
 		/// <param name="defaultButton">         The default button.</param>
-		private static void SetDialogButtons(
-			FlexibleMessageBoxForm flexibleMessageBoxForm,
-			MessageBoxButtons buttons,
-			MessageBoxDefaultButton defaultButton
-		) {
-
+		private static void SetDialogButtons( FlexibleMessageBoxForm flexibleMessageBoxForm, MessageBoxButtons buttons, MessageBoxDefaultButton defaultButton ) {
 			//Set the buttons visibilities and texts
 			switch ( buttons ) {
 				case MessageBoxButtons.AbortRetryIgnore:
@@ -474,7 +441,6 @@ public static class FlexibleMessageBox {
 				}
 
 				default: {
-
 					//When no icon is used: Correct placement and width of rich text box.
 					pictureBoxForIcon.Visible = false;
 					if ( flexibleMessageBoxForm._richTextBoxMessage != null ) {
@@ -494,12 +460,7 @@ public static class FlexibleMessageBox {
 		/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 		/// <param name="text">                  The text (the longest text row is used to calculate the dialog width).</param>
 		/// <param name="caption">               The caption (this can also affect the dialog width).</param>
-		private static void SetDialogSizes(
-			FlexibleMessageBoxForm flexibleMessageBoxForm,
-			String? text,
-			String? caption
-		) {
-
+		private static void SetDialogSizes( FlexibleMessageBoxForm flexibleMessageBoxForm, String? text, String? caption ) {
 			//First set the bounds for the maximum dialog size
 			flexibleMessageBoxForm.MaximumSize = new Size( Convert.ToInt32( SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor( MaxWidthFactor ) ),
 				Convert.ToInt32( SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor( MaxHeightFactor ) ) );
@@ -534,7 +495,6 @@ public static class FlexibleMessageBox {
 		/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 		/// <param name="owner">                 The owner.</param>
 		private static void SetDialogStartPosition( Form flexibleMessageBoxForm, IWin32Window? owner ) {
-
 			//If no owner given: Center on current screen
 			if ( owner is null ) {
 				var screen = Screen.FromPoint( Cursor.Position );
@@ -549,7 +509,6 @@ public static class FlexibleMessageBox {
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">     The <see cref="KeyEventArgs" /> instance containing the event data.</param>
 		private void FlexibleMessageBoxForm_KeyUp( Object? sender, KeyEventArgs? e ) {
-
 			//Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
 			if ( e?.Control == true && e.KeyCode is Keys.C or Keys.Insert ) {
 				var buttonsTextLine = ( this._button1.Visible ? this._button1.Text + StandardMessageboxSeparatorSpaces : String.Empty ) +
@@ -569,7 +528,6 @@ public static class FlexibleMessageBox {
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">     The <see cref="EventArgs" /> instance containing the event data.</param>
 		private void FlexibleMessageBoxForm_Shown( Object? sender, EventArgs? e ) {
-
 			//Set the default button...
 			var buttonIndexToFocus = this._defaultButton switch {
 				MessageBoxDefaultButton.Button1 => 1,
@@ -604,9 +562,9 @@ public static class FlexibleMessageBox {
 			var pictureBoxForIcon = new PictureBox();
 			this._button2 = new Button();
 			this._button3 = new Button();
-			( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource ).BeginInit();
+			( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource ).BeginInit();
 			this._panel1.SuspendLayout();
-			( ( ISupportInitialize )pictureBoxForIcon ).BeginInit();
+			( ( ISupportInitialize ) pictureBoxForIcon ).BeginInit();
 			this.SuspendLayout();
 
 			// button1
@@ -709,9 +667,9 @@ public static class FlexibleMessageBox {
 			this.StartPosition = FormStartPosition.CenterParent;
 			this.Text = "<Caption>";
 			this.Shown += this.FlexibleMessageBoxForm_Shown;
-			( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource )?.EndInit();
+			( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource )?.EndInit();
 			this._panel1?.ResumeLayout( false );
-			( ( ISupportInitialize )pictureBoxForIcon ).EndInit();
+			( ( ISupportInitialize ) pictureBoxForIcon ).EndInit();
 			this.ResumeLayout( false );
 			this.PerformLayout();
 		}
@@ -741,7 +699,6 @@ public static class FlexibleMessageBox {
 			MessageBoxDefaultButton defaultButton
 		) {
 			var func = new Func<DialogResult?>( () => {
-
 				//Create a new instance of the FlexibleMessageBox form
 				var flexibleMessageBoxForm = new FlexibleMessageBoxForm {
 					ShowInTaskbar = false,
@@ -775,14 +732,36 @@ public static class FlexibleMessageBox {
 				return flexibleMessageBoxForm.ShowDialog( owner ?? throw new ArgumentEmptyException( nameof( owner ) ) );
 			} );
 
-			if ( owner is Control { InvokeRequired: true } control ) {
+			if ( owner is Control {InvokeRequired: true} control ) {
 				return control.Invoke( func );
 			}
 
 			return func();
 		}
 
+		//These are the possible buttons (in a standard MessageBox)
+		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+		private enum ButtonID {
+
+			OK = 0,
+
+			CANCEL,
+
+			YES,
+
+			NO,
+
+			ABORT,
+
+			RETRY,
+
+			IGNORE
+
+		}
+
 		//These are the buttons texts for different languages.
 		//If you want to add a new language, add it here and in the GetButtonText-Function
+
 	}
+
 }

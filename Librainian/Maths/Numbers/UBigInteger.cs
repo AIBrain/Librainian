@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UBigInteger.cs" last touched on 2021-12-30 at 2:18 AM by Protiguous.
+// File "UBigInteger.cs" last formatted on 2022-12-22 at 4:22 AM by Protiguous.
 
 #nullable enable
 
@@ -42,7 +42,7 @@ using Utilities;
 ///     <para>Unsigned biginteger class.</para>
 /// </summary>
 [Immutable]
-public record UBigInteger : IComparable, IComparable<UBigInteger> {
+public readonly record struct UBigInteger : IComparable<UBigInteger> {
 
 	/// <summary>
 	///     <para>The lowest <see cref="UBigInteger" /> that is higher than <see cref="Zero" />.</para>
@@ -66,10 +66,10 @@ public record UBigInteger : IComparable, IComparable<UBigInteger> {
 			throw new ArgumentOutOfRangeException( nameof( value ), $"{nameof( value )} cannot be less than 0." );
 		}
 
-		this.InternalValue = value;
+		this.Value = value;
 	}
 
-	public UBigInteger( UInt64 value ) => this.InternalValue = value;
+	public UBigInteger( UInt64 value ) => this.Value = value;
 
 	public UBigInteger( Byte[] bytes ) {
 		// http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
@@ -80,100 +80,90 @@ public record UBigInteger : IComparable, IComparable<UBigInteger> {
 		var bytesWith00Attheendnd = new Byte[ bytes.Length + 1 ];
 		bytes.CopyTo( bytesWith00Attheendnd, 0 );
 		bytesWith00Attheendnd[ bytes.Length ] = 0;
-		this.InternalValue = new BigInteger( bytesWith00Attheendnd );
+		this.Value = new BigInteger( bytesWith00Attheendnd );
 
-		Debug.Assert( this.InternalValue >= BigInteger.Zero );
+		Debug.Assert( this.Value >= BigInteger.Zero );
 
-		if ( this.InternalValue < 0 ) {
+		if ( this.Value < 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( bytes ), $"Error converting {nameof( bytes )} to {nameof( UBigInteger )}." );
 		}
 	}
 
 	public UBigInteger( Int64 value ) {
-		//value.Should().BeGreaterOrEqualTo(expected: 0);
-
 		if ( value < 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( value ), $"Error converting {nameof( value )} to {nameof( UBigInteger )}." );
 		}
 
-		this.InternalValue = value;
+		this.Value = value;
 	}
 
-	private BigInteger InternalValue { get; }
+	private BigInteger Value { get; }
 
-	[NeedsTesting]
-	public Int32 CompareTo( Object? obj ) =>
-		obj switch {
-			null => throw new ArgumentEmptyException( nameof( obj ) ),
-			UBigInteger uBigInteger => this.InternalValue.CompareTo( uBigInteger ),
-			var _ => throw new InvalidCastException( $"Error casting {nameof( obj )} to a {nameof( UBigInteger )}" )
-		};
+	public Int32 CompareTo( UBigInteger? number ) => this.Value.CompareTo( number?.Value );
 
-	public Int32 CompareTo( UBigInteger? number ) => this.InternalValue.CompareTo( number?.InternalValue );
+	public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new(BigInteger.Add( left.Value, right.Value ));
 
-	public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new(BigInteger.Add( left.InternalValue, right.InternalValue ));
+	public static explicit operator Decimal( UBigInteger number ) => ( Decimal ) number.Value;
 
-	public static explicit operator Decimal( UBigInteger number ) => ( Decimal ) number.InternalValue;
+	public static explicit operator Int32( UBigInteger number ) => ( Int32 ) number.Value;
 
-	public static explicit operator Int32( UBigInteger number ) => ( Int32 ) number.InternalValue;
+	public static explicit operator Int64( UBigInteger number ) => ( Int64 ) number.Value;
 
-	public static explicit operator Int64( UBigInteger number ) => ( Int64 ) number.InternalValue;
+	public static explicit operator UInt64( UBigInteger number ) => ( UInt64 ) number.Value;
 
-	public static explicit operator UInt64( UBigInteger number ) => ( UInt64 ) number.InternalValue;
-
-	public static implicit operator BigInteger( UBigInteger number ) => number.InternalValue;
+	public static implicit operator BigInteger( UBigInteger number ) => number.Value;
 
 	public static implicit operator UBigInteger( Int64 number ) => new(number);
 
-	public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) => new(BigInteger.Multiply( left.InternalValue, right.InternalValue ));
+	public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) => new(BigInteger.Multiply( left.Value, right.Value ));
 
-	public static UBigInteger operator -( UBigInteger number ) => new(-number.InternalValue);
+	public static UBigInteger operator -( UBigInteger number ) => new(-number.Value);
 
-	public static UBigInteger operator -( UBigInteger left, UBigInteger right ) => new(left.InternalValue - right.InternalValue);
+	public static UBigInteger operator -( UBigInteger left, UBigInteger right ) => new(left.Value - right.Value);
 
-	public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) => new(dividend.InternalValue % divisor.InternalValue);
+	public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) => new(dividend.Value % divisor.Value);
 
-	public static UBigInteger operator &( UBigInteger left, UBigInteger right ) => new(left.InternalValue & right.InternalValue);
+	public static UBigInteger operator &( UBigInteger left, UBigInteger right ) => new(left.Value & right.Value);
 
-	public static UBigInteger operator *( UBigInteger left, UBigInteger right ) => new(left.InternalValue * right.InternalValue);
+	public static UBigInteger operator *( UBigInteger left, UBigInteger right ) => new(left.Value * right.Value);
 
-	public static UBigInteger operator /( UBigInteger left, UBigInteger right ) => new(left.InternalValue / right.InternalValue);
+	public static UBigInteger operator /( UBigInteger left, UBigInteger right ) => new(left.Value / right.Value);
 
 	public static Double operator /( Double left, UBigInteger right ) {
 		Debug.Assert( right > Zero );
 
-		var rational = new Rational( new BigInteger( left ), right.InternalValue );
+		var rational = new Rational( new BigInteger( left ), right.Value );
 
 		return ( Double ) rational;
 	}
 
-	public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new(left.InternalValue + right.InternalValue);
+	public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new(left.Value + right.Value);
 
-	public static Boolean operator <( UBigInteger left, Int64 right ) => left.InternalValue < right;
+	public static Boolean operator <( UBigInteger left, Int64 right ) => left.Value < right;
 
-	public static Boolean operator <( UBigInteger left, UBigInteger right ) => left.InternalValue < right.InternalValue;
+	public static Boolean operator <( UBigInteger left, UBigInteger right ) => left.Value < right.Value;
 
-	public static Boolean operator <( UBigInteger left, UInt64 right ) => left.InternalValue < right;
+	public static Boolean operator <( UBigInteger left, UInt64 right ) => left.Value < right;
 
-	public static Boolean operator <( UInt64 left, UBigInteger right ) => left < right.InternalValue;
+	public static Boolean operator <( UInt64 left, UBigInteger right ) => left < right.Value;
 
-	public static UBigInteger operator <<( UBigInteger number, Int32 shift ) => new(number.InternalValue << shift);
+	public static UBigInteger operator <<( UBigInteger number, Int32 shift ) => new(number.Value << shift);
 
-	public static Boolean operator <=( UBigInteger left, UInt64 right ) => left.InternalValue <= right;
+	public static Boolean operator <=( UBigInteger left, UInt64 right ) => left.Value <= right;
 
-	public static Boolean operator <=( UBigInteger left, UBigInteger right ) => left.InternalValue <= right.InternalValue;
+	public static Boolean operator <=( UBigInteger left, UBigInteger right ) => left.Value <= right.Value;
 
-	public static Boolean operator >( UBigInteger left, Int64 right ) => left.InternalValue > right;
+	public static Boolean operator >( UBigInteger left, Int64 right ) => left.Value > right;
 
-	public static Boolean operator >( UBigInteger left, UInt64 right ) => left.InternalValue > right;
+	public static Boolean operator >( UBigInteger left, UInt64 right ) => left.Value > right;
 
-	public static Boolean operator >( UInt64 left, UBigInteger right ) => left > right.InternalValue;
+	public static Boolean operator >( UInt64 left, UBigInteger right ) => left > right.Value;
 
-	public static Boolean operator >( UBigInteger left, UBigInteger right ) => left.InternalValue > right.InternalValue;
+	public static Boolean operator >( UBigInteger left, UBigInteger right ) => left.Value > right.Value;
 
-	public static Boolean operator >=( UBigInteger left, UInt64 right ) => left.InternalValue >= right;
+	public static Boolean operator >=( UBigInteger left, UInt64 right ) => left.Value >= right;
 
-	public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left.InternalValue >= right.InternalValue;
+	public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left.Value >= right.Value;
 
 	public static UBigInteger Parse( String number, NumberStyles style ) {
 		if ( number is null ) {
@@ -183,16 +173,18 @@ public record UBigInteger : IComparable, IComparable<UBigInteger> {
 		return new UBigInteger( BigInteger.Parse( number, style ) );
 	}
 
-	public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new(BigInteger.Pow( number.InternalValue, exponent ));
+	public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new(BigInteger.Pow( number.Value, exponent ));
 
-	public Int32 CompareTo( Int64 other ) => this.InternalValue.CompareTo( other );
+	public Int32 CompareTo( Int64 other ) => this.Value.CompareTo( other );
 
-	public Int32 CompareTo( UInt64 other ) => this.InternalValue.CompareTo( other );
+	public Int32 CompareTo( UInt64 other ) => this.Value.CompareTo( other );
 
-	public Byte[] ToByteArray() => this.InternalValue.ToByteArray();
+	public Byte[] ToByteArray() => this.Value.ToByteArray();
 
-	public override String ToString() => this.InternalValue.ToString();
+	public override String ToString() => this.Value.ToString();
 
-	public String ToString( String format ) => this.InternalValue.ToString( format );
+	public String ToString( String format ) => this.Value.ToString( format );
+
+	public Int32 CompareTo( UBigInteger other ) => this.Value.CompareTo( other.Value );
 
 }

@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "Internet.cs" last formatted on 2022-12-22 at 5:17 PM by Protiguous.
 
 namespace Librainian.Internet;
 
@@ -42,7 +42,7 @@ public static class Internet {
 
 	private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new();
 
-	internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new( () => new WebClientWithTimeout(), true );
+	internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new(() => new WebClientWithTimeout(), true);
 
 	public interface IDownloader {
 
@@ -91,6 +91,7 @@ public static class Internet {
 		/// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
 		/// <exception cref="Exception"></exception>
 		Boolean Wait( TimeSpan forHowLong, CancellationToken cancellationToken );
+
 	}
 
 	public class FileDownloader : UnderlyingDownloader {
@@ -117,7 +118,7 @@ public static class Internet {
 		) : base( source, destination, waitifBusy, timeout, cancellationToken, credentials ) {
 			$"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Verbose();
 
-			DownloadRequests[this.Id] = this;
+			DownloadRequests[ this.Id ] = this;
 
 			if ( autoStart ) {
 				this.Start();
@@ -147,48 +148,10 @@ public static class Internet {
 
 			return base.Start();
 		}
+
 	}
 
 	public abstract class UnderlyingDownloader : IDownloader {
-
-		public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
-
-		/// <summary>-1 milliseconds</summary>
-		public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
-
-		public WebClientWithTimeout Client { get; }
-
-		public ICredentials? Credentials { get; set; }
-
-		public Byte[]? DestinationBuffer { get; set; }
-
-		public Document DestinationDocument { get; set; }
-
-		public ManualResetEventSlim Downloaded { get; } = new( false );
-
-		/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
-		public Stopwatch? Elasped { get; set; }
-
-		/// <summary>The unique identifier assigned to this download.</summary>
-		public Guid Id { get; }
-
-		public Action? OnCancelled { get; set; }
-
-		public Action? OnCompleted { get; set; }
-
-		public Action? OnFailure { get; set; }
-
-		public Action? OnTimeout { get; set; }
-
-		public Uri Source { get; set; }
-
-		public Task? Task { get; set; }
-
-		/// <summary>The length of time to wait before the download is cancelled. See also: <seealso cref="Forever" />.</summary>
-		public TimeSpan Timeout { get; set; }
-
-		/// <summary>The UTC date & time when the download was started.</summary>
-		public DateTime WhenStarted { get; set; }
 
 		/// <summary>ctor</summary>
 		/// <param name="source"></param>
@@ -231,6 +194,45 @@ public static class Internet {
 			//this.DestinationBuffer = destination.AsBytes(cancellationToken).ToArrayAsync(cancellationToken); //can we do this??
 		}
 
+		public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
+
+		/// <summary>-1 milliseconds</summary>
+		public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
+
+		public WebClientWithTimeout Client { get; }
+
+		public ManualResetEventSlim Downloaded { get; } = new(false);
+
+		/// <summary>The unique identifier assigned to this download.</summary>
+		public Guid Id { get; }
+
+		public ICredentials? Credentials { get; set; }
+
+		public Byte[]? DestinationBuffer { get; set; }
+
+		public Document DestinationDocument { get; set; }
+
+		/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
+		public Stopwatch? Elasped { get; set; }
+
+		public Action? OnCancelled { get; set; }
+
+		public Action? OnCompleted { get; set; }
+
+		public Action? OnFailure { get; set; }
+
+		public Action? OnTimeout { get; set; }
+
+		public Uri Source { get; set; }
+
+		public Task? Task { get; set; }
+
+		/// <summary>The length of time to wait before the download is cancelled. See also: <seealso cref="Forever" />.</summary>
+		public TimeSpan Timeout { get; set; }
+
+		/// <summary>The UTC date & time when the download was started.</summary>
+		public DateTime WhenStarted { get; set; }
+
 		public virtual Boolean Cancel() {
 			try {
 				this.Client.CancelAsync();
@@ -240,18 +242,6 @@ public static class Internet {
 			}
 
 			return this.IsBusy();
-		}
-
-		public (Status responseCode, Int64 fileLength) GetContentLength() {
-			if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
-				request.Method = "HEAD";
-
-				using var response = request.GetResponse();
-
-				return (Status.Success, response.ContentLength);
-			}
-
-			return (Status.Error, default( Int64 ));
 		}
 
 		/// <summary>Returns true if the web request is in progress.</summary>
@@ -303,5 +293,19 @@ public static class Internet {
 				}
 			}
 		}
+
+		public (Status responseCode, Int64 fileLength) GetContentLength() {
+			if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
+				request.Method = "HEAD";
+
+				using var response = request.GetResponse();
+
+				return ( Status.Success, response.ContentLength );
+			}
+
+			return ( Status.Error, default( Int64 ) );
+		}
+
 	}
+
 }

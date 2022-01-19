@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NullStream.cs" last touched on 2021-09-11 at 7:10 AM by Protiguous.
+// File "NullStream.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 namespace Librainian.Extensions;
 
@@ -32,8 +32,8 @@ using System.IO;
 
 /// <summary>
 ///     <para>
-///         A stream that you can write to the NULL device, from <see cref="long.MinValue" />
-///         (-9,223,372,036,854,775,808) up to <see cref="long.MaxValue" /> 9,223,372,036,854,775,807 bytes.
+///         A stream that you can write to the NULL device, from <see cref="Int64.MinValue" />
+///         (-9,223,372,036,854,775,808) up to <see cref="Int64.MaxValue" /> 9,223,372,036,854,775,807 bytes.
 ///     </para>
 /// </summary>
 public class NullStream : Stream {

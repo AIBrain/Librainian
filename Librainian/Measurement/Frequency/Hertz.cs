@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Hertz.cs" last touched on 2021-09-04 at 3:26 PM by Protiguous.
+// File "Hertz.cs" last formatted on 2022-12-22 at 5:17 PM by Protiguous.
 
 namespace Librainian.Measurement.Frequency;
 
@@ -47,9 +47,9 @@ public record Hertz {
 		}
 	}
 
-	public Hertz( UInt64 frequency ) : this( ( Decimal )frequency ) { }
+	public Hertz( UInt64 frequency ) : this( ( Decimal ) frequency ) { }
 
-	public Hertz( Double frequency ) : this( ( Decimal )frequency ) { }
+	public Hertz( Double frequency ) : this( ( Decimal ) frequency ) { }
 
 	/// <summary>Fifteen <see cref="Hertz" /> s.</summary>
 	public static Hertz Fifteen { get; } = new(15);
@@ -114,12 +114,12 @@ public record Hertz {
 
 	public static implicit operator SpanOfTime( Hertz hertz ) => new Seconds( 1 / hertz.Value );
 
-	public static implicit operator TimeSpan( Hertz hertz ) => TimeSpan.FromSeconds( ( Double )( 1 / hertz.Value ) );
+	public static implicit operator TimeSpan( Hertz hertz ) => TimeSpan.FromSeconds( ( Double ) ( 1 / hertz.Value ) );
 
 	public static Boolean operator <( Hertz left, Hertz right ) => left.Value.CompareTo( right.Value ) < 0;
 
 	public static Boolean operator >( Hertz left, Hertz right ) => left.Value.CompareTo( right.Value ) > 0;
 
-	public override String ToString() => $"{this.Value} hertz ({( ( TimeSpan )this ).Simpler()})";
+	public override String ToString() => $"{this.Value} hertz ({( ( TimeSpan ) this ).Simpler()})";
 
 }

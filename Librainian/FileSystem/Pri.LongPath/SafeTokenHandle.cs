@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "SafeTokenHandle.cs" last touched on 2021-12-08 at 10:53 AM by Protiguous.
+// File "SafeTokenHandle.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 namespace Librainian.FileSystem.Pri.LongPath;
 
@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
 using OperatingSystem;
+
 //using System.Runtime.ConstrainedExecution;
 
 public class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid {

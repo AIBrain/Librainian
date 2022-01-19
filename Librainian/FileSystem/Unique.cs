@@ -1,25 +1,29 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
-// derived) from our binaries, libraries, projects, solutions, or applications.
-//
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
-// avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
-// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you
-// want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
-// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
-//
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
-// contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
-//
-// File "Unique.cs" last touched on 2022-01-18 at 2:57 PM by Protiguous.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.com/Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Unique.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 namespace Librainian.FileSystem;
 
@@ -38,12 +42,12 @@ using Parsing;
 using Utilities.Disposables;
 
 /// <summary>
-/// <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
-/// <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>
-/// <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
-/// <para>Locations should be case-sensitive ( <see cref="Equals(Object)" />).</para>
-/// <para>It's... <see cref="Unique" />!</para>
-/// <see cref="Location" />
+///     <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
+///     <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>
+///     <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
+///     <para>Locations should be case-sensitive ( <see cref="Equals(Object)" />).</para>
+///     <para>It's... <see cref="Unique" />!</para>
+///     <see cref="Location" />
 /// </summary>
 [Serializable]
 public class Unique : ABetterClassDispose, IEquatable<Unique> {
@@ -75,11 +79,13 @@ public class Unique : ABetterClassDispose, IEquatable<Unique> {
 	public String AbsolutePath => this.U.AbsolutePath;
 
 	/// <summary>
-	/// The location/directory/path/file/name/whatever.ext
-	/// <para>Has been filtered through Uri.AbsoluteUri already.</para>
+	///     The location/directory/path/file/name/whatever.ext
+	///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
 	/// </summary>
 	[JsonIgnore]
 	public Uri U => this._u ?? throw new NullException( nameof( Uri ) );
+
+	public Boolean Equals( Unique? other ) => Equals( this, other );
 
 	/// <summary>Static (Ordinal) comparison.</summary>
 	/// <param name="left"></param>
@@ -148,7 +154,7 @@ public class Unique : ABetterClassDispose, IEquatable<Unique> {
 				yield break;
 			}
 
-			yield return ( Byte )a;
+			yield return ( Byte ) a;
 		}
 	}
 
@@ -234,8 +240,6 @@ public class Unique : ABetterClassDispose, IEquatable<Unique> {
 		}
 	}
 
-	public Boolean Equals( Unique? other ) => Equals( this, other );
-
 	public override Boolean Equals( Object? obj ) => Equals( this, obj as Unique );
 
 	public override Int32 GetHashCode() => this.U.GetHashCode();
@@ -249,8 +253,8 @@ public class Unique : ABetterClassDispose, IEquatable<Unique> {
 	public Boolean IsFolder() => this.IsDirectory();
 
 	/// <summary>
-	/// <para>Gets the size in bytes of the location.</para>
-	/// <para>A value of -1 indicates an error, timeout, or exception.</para>
+	///     <para>Gets the size in bytes of the location.</para>
+	///     <para>A value of -1 indicates an error, timeout, or exception.</para>
 	/// </summary>
 	/// <param name="timeout"></param>
 	/// <param name="cancellationToken"></param>
@@ -307,4 +311,5 @@ public class Unique : ABetterClassDispose, IEquatable<Unique> {
 	/// <summary>Returns a string that represents the current object.</summary>
 	/// <returns>A string that represents the current object.</returns>
 	public override String ToString() => $"{this.AbsolutePath}";
+
 }

@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MathStatistics.cs" last touched on 2021-12-13 at 12:07 AM by Protiguous.
+// File "MathStatistics.cs" last formatted on 2022-12-22 at 4:22 AM by Protiguous.
 
 namespace Librainian.Maths;
 

@@ -39,8 +39,8 @@ public class UsableSemaphoreThrottleTests {
 			throw new ArgumentNullException( nameof( throttle ) );
 		}
 
-		using var wrapper = await throttle.WaitAsync().ConfigureAwait( true );
-		await Task.Delay( taskTimeSpan ).ConfigureAwait( true );
+		using var wrapper = await throttle.WaitAsync().ConfigureAwait( false );
+		await Task.Delay( taskTimeSpan ).ConfigureAwait( false );
 
 		return wrapper.Elapsed;
 	}
@@ -50,19 +50,20 @@ public class UsableSemaphoreThrottleTests {
 	[TestCase( 100, 500 )]
 	public async Task WaitSemaphoreThrottleAsync( Int32 semaphoreMilliseconds, Int32 taskMilliseconds ) {
 		var semaphoreTimeSpan = TimeSpan.FromMilliseconds( semaphoreMilliseconds );
-		var taskTimeSpan = TimeSpan.FromMilliseconds( taskMilliseconds );
+		var time = TimeSpan.FromMilliseconds( taskMilliseconds );
 
 		using var throttle = new UsableSemaphoreThrottle( semaphoreTimeSpan, 2 );
-		var taskA = DoThings( throttle, taskTimeSpan );
-		var taskB = DoThings( throttle, taskTimeSpan );
-		var taskC = DoThings( throttle, taskTimeSpan );
 
-		await Task.WhenAll( taskA, taskB, taskC ).ConfigureAwait( true );
+		var taskA = DoThings( throttle, time );
+		var taskB = DoThings( throttle, time );
+		var taskC = DoThings( throttle, time );
 
-		Assert.True( taskA.Result > taskTimeSpan );
+		await Task.WhenAll( taskA, taskB, taskC ).ConfigureAwait( false );
+
+		Assert.True( taskA.Result > time );
 		Assert.True( taskA.Result < taskB.Result );
 
-		Assert.True( taskB.Result > taskTimeSpan + semaphoreTimeSpan );
+		Assert.True( taskB.Result > time + semaphoreTimeSpan );
 		Assert.True( taskB.Result < taskC.Result );
 	}
 

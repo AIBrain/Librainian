@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UniversalConstants.cs" last touched on 2021-12-12 at 11:46 PM by Protiguous.
+// File "UniversalConstants.cs" last formatted on 2022-12-22 at 5:17 PM by Protiguous.
 
 namespace Librainian.Measurement.Physics;
 
@@ -33,7 +33,6 @@ using Maths;
 public static class UniversalConstants {
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <see cref="http://wikipedia.org/wiki/Elementary_charge" />
 	public static ElectronVolts? ElementaryCharge { get; } = new(0.0000000000000000001602176565m);

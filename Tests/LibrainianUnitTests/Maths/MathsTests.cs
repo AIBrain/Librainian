@@ -34,10 +34,19 @@ using Librainian.Maths;
 using NUnit.Framework;
 
 [TestFixture]
+public static class BigIntTests {
+	[Test]
+	public static void TestOperations() {
+		var result = true;
+		result.Should().BeTrue();
+	}
+}
+
+[TestFixture]
 public static class MathsTests {
 
 	[Test]
-	public static void TestOperations() {
+	public static void TestVarIsStillValue1() {
 		var result = true;
 		result.Should().BeTrue();
 	}

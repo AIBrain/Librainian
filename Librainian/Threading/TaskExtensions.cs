@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TaskExtensions.cs" last touched on 2021-12-27 at 7:48 AM by Protiguous.
+// File "TaskExtensions.cs" last formatted on 2022-12-22 at 5:21 PM by Protiguous.
 
 #nullable enable
 
@@ -1112,6 +1112,17 @@ public static class TaskExtensions {
 	/// <param name="input"></param>
 	public static Task<TOut> Wrap<TIn, TOut>( this Func<TIn, TOut> selector, TIn? input ) => Task.Run( () => selector( input ) );
 
+	/// <summary>
+	///     If the given <paramref name="task" /> is not null, then await it.
+	/// </summary>
+	/// <param name="task"></param>
+	/// <returns></returns>
+	public static async Task IgnoreNullTask( this Task? task ) {
+		if ( task != null ) {
+			await task.ConfigureAwait( false );
+		}
+	}
+
 	/// <summary></summary>
 	/// <typeparam name="T"></typeparam>
 	/// <see cref="http://www.codeproject.com/Articles/5274659/How-to-Use-the-Csharp-Await-Keyword-On-Anything" />
@@ -1180,17 +1191,6 @@ public static class TaskExtensions {
 			}
 		}
 
-	}
-
-	/// <summary>
-	/// If the given <paramref name="task"/> is not null, then await it.
-	/// </summary>
-	/// <param name="task"></param>
-	/// <returns></returns>
-	public static async Task IgnoreNullTask( this Task? task ) {
-		if ( task != null ) {
-			await task.ConfigureAwait( false );
-		}
 	}
 
 }

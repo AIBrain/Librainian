@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ControlExtensions.cs" last touched on 2021-08-28 at 4:27 PM by Protiguous.
+// File "ControlExtensions.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
 
@@ -131,11 +131,11 @@ public static class ControlExtensions {
 
 		return Color.FromArgb( Red(), Green(), Blue() );
 
-		Byte Red() => ( Byte )( thisColor.R * blendToPercent + blendToColor.R * i );
+		Byte Red() => ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * i );
 
-		Byte Green() => ( Byte )( thisColor.G * blendToPercent + blendToColor.G * i );
+		Byte Green() => ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * i );
 
-		Byte Blue() => ( Byte )( thisColor.B * blendToPercent + blendToColor.B * i );
+		Byte Blue() => ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * i );
 	}
 
 	/// <summary>
@@ -276,11 +276,14 @@ public static class ControlExtensions {
 		}
 
 		spanOff ??= Milliseconds.FiveHundred;
-		FluentTimer.Create( spanOff.Value, () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) ).Once().Start();
+		FluentTimer.Create( spanOff.Value,
+			           () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) )
+		           .Once()
+		           .Start();
 	}
 
 	/// <summary>
-	/// Flash a control while the text is blank.
+	///     Flash a control while the text is blank.
 	/// </summary>
 	/// <param name="input"></param>
 	/// <param name="control"></param>
@@ -399,11 +402,13 @@ public static class ControlExtensions {
 		*/
 	}
 
-	public static TResult? SafeInvoke<T,TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
+	public static TResult? SafeInvoke<T, TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
 		if ( synchronizeInvoke.InvokeRequired ) {
-			var result = synchronizeInvoke.BeginInvoke( call, new Object[] { synchronizeInvoke } );
+			var result = synchronizeInvoke.BeginInvoke( call, new Object[] {
+				synchronizeInvoke
+			} );
 			var endResult = synchronizeInvoke.EndInvoke( result );
-			return ( TResult? )endResult;
+			return ( TResult? ) endResult;
 		}
 
 		return call( synchronizeInvoke );
@@ -411,7 +416,9 @@ public static class ControlExtensions {
 
 	public static void SafeInvoke<T>( this T isi, Action<T> call ) where T : ISynchronizeInvoke {
 		if ( isi.InvokeRequired ) {
-			isi.BeginInvoke( call, new Object[] { isi } );
+			isi.BeginInvoke( call, new Object[] {
+				isi
+			} );
 		}
 		else {
 			call( isi );
@@ -471,7 +478,7 @@ public static class ControlExtensions {
 	public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
 		transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-		return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
+		return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
 	}
 
 	public static Task MarqueeAsync( this Control control, TimeSpan timeSpan, String message ) {
@@ -715,7 +722,7 @@ public static class ControlExtensions {
 			textBox.AppendText( message );
 
 			while ( textBox.Lines?.Length > maxlines ) {
-				( ( IList )textBox.Lines ).RemoveAt( 0 );
+				( ( IList ) textBox.Lines ).RemoveAt( 0 );
 			}
 		}, redraw );
 	}

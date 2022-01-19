@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ValidatedConnectionString.cs" last touched on 2021-12-19 at 8:01 AM by Protiguous.
+// File "ValidatedConnectionString.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 namespace Librainian.Databases;
 
@@ -65,7 +65,7 @@ public record ValidatedConnectionString : IValidatedConnectionString {
 		var key = Common.ToKey( nameof( PullFromSecrectsAndRunThroughBuilder ), nameof( DatabaseServer ), nameof( ValidatedConnectionString ) );
 		this.Value = this.Cache.GetOrAdd( key, PullFromSecrectsAndRunThroughBuilder ) ?? throw new NullException( nameof( this.Cache ) );
 
-		return;	
+		return;
 
 		String PullFromSecrectsAndRunThroughBuilder() {
 			//This is ran when the Value is currently not cached

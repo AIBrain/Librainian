@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "IOWrapper.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 #nullable enable
 
@@ -39,27 +39,6 @@ using OperatingSystem;
 /// <summary>defrag stuff</summary>
 /// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
 public static class IOWrapper {
-
-	private const UInt32 ErrorInsufficientBuffer = 122;
-
-	private const UInt32 FileFlagNoBuffering = 0x20000000;
-
-	private const UInt32 FileReadAttributes = 0x0080;
-
-	private const UInt32 FileShareDelete = 0x00000004;
-
-	// CreateFile constants
-	private const UInt32 FileShareRead = 0x00000001;
-
-	private const UInt32 FileShareWrite = 0x00000002;
-
-	private const UInt32 FileWriteAttributes = 0x0100;
-
-	private const UInt32 GenericRead = 0x80000000;
-
-	private const UInt32 GenericWrite = 0x40000000;
-
-	private const UInt32 OpenExisting = 3;
 
 	/// <summary>Access flags.</summary>
 	[Flags]
@@ -126,6 +105,7 @@ public static class IOWrapper {
 
 		/// <summary>All possible access rights.</summary>
 		GENERIC_ALL = 0x10000000
+
 	}
 
 	/// <summary>Enumerates the that may apply to files.</summary>
@@ -213,7 +193,29 @@ public static class IOWrapper {
 		FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
 
 		FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE
+
 	}
+
+	private const UInt32 ErrorInsufficientBuffer = 122;
+
+	private const UInt32 FileFlagNoBuffering = 0x20000000;
+
+	private const UInt32 FileReadAttributes = 0x0080;
+
+	private const UInt32 FileShareDelete = 0x00000004;
+
+	// CreateFile constants
+	private const UInt32 FileShareRead = 0x00000001;
+
+	private const UInt32 FileShareWrite = 0x00000002;
+
+	private const UInt32 FileWriteAttributes = 0x0100;
+
+	private const UInt32 GenericRead = 0x80000000;
+
+	private const UInt32 GenericWrite = 0x40000000;
+
+	private const UInt32 OpenExisting = 3;
 
 	/// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
 	/// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
@@ -255,15 +257,15 @@ public static class IOWrapper {
 			    } RETRIEVAL_POINTERS_BUFFER, *PRETRIEVAL_POINTERS_BUFFER;
 			*/
 
-			var extentCount = ( Int32 )( Marshal.PtrToStructure( pDest, typeof( Int32 ) ) ?? throw new InvalidOperationException() );
+			var extentCount = ( Int32 ) ( Marshal.PtrToStructure( pDest, typeof( Int32 ) ) ?? throw new InvalidOperationException() );
 
-			pDest = ( IntPtr )( ( Int64 )pDest + 4 );
+			pDest = ( IntPtr ) ( ( Int64 ) pDest + 4 );
 
-			var startingVcn = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
+			var startingVcn = ( Int64 ) ( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
 
 			Debug.Assert( startingVcn == 0 );
 
-			pDest = ( IntPtr )( ( Int64 )pDest + 8 );
+			pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
 			// now pDest points at an array of pairs of Int64s.
 
@@ -273,13 +275,13 @@ public static class IOWrapper {
 
 			for ( var i = 0; i < extentCount; i++ ) {
 				for ( var j = 0; j < 2; j++ ) {
-					var v = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
+					var v = ( Int64 ) ( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
 
 					retVal.SetValue( v, new[] {
 						i, j
 					} );
 
-					pDest = ( IntPtr )( ( Int64 )pDest + 8 );
+					pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 				}
 			}
 
@@ -288,11 +290,9 @@ public static class IOWrapper {
 		finally {
 			hFile.CloseHandle();
 
-
 			//hFile = IntPtr.Zero;
 
 			Marshal.FreeHGlobal( pAlloc );
-
 
 			//pAlloc = IntPtr.Zero;
 		}
@@ -342,24 +342,24 @@ public static class IOWrapper {
 			       BYTE Buffer[1];
 			  } VOLUME_BITMAP_BUFFER, *PVOLUME_BITMAP_BUFFER;
 			*/
-			var startingLcn = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
+			var startingLcn = ( Int64 ) ( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
 
 			Debug.Assert( startingLcn == 0 );
 
-			pDest = ( IntPtr )( ( Int64 )pDest + 8 );
-			var bitmapSize = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
+			pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
+			var bitmapSize = ( Int64 ) ( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
 
-			var byteSize = ( Int32 )( bitmapSize / 8 );
+			var byteSize = ( Int32 ) ( bitmapSize / 8 );
 			byteSize++; // round up - even with no remainder
 
-			var bitmapBegin = ( IntPtr )( ( Int64 )pDest + 8 );
+			var bitmapBegin = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
-			var byteArr = new Byte[byteSize];
+			var byteArr = new Byte[ byteSize ];
 
 			Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
 
 			var retVal = new BitArray( byteArr ) {
-				Length = ( Int32 )bitmapSize
+				Length = ( Int32 ) bitmapSize
 			};
 
 			// truncate to exact cluster count
@@ -395,7 +395,7 @@ public static class IOWrapper {
 
 			var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
 			var p = handle.AddrOfPinnedObject();
-			var bufSize = ( UInt32 )Marshal.SizeOf( mfd );
+			var bufSize = ( UInt32 ) Marshal.SizeOf( mfd );
 
 			var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size,
 				IntPtr.Zero );
@@ -413,7 +413,7 @@ public static class IOWrapper {
 	}
 
 	public static IntPtr OpenFile( String? path ) {
-		var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
+		var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
 			FileMode.Open, 0, IntPtr.Zero );
 
 		if ( hFile.IsInvalid ) {
@@ -424,7 +424,7 @@ public static class IOWrapper {
 	}
 
 	public static IntPtr OpenVolume( String? deviceName ) {
-		var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
+		var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
 			IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
 		if ( hDevice.IsInvalid ) {

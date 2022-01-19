@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TrimmedString.cs" last touched on 2021-12-30 at 1:06 AM by Protiguous.
+// File "TrimmedString.cs" last formatted on 2022-12-22 at 5:20 PM by Protiguous.
 
 #nullable enable
 
@@ -40,7 +40,7 @@ using Maths;
 using Newtonsoft.Json;
 using Utilities;
 
-/// <summary>This <see cref="string" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
+/// <summary>This <see cref="String" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [Serializable]
 [JsonObject]

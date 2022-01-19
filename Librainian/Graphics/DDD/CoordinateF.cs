@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CoordinateF.cs" last touched on 2021-12-29 at 6:21 AM by Protiguous.
+// File "CoordinateF.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 #nullable enable
 
@@ -39,7 +39,7 @@ using Measurement;
 using Newtonsoft.Json;
 
 /// <summary>
-///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float" />).</para>
+///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
 /// </summary>
 /// <remarks>Code towards speed.</remarks>
 [Immutable]
@@ -55,7 +55,6 @@ public record CoordinateF : IComparable<CoordinateF> {
 		Randem.NextFloat( z.Min, z.Max ) ) { }
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name="x"></param>
 	/// <param name="y"></param>

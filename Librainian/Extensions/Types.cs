@@ -1,12 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "Types.cs" last formatted on 2020-08-14 at 8:33 PM.
+// 
+// File "Types.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
 
@@ -44,11 +47,9 @@ public static class Types {
 
 	private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
 
-	public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new( () => AppDomain.CurrentDomain.GetAssemblies() );
+	public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new(() => AppDomain.CurrentDomain.GetAssemblies());
 
 	public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new();
-
-	private delegate Object ObjectActivator();
 
 	public static Boolean CanAssignValue( this PropertyInfo p, Object? value ) {
 		if ( p is null ) {
@@ -61,8 +62,7 @@ public static class Types {
 	/// <summary>Creates a new <see cref="IList{T}" /> with a clone of each item.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list"></param>
-	public static IList<T> Clone<T>( this IEnumerable<T> list ) where T : ICloneable =>
-		list.Select( item => ( T )item.Clone() ).ToList();
+	public static IList<T> Clone<T>( this IEnumerable<T> list ) where T : ICloneable => list.Select( item => ( T ) item.Clone() ).ToList();
 
 	public static void CopyField<TSource>( [DisallowNull] this TSource source, [DisallowNull] TSource destination, FieldInfo field, Boolean mergeDictionaries = true ) {
 		try {
@@ -236,7 +236,7 @@ public static class Types {
 			list = Assembly.GetAssembly( typeof( T ) )?.GetTypes().ToList();
 
 			if ( list is not null ) {
-				EnumerableOfTypeCache[typeof( T )] = list;
+				EnumerableOfTypeCache[ typeof( T ) ] = list;
 			}
 		}
 
@@ -300,8 +300,9 @@ public static class Types {
 
 	/// <summary>
 	///     Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory
-	///     without potential segmentation faults (i.e. the type contains no managed references such as <see cref="String" /> s).
-	/// This function will always return <c>false</c> for non- <see cref="ValueType" /> s.
+	///     without potential segmentation faults (i.e. the type contains no managed references such as <see cref="String" />
+	///     s).
+	///     This function will always return <c>false</c> for non- <see cref="ValueType" /> s.
 	/// </summary>
 	/// <returns>True if the type can be copied (blitted), or false if not.</returns>
 	public static Boolean IsBlittable( this Type? self ) {
@@ -313,7 +314,8 @@ public static class Types {
 			return false;
 		}
 
-		if ( self.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Any( fieldInfo => !fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsPointer ) ) {
+		if ( self.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )
+		         .Any( fieldInfo => !fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsPointer ) ) {
 			return false;
 		}
 
@@ -321,7 +323,7 @@ public static class Types {
 	}
 
 	/// <summary>
-	/// only quickly/simply tested. Seems to work.. is it useful now that we have pattern matching?
+	///     only quickly/simply tested. Seems to work.. is it useful now that we have pattern matching?
 	/// </summary>
 	/// <typeparam name="TType"></typeparam>
 	/// <param name="_"></param>
@@ -347,15 +349,13 @@ public static class Types {
 	/// <summary>Ascertains if the given type is a numeric type (e.g. <see cref="Int32" />).</summary>
 	/// <returns>True if the type represents a numeric type, false if not.</returns>
 	public static Boolean IsNumeric( this Type self ) =>
-		self == typeof( Double ) || self == typeof( Single ) || self == typeof( Int64 ) || self == typeof( Int16 ) || self == typeof( Byte ) ||
-		self == typeof( SByte ) || self == typeof( UInt32 ) || self == typeof( UInt64 ) || self == typeof( UInt16 ) || self == typeof( Decimal ) ||
-		self == typeof( Int32 );
+		self == typeof( Double ) || self == typeof( Single ) || self == typeof( Int64 ) || self == typeof( Int16 ) || self == typeof( Byte ) || self == typeof( SByte ) ||
+		self == typeof( UInt32 ) || self == typeof( UInt64 ) || self == typeof( UInt16 ) || self == typeof( Decimal ) || self == typeof( Int32 );
 
 	/// <summary>Ascertains if the given type is a numeric type (e.g. <see cref="Int32" />).</summary>
 	/// <returns>True if the type represents a numeric type, false if not.</returns>
 	public static Boolean IsNumeric<T>( [DisallowNull] this T self ) =>
-		self is Int32 or Double or Single or Int64 or Int16 or Byte or SByte or UInt32 or UInt64 or
-			UInt16 or Decimal;
+		self is Int32 or Double or Single or Int64 or Int16 or Byte or SByte or UInt32 or UInt64 or UInt16 or Decimal;
 
 	/// <summary>
 	///     <para>Checks a type to see if it derives from a raw generic (e.g. List[[]])</para>
@@ -364,8 +364,7 @@ public static class Types {
 	/// <param name="generic"></param>
 	public static Boolean IsSubclassOfRawGeneric( this Type? type, Type? generic ) {
 		while ( type != typeof( Object ) ) {
-			var cur = type is
-			{
+			var cur = type is {
 				IsGenericType: true
 			} ? type.GetGenericTypeDefinition() : type;
 
@@ -379,14 +378,14 @@ public static class Types {
 		return false;
 	}
 
-	public static Boolean MergeDictionaries<TSource>(  this IDictionary sourceValue, FieldInfo field, TSource? destination ) {
+	public static Boolean MergeDictionaries<TSource>( this IDictionary sourceValue, FieldInfo field, TSource? destination ) {
 		if ( field.GetValue( destination ) is not IDictionary destAsDictionary ) {
 			return false;
 		}
 
 		foreach ( DictionaryEntry pair in sourceValue ) {
 			try {
-				destAsDictionary[pair.Key] = pair.Value;
+				destAsDictionary[ pair.Key ] = pair.Value;
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -411,19 +410,18 @@ public static class Types {
 			var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
 
 			var ilGenerator = dynamicMethod.GetILGenerator(); //can this be optimized any further? cached?
-			ilGenerator.Emit( OpCodes.Nop );                  //why nop here? alignment?
+			ilGenerator.Emit( OpCodes.Nop ); //why nop here? alignment?
 
 			ilGenerator.Emit( OpCodes.Newobj,
-				type.GetConstructor( Type.EmptyTypes ) ??
-				throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
+				type.GetConstructor( Type.EmptyTypes ) ?? throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
 
 			ilGenerator.Emit( OpCodes.Ret );
 
-			activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+			activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
 			ObjectActivators.Add( type, activator );
 		}
 
-		return ( T )activator.Invoke();
+		return ( T ) activator.Invoke();
 	}
 
 	public static Func<Object?> NewInstanceByCreate( this Type type ) => () => Activator.CreateInstance( type );
@@ -470,7 +468,6 @@ public static class Types {
 		var underlyingType = Nullable.GetUnderlyingType( type ) ?? type;
 
 		try {
-
 			// Just one edge case you might want to handle.
 			if ( underlyingType == typeof( Guid ) ) {
 				value = value switch {
@@ -480,7 +477,7 @@ public static class Types {
 				};
 			}
 
-			result = ( T )Convert.ChangeType( value, underlyingType );
+			result = ( T ) Convert.ChangeType( value, underlyingType );
 
 			return true;
 		}
@@ -490,6 +487,8 @@ public static class Types {
 			return false;
 		}
 	}
+
+	private delegate Object ObjectActivator();
 
 	/*
             public static String GetName<T>( [NeedsTesting] this Expression<Func<T>> propertyExpression ) {
@@ -561,4 +560,5 @@ public static class Types {
 	//            }
 	//    }
 	//}
+
 }

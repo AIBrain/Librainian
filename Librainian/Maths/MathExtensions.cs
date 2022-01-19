@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MathExtensions.cs" last touched on 2022-01-07 at 4:16 AM by Protiguous.
+// File "MathExtensions.cs" last formatted on 2022-12-22 at 5:24 AM by Protiguous.
 
 #nullable enable
 
@@ -46,13 +46,14 @@ using Utilities;
 
 public static class MathExtensions {
 
-	/// <summary>Fake!</summary>
-	public static BigDecimal EpsilonBigDecimal => 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
-
 	/// <summary>
-	///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
+	///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
 	/// </summary>
 	public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
+
+	/// <summary>Fake!</summary>
+	public static BigDecimal EpsilonBigDecimal =>
+		0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
 
 	// you may want to pass this and use generics to allow more or less bits
 	/// <summary>Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.</summary>
@@ -242,17 +243,17 @@ public static class MathExtensions {
 		}
 
 		output[ 0 ] = input[ 0 ];
-		output[ 1 ] = input[ 7 ] || ( input[ 11 ] && input[ 3 ] );
-		output[ 2 ] = input[ 11 ] || ( input[ 7 ] && input[ 3 ] );
+		output[ 1 ] = input[ 7 ] || input[ 11 ] && input[ 3 ];
+		output[ 2 ] = input[ 11 ] || input[ 7 ] && input[ 3 ];
 		output[ 3 ] = input[ 11 ] || input[ 7 ] || input[ 3 ];
 		output[ 4 ] = input[ 4 ];
-		output[ 5 ] = input[ 5 ] || ( input[ 11 ] && input[ 3 ] );
+		output[ 5 ] = input[ 5 ] || input[ 11 ] && input[ 3 ];
 		output[ 6 ] = input[ 7 ] && input[ 3 ];
 		output[ 7 ] = input[ 8 ];
-		output[ 8 ] = input[ 9 ] || ( input[ 11 ] && input[ 1 ] );
-		output[ 9 ] = input[ 10 ] || ( input[ 11 ] && input[ 2 ] );
+		output[ 8 ] = input[ 9 ] || input[ 11 ] && input[ 1 ];
+		output[ 9 ] = input[ 10 ] || input[ 11 ] && input[ 2 ];
 
-		var sb = new StringBuilder( 10 );	
+		var sb = new StringBuilder( 10 );
 
 		for ( var i = 9; i >= 0; i-- ) {
 			sb.Append( output[ i ] ? '1' : '0' );
@@ -550,6 +551,11 @@ public static class MathExtensions {
 	[DebuggerStepThrough]
 	[NeedsTesting]
 	public static Int32 Half( this Int32 number ) => number / 2;
+
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static Int32 Twice( this Int32 number ) => number * 2;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
@@ -909,7 +915,6 @@ public static class MathExtensions {
 	[DebuggerStepThrough]
 	[NeedsTesting]
 	public static Double Phi( this Double x ) {
-		// constants
 		const Double a1 = 0.254829592;
 		const Double a2 = -0.284496736;
 		const Double a3 = 1.421413741;
@@ -1032,6 +1037,7 @@ public static class MathExtensions {
 	[DebuggerStepThrough]
 	public static void RotateRight( ref this UInt64 original, Int32 bits ) => original = ( original >> bits ) | ( original << ( 64 - bits ) );
 
+	/*
 	/// <summary>Truncate, don't round. Just chop it off after <paramref name="decimalPlaces" />.</summary>
 	/// <param name="number"></param>
 	/// <param name="decimalPlaces"></param>
@@ -1044,6 +1050,7 @@ public static class MathExtensions {
 
 		return number;
 	}
+	*/
 
 	/// <summary>Set a bit to [newBitValue]</summary>
 	/// <param name="b">The byte value</param>
@@ -1254,28 +1261,6 @@ public static class MathExtensions {
 	/// <returns></returns>
 	public static String ToBinaryString( this Int64 value ) => Convert.ToString( value, 2 );
 
-	/*
-	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
-	/// <param name="value"></param>
-	/// <returns></returns>
-	public static String ToBinaryString( this Decimal value ) => Convert.ToString( value, 2 );
-	*/
-
-	/*
-	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
-	/// <param name="value"></param>
-	/// <returns></returns>
-	public static String ToBinaryString( this UInt64 value ) => Convert.ToString( value, 2 );
-	*/
-
-	/*
-	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
-	/// <param name="value"></param>
-	/// <returns></returns>
-	public static String ToBinaryString( this Int256 value ) => Convert.ToString( value, 2 );
-	*/
-
-
 	/// <summary>
 	///     <see
 	///         cref="http://stackoverflow.com/questions/17575375/how-do-i-convert-an-int-to-a-String-in-c-sharp-without-using-tostring" />
@@ -1308,7 +1293,7 @@ public static class MathExtensions {
 		var n = ( UInt32 ) number;
 		var b = ( UInt32 ) @base;
 
-		while ( ( n > 0 ) || ( minDigits-- > 0 ) ) {
+		while ( n > 0 || minDigits-- > 0 ) {
 			s = MathConstants.NumberBaseChars[ ( Int32 ) ( n % b ) ] + s;
 			n /= b;
 		}
@@ -1403,20 +1388,28 @@ public static class MathExtensions {
 		return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
 	}
 
+	[NeedsTesting]
 	public static Int32 TurnBitsOff( this Int32 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
 
+	[NeedsTesting]
 	public static Int64 TurnBitsOff( this Int64 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
 
+	[NeedsTesting]
 	public static UInt64 TurnBitsOff( this UInt64 value, Byte bitToTurnOff ) => value & ( UInt64 ) ~bitToTurnOff;
 
+	[NeedsTesting]
 	public static Byte TurnBitsOff( this Byte value, Byte bitToTurnOff ) => ( Byte ) ( value & ~bitToTurnOff );
 
+	[NeedsTesting]
 	public static Int32 TurnBitsOn( this Int32 value, Byte bitToTurnOn ) => value | bitToTurnOn;
 
+	[NeedsTesting]
 	public static Int64 TurnBitsOn( this Int64 value, Byte bitToTurnOn ) => value | bitToTurnOn;
 
+	[NeedsTesting]
 	public static UInt64 TurnBitsOn( this UInt64 value, Byte bitToTurnOn ) => value | bitToTurnOn;
 
+	[NeedsTesting]
 	public static Byte TurnBitsOn( this Byte value, Byte bitToTurnOn ) => ( Byte ) ( value | bitToTurnOn );
 
 	[NeedsTesting]
@@ -1432,6 +1425,6 @@ public static class MathExtensions {
 	public static Decimal Twice( this Decimal number ) => number * 2m;
 
 	[NeedsTesting]
-	public static Int64 Twice( this Int64 number ) => number * 2L;
+	public static Int64 Twice( this Int64 number ) => number * 2;
 
 }

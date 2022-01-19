@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Randem.cs" last touched on 2021-12-11 at 2:18 PM by Protiguous.
+// File "Randem.cs" last formatted on 2022-12-22 at 4:22 AM by Protiguous.
 
 #nullable enable
 
@@ -1001,11 +1001,13 @@ public static class Randem {
 		return new Word( word );
 	}
 
-	/// <summary>Generate two random numbers about halfway of
+	/// <summary>
+	///     Generate two random numbers about halfway of
 	///     <param name="goal"></param>
 	///     .
 	/// </summary>
-	/// <remarks>Given one number, return two random numbers that add up to
+	/// <remarks>
+	///     Given one number, return two random numbers that add up to
 	///     <param name="goal"></param>
 	/// </remarks>
 	[NeedsTesting]
@@ -1022,7 +1024,8 @@ public static class Randem {
 	///     <para>Generate two random numbers about halfway of <paramref name="goal" />.</para>
 	///     <para>Also, return a random number between <paramref name="lowResult" /> and <paramref name="highResult" /></para>
 	/// </summary>
-	/// <remarks>Given one number, return two random numbers that add up to
+	/// <remarks>
+	///     Given one number, return two random numbers that add up to
 	///     <param name="goal"></param>
 	/// </remarks>
 	[NeedsTesting]

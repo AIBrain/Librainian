@@ -1,29 +1,29 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Images.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 namespace Librainian.Graphics;
 
@@ -95,8 +95,7 @@ public static class Images {
 
 		ImageStripByteCounts = 0x0117, // The total number of bytes in each strip. With JPEG compressed data this designation is not needed and is omitted.
 
-		ImageXResolution =
-			0x011a, // The number of pixels per <ResolutionUnit> in the <ImageWidth> direction. When the image resolution is unknown, 72 [dpi] is designated.
+		ImageXResolution = 0x011a, // The number of pixels per <ResolutionUnit> in the <ImageWidth> direction. When the image resolution is unknown, 72 [dpi] is designated.
 
 		ImageYResolution = 0x011b, // The number of pixels per <ResolutionUnit> in the <ImageLength> direction. The same value as <XResolution> is designated.
 
@@ -148,8 +147,7 @@ public static class Images {
 		ImageTileOffsets =
 			0x0144, // For each tile, the byte offset of that tile, as compressed and stored on disk. The offset is specified with respect to the beginning of the TIFF file. Note that this implies that each tile has a location independent of the locations of other tiles.
 
-		ImageTileByteCounts =
-			0x0145, // For each tile, the number of (compressed) bytes in that tile. See TileOffsets for a description of how the byte counts are ordered.
+		ImageTileByteCounts = 0x0145, // For each tile, the number of (compressed) bytes in that tile. See TileOffsets for a description of how the byte counts are ordered.
 
 		ImageSubIfDs = 0x014a, // Defined by Adobe Corporation to enable TIFF Trees within a TIFF file.
 
@@ -448,8 +446,7 @@ public static class Images {
 		ImageOriginalRawFileData =
 			0xc68c, // If the DNG file was converted from a non-DNG raw file, then this tag contains the compressed contents of that original raw file. The contents of this tag always use the big-endian byte order. The tag contains a sequence of data blocks. Future versions of the DNG specification may define additional data blocks, so DNG readers should ignore extra bytes when parsing this tag. DNG readers should also detect the case where data blocks are missing from the end of the sequence, and should assume a default value for all the missing blocks. There are no padding or alignment bytes between data blocks.
 
-		ImageActiveArea =
-			0xc68d, // This rectangle defines the active (non-masked) pixels of the sensor. The order of the rectangle coordinates is: top, left, bottom, right.
+		ImageActiveArea = 0xc68d, // This rectangle defines the active (non-masked) pixels of the sensor. The order of the rectangle coordinates is: top, left, bottom, right.
 
 		ImageMaskedAreas =
 			0xc68e, // This tag contains a list of non-overlapping rectangle coordinates of fully masked pixels, which can be optionally used by DNG readers to measure the black encoding level. The order of each rectangle's coordinates is: top, left, bottom, right. If the raw image data has already had its black encoding level subtracted, then this tag should not be used, since the masked pixels are no longer useful.
@@ -587,8 +584,7 @@ public static class Images {
 		PhotoComponentsConfiguration =
 			0x9101, // Information specific to compressed data. The channels of each component are arranged in order from the 1st component to the 4th. For uncompressed data the data arrangement is given in the <PhotometricInterpretation> tag. However, since <PhotometricInterpretation> can only express the order of Y, Cb and Cr, this tag is provided for cases when compressed data uses components other than Y, Cb, and Cr and to enable support of other sequences.
 
-		PhotoCompressedBitsPerPixel =
-			0x9102, // Information specific to compressed data. The compression mode used for a compressed image is indicated in unit bits per pixel.
+		PhotoCompressedBitsPerPixel = 0x9102, // Information specific to compressed data. The compression mode used for a compressed image is indicated in unit bits per pixel.
 
 		PhotoShutterSpeedValue = 0x9201, // Shutter speed. The unit is the APEX (Additive System of Photographic Exposure) setting.
 
@@ -742,8 +738,7 @@ public static class Images {
 		GpsAltitudeRef =
 			0x0005, // Indicates the altitude used as the reference altitude. If the reference is sea level and the altitude is above sea level, 0 is given. If the altitude is below sea level, a value of 1 is given and the altitude is indicated as an absolute value in the GSPAltitude tag. The reference unit is meters. Note that this tag is BYTE type, unlike other reference tags.
 
-		GpsAltitude =
-			0x0006, // Indicates the altitude based on the reference in GPSAltitudeRef. Altitude is expressed as one RATIONAL value. The reference unit is meters.
+		GpsAltitude = 0x0006, // Indicates the altitude based on the reference in GPSAltitudeRef. Altitude is expressed as one RATIONAL value. The reference unit is meters.
 
 		GpsTimeStamp =
 			0x0007, // Indicates the time as UTC (Coordinated Universal Time). <TimeStamp> is expressed as three RATIONAL values giving the hour, minute, and second (atomic clock).
@@ -788,8 +783,7 @@ public static class Images {
 		GpsDestLongitude =
 			0x0016, // Indicates the longitude of the destination point. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If longitude is expressed as degrees, minutes and seconds, a typical format would be ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be ddd/1,mmmm/100,0/1.
 
-		GpsDestBearingRef =
-			0x0017, // Indicates the reference used for giving the bearing to the destination point. "T" denotes true direction and "M" is magnetic direction.
+		GpsDestBearingRef = 0x0017, // Indicates the reference used for giving the bearing to the destination point. "T" denotes true direction and "M" is magnetic direction.
 
 		GpsDestBearing = 0x0018, // Indicates the bearing to the destination point. The range of values is from 0.00 to 359.99.
 
@@ -935,6 +929,7 @@ public static class Images {
 		HalftoneScreen = 0x500F,
 
 		HalftoneShape = 0x500D
+
 	}
 
 	public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
@@ -958,24 +953,23 @@ public static class Images {
 		Double p = 0, q = 0, r = 0, s = 0, t = 0, u = 0;
 
 		for ( var i = 0; i < n; i++ ) {
-
 			// Compute sum of squares for X^T * X
-			a += xy[i].X * xy[i].X;
-			b += xy[i].X * xy[i].Y;
-			c += xy[i].X;
-			d += xy[i].X * xy[i].Y;
-			e += xy[i].Y * xy[i].Y;
-			f += xy[i].Y;
-			g += xy[i].X;
-			h += xy[i].Y;
+			a += xy[ i ].X * xy[ i ].X;
+			b += xy[ i ].X * xy[ i ].Y;
+			c += xy[ i ].X;
+			d += xy[ i ].X * xy[ i ].Y;
+			e += xy[ i ].Y * xy[ i ].Y;
+			f += xy[ i ].Y;
+			g += xy[ i ].X;
+			h += xy[ i ].Y;
 
 			// Compute sum of squares for X^T * U
-			p += xy[i].X * uv[i].X;
-			q += xy[i].X * uv[i].Y;
-			r += xy[i].Y * uv[i].X;
-			s += xy[i].Y * uv[i].Y;
-			t += uv[i].X;
-			u += uv[i].Y;
+			p += xy[ i ].X * uv[ i ].X;
+			q += xy[ i ].X * uv[ i ].Y;
+			r += xy[ i ].Y * uv[ i ].X;
+			s += xy[ i ].Y * uv[ i ].Y;
+			t += uv[ i ].X;
+			u += uv[ i ].Y;
 		}
 
 		// Create matrices from the coefficients
@@ -1035,6 +1029,7 @@ public static class Images {
 		/// </summary>
 		/// <see cref="http://wikipedia.org/wiki/TIFF" />
 		public static String Tiff => ".tif";
+
 	}
 
 	internal static class PropertyList {
@@ -1044,5 +1039,7 @@ public static class Images {
 		public const Int32 DateTimeOriginal = 0x9003;
 
 		public const Int32 PropertyTagDateTime = 0x132;
+
 	}
+
 }

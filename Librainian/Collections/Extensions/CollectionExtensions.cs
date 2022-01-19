@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CollectionExtensions.cs" last touched on 2021-12-08 at 10:32 AM by Protiguous.
+// File "CollectionExtensions.cs" last formatted on 2022-12-22 at 5:14 PM by Protiguous.
 
 #nullable enable
 
@@ -397,7 +397,6 @@ public static class CollectionExtensions {
 	public static Int32 IndexOf<T>( this T[] self, T? item ) => Array.IndexOf( self, item );
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="source"></param>
@@ -407,7 +406,6 @@ public static class CollectionExtensions {
 	public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence ) => source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="source"></param>
@@ -514,7 +512,6 @@ public static class CollectionExtensions {
 	[NeedsTesting]
 	public static LinkedListNode<TType>? NextOrFirst<TType>( this LinkedListNode<TType> current ) => current.Next ?? current.List?.First;
 
-	
 	[NeedsTesting]
 	public static IEnumerable<T> OrderBy<T>( this IEnumerable<T> list, IEnumerable<T> guide ) {
 		var toBeSorted = new HashSet<T>( list );
@@ -613,7 +610,6 @@ public static class CollectionExtensions {
 	}
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="current"></param>

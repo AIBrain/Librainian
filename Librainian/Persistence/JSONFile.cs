@@ -1,12 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "JSONFile.cs" last formatted on 2020-08-14 at 8:44 PM.
+// 
+// File "JSONFile.cs" last formatted on 2022-12-22 at 5:20 PM by Protiguous.
 
 #nullable enable
 
@@ -49,21 +52,34 @@ using SectionType = System.Collections.Concurrent.ConcurrentDictionary<System.St
 [JsonObject]
 public class JSONFile {
 
+	/// <summary>
+	/// </summary>
+	/// <param name="document"></param>
+	/// <param name="cancellationToken"></param>
+	public JSONFile( Document? document, CancellationToken cancellationToken ) : this() {
+		this.Document = document;
+
+		this.Document?.ContainingingFolder().Create( cancellationToken );
+
+		this.Read( cancellationToken ).Wait( cancellationToken );
+	}
+
+	public JSONFile() { }
+
 	[JsonProperty]
 	private SectionType Data {
 		[DebuggerStepThrough]
 		get;
 	} = new();
 
-	public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[section].Keys );
+	public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[ section ].Keys );
 
-		
 	[JsonProperty]
 	public Document? Document { get; set; }
 
 	public IEnumerable<String> Sections => this.Data.Keys;
 
-	public ReadOnlyDataType? this[String? section] {
+	public ReadOnlyDataType? this[ String? section ] {
 		[DebuggerStepThrough]
 		[NeedsTesting]
 		get {
@@ -81,13 +97,11 @@ public class JSONFile {
 		}
 	}
 
-		
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name="section"></param>
 	/// <param name="key"></param>
-	public String? this[String? section, String? key] {
+	public String? this[ String? section, String? key ] {
 		[DebuggerStepThrough]
 		[NeedsTesting]
 		get {
@@ -103,7 +117,7 @@ public class JSONFile {
 				return default( String? );
 			}
 
-			return this.Data[section].TryGetValue( key, out var value ) ? value : null;
+			return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
 		}
 
 		[DebuggerStepThrough]
@@ -116,25 +130,9 @@ public class JSONFile {
 				return;
 			}
 
-			this.Add( section, (key, value) );
+			this.Add( section, ( key, value ) );
 		}
 	}
-
-		
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="document"></param>
-	/// <param name="cancellationToken"></param>
-	public JSONFile( Document? document, CancellationToken cancellationToken ) : this() {
-		this.Document = document;
-
-		this.Document?.ContainingingFolder().Create( cancellationToken );
-
-		this.Read( cancellationToken ).Wait( cancellationToken );
-	}
-
-	public JSONFile() { }
 
 	/// <summary>(Trims whitespaces from section and key)</summary>
 	/// <param name="section"></param>
@@ -158,8 +156,8 @@ public class JSONFile {
 		}
 
 		try {
-			(var key, var value) = pair;
-			this.Data[section][key.Trim()] = value;
+			( var key, var value ) = pair;
+			this.Data[ section ][ key.Trim() ] = value;
 
 			return true;
 		}
@@ -198,8 +196,8 @@ public class JSONFile {
 		}
 
 		try {
-			(var key, var value) = tuple;
-			this.Data[section][key.Trim()] = value;
+			( var key, var value ) = tuple;
+			this.Data[ section ][ key.Trim() ] = value;
 
 			return true;
 		}
@@ -237,16 +235,16 @@ public class JSONFile {
 		}
 
 		try {
-			(var status, var data) = await document.LoadJSON<SectionType>( null, cancellationToken ).ConfigureAwait( false );
+			( var status, var data ) = await document.LoadJSON<SectionType>( null, cancellationToken ).ConfigureAwait( false );
 
 			if ( !status.IsGood() ) {
 				return false;
 			}
 
 			if ( data != null ) {
-				var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[section].Keys.AsParallel().AsUnordered(), key => {
+				var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[ section ].Keys.AsParallel().AsUnordered(), key => {
 					if ( !String.IsNullOrEmpty( key ) ) {
-						this.Add( section, new KeyValuePair<String, String?>( key, data[section][key] ) );
+						this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
 					}
 				} ) );
 
@@ -257,12 +255,10 @@ public class JSONFile {
 			exception.Log();
 		}
 		catch ( IOException exception ) {
-
 			//file in use by another app
 			exception.Log();
 		}
 		catch ( OutOfMemoryException exception ) {
-
 			//file is huge
 			exception.Log();
 		}
@@ -292,11 +288,12 @@ public class JSONFile {
 		if ( key is null ) {
 			return false;
 		}
+
 		if ( !this.Data.ContainsKey( section ) ) {
 			return false;
 		}
 
-		return this.Data[section].TryRemove( key, out var _ );
+		return this.Data[ section ].TryRemove( key, out var _ );
 	}
 
 	/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
@@ -317,4 +314,5 @@ public class JSONFile {
 		await document.AppendText( json, cancellationToken ).ConfigureAwait( false );
 		return true;
 	}
+
 }

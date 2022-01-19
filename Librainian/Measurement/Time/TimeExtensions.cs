@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TimeExtensions.cs" last touched on 2021-09-28 at 6:40 AM by Protiguous.
+// File "TimeExtensions.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 #nullable enable
 
@@ -103,8 +103,7 @@ public static class TimeExtensions {
 	/// <param name="second">      The second to set time to.</param>
 	/// <param name="milliseconds">The milliseconds to set time to.</param>
 	/// <returns><see cref="DateTime" /> with hour and minutes and seconds set to given values.</returns>
-	public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) =>
-		current.SetTime( hour, minute, second, milliseconds );
+	public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) => current.SetTime( hour, minute, second, milliseconds );
 
 	public static DateTime Average( this IEnumerable<DateTime> dates ) {
 		if ( dates is null ) {
@@ -113,7 +112,7 @@ public static class TimeExtensions {
 
 		var ticks = dates.Select( time => time.Ticks ).Average();
 
-		return new DateTime( ( Int64 )ticks );
+		return new DateTime( ( Int64 ) ticks );
 	}
 
 	/// <summary>
@@ -168,7 +167,7 @@ public static class TimeExtensions {
 	/// </summary>
 	/// <param name="timeSpan"></param>
 	/// <param name="scalar">  </param>
-	public static TimeSpan Divide( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
+	public static TimeSpan Divide( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks / scalar ) );
 
 	/// <summary>
 	///     Reduce a <see cref="TimeSpan" /> by a <paramref name="scalar" /> amount.
@@ -182,7 +181,7 @@ public static class TimeExtensions {
 	/// </summary>
 	/// <param name="timeSpan"></param>
 	/// <param name="scalar">  </param>
-	public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
+	public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks / scalar ) );
 
 	/// <summary>
 	///     <para>Returns the last millisecond of the given <paramref name="date" />.</para>
@@ -205,10 +204,10 @@ public static class TimeExtensions {
 			progress = max;
 		}
 
-		var milliseconds = ( Decimal )timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
+		var milliseconds = ( Decimal ) timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
 		var remainingTime = milliseconds / progress - milliseconds; // should be 15 seconds ( 20 - 5)
 
-		return TimeSpan.FromMilliseconds( ( Double )remainingTime );
+		return TimeSpan.FromMilliseconds( ( Double ) remainingTime );
 	}
 
 	public static DateTime ExtractDate( this String input, String pattern, IFormatProvider? culture ) {
@@ -503,12 +502,12 @@ public static class TimeExtensions {
 	/// <summary>
 	///     Multiplies a timespan by a double value
 	/// </summary>
-	public static TimeSpan Multiply( this TimeSpan multiplicand, Double multiplier ) => TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
+	public static TimeSpan Multiply( this TimeSpan multiplicand, Double multiplier ) => TimeSpan.FromTicks( ( Int64 ) ( multiplicand.Ticks * multiplier ) );
 
 	/// <summary>
 	///     Multiplies a timespan by a decimal value
 	/// </summary>
-	public static TimeSpan Multiply( this TimeSpan multiplicand, Decimal multiplier ) => TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
+	public static TimeSpan Multiply( this TimeSpan multiplicand, Decimal multiplier ) => TimeSpan.FromTicks( ( Int64 ) ( multiplicand.Ticks * multiplier ) );
 
 	/// <summary>
 	///     Multiplies a timespan by an integer value
@@ -679,8 +678,7 @@ public static class TimeExtensions {
 
 		var differenceInDays = start.Day - numberOfDaysInSameMonthPreviousYear;
 
-		var dateTime = new DateTime( previousYear, start.Month, numberOfDaysInSameMonthPreviousYear, start.Hour, start.Minute, start.Second, start.Millisecond,
-			start.Kind );
+		var dateTime = new DateTime( previousYear, start.Month, numberOfDaysInSameMonthPreviousYear, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
 
 		return dateTime + differenceInDays.Days();
 	}
@@ -843,11 +841,11 @@ public static class TimeExtensions {
 	public static String Simpler( this TimeSpan timeSpan ) {
 		var length = 0;
 
-		if (timeSpan.Days.Any()  ) {
+		if ( timeSpan.Days.Any() ) {
 			length += 2 * ( timeSpan.Days.ToString().Length + " years ".Length );
 		}
 
-		if (timeSpan.Hours.Any()  ) {
+		if ( timeSpan.Hours.Any() ) {
 			length += timeSpan.Hours.ToString().Length + " hours ".Length;
 		}
 
@@ -996,11 +994,11 @@ public static class TimeExtensions {
 	/// </summary>
 	/// <param name="value"></param>
 	public static void ThrowIfOutOfDecimalRange( this Double value ) {
-		if ( value < ( Double )Decimal.MinValue ) {
+		if ( value < ( Double ) Decimal.MinValue ) {
 			throw new OverflowException( Constants.ValueIsTooLow );
 		}
 
-		if ( value > ( Double )Decimal.MaxValue ) {
+		if ( value > ( Double ) Decimal.MaxValue ) {
 			throw new OverflowException( Constants.ValueIsTooHigh );
 		}
 	}
@@ -1020,7 +1018,7 @@ public static class TimeExtensions {
 	/// </summary>
 	/// <param name="timeSpan"></param>
 	/// <param name="scalar">  </param>
-	public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks * scalar ) );
+	public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks * scalar ) );
 
 	// if ( value < Constants.MinimumUsefulDecimal ) { throw new OverflowException( Constants.ValueIsTooLow ); }
 	public static SpanOfTime TimeStatement( this Action? action ) {
@@ -1064,7 +1062,7 @@ public static class TimeExtensions {
 
 	public static Decimal ToStarDate( this DateTime earthDateTime ) {
 		var earthToStarDateDiff = earthDateTime - StarDateOrigin;
-		var millisecondConversion = ( Decimal )earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
+		var millisecondConversion = ( Decimal ) earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
 		var starDate = Math.Floor( millisecondConversion * 100 ) / 100;
 
 		return Math.Round( starDate, 2, MidpointRounding.AwayFromZero );
@@ -1077,7 +1075,7 @@ public static class TimeExtensions {
 	public static Int64 ToUnixTimestamp( this DateTime date ) {
 		var diff = date - DateTime.UnixEpoch;
 
-		return ( Int64 )diff.TotalSeconds;
+		return ( Int64 ) diff.TotalSeconds;
 	}
 
 	public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {
@@ -1085,7 +1083,7 @@ public static class TimeExtensions {
 			( var year, var month, var day ) = date;
 
 			if ( year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
-				dateTime = new DateTime( ( Int32 )year.Value, ( Int32 )month.Value, ( Int32 )day.Value );
+				dateTime = new DateTime( ( Int32 ) year.Value, ( Int32 ) month.Value, ( Int32 ) day.Value );
 
 				return true;
 			}

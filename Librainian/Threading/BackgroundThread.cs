@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BackgroundThread.cs" last touched on 2021-09-03 at 10:46 AM by Protiguous.
+// File "BackgroundThread.cs" last formatted on 2022-12-22 at 5:20 PM by Protiguous.
 
 namespace Librainian.Threading;
 
@@ -42,11 +42,9 @@ using Threadsafe;
 /// </summary>
 public class BackgroundThread : BackgroundWorker {
 
-	private VolatileBoolean _runningAction = new(false);
+	private readonly VolatileBoolean _runningAction = new(false);
 
-		
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name="actionToPerform">Action to perform on each <see cref="Signal" />.</param>
 	/// <param name="cancellationToken"></param>
@@ -68,7 +66,6 @@ public class BackgroundThread : BackgroundWorker {
 	/// </summary>
 	/// <param name="e"></param>
 	protected override async void OnDoWork( DoWorkEventArgs e ) {
-
 		while ( !this.CancellationToken.IsCancellationRequested ) {
 			if ( !this.Signal.Wait( Seconds.One, this.CancellationToken ) ) {
 				continue;

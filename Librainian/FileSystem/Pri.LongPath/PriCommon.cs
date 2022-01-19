@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "Common.cs" last formatted on 2020-08-14 at 8:39 PM.
+// 
+// File "PriCommon.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
 
@@ -55,8 +58,9 @@ public static class PriCommon {
 	private static String GetMessageFromErrorCode( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode ) {
 		var buffer = new StringBuilder( 1024 );
 
-		var _ = PriNativeMethods.FormatMessage( PriNativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS | PriNativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | PriNativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY,
-			IntPtr.Zero, ( Int32 )filesAndFoldersErrorsCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
+		var _ = PriNativeMethods.FormatMessage(
+			PriNativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS | PriNativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | PriNativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY, IntPtr.Zero,
+			( Int32 ) filesAndFoldersErrorsCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
 
 		return buffer.ToString();
 	}
@@ -66,7 +70,7 @@ public static class PriCommon {
 
 		var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
 
-		if ( errorCode != ( Int32 )PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
+		if ( errorCode != ( Int32 ) PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
 			throw GetExceptionFromWin32Error( errorCode );
 		}
 
@@ -83,9 +87,11 @@ public static class PriCommon {
 
 	public static Exception GetExceptionFromLastWin32Error() => GetExceptionFromLastWin32Error( "path" );
 
-	public static Exception GetExceptionFromLastWin32Error( String parameterName ) => GetExceptionFromWin32Error( ( PriNativeMethods.FilesAndFoldersErrors )Marshal.GetLastWin32Error(), parameterName );
+	public static Exception GetExceptionFromLastWin32Error( String parameterName ) =>
+		GetExceptionFromWin32Error( ( PriNativeMethods.FilesAndFoldersErrors ) Marshal.GetLastWin32Error(), parameterName );
 
-	public static Exception GetExceptionFromWin32Error( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode ) => GetExceptionFromWin32Error( filesAndFoldersErrorsCode, "path" );
+	public static Exception GetExceptionFromWin32Error( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode ) =>
+		GetExceptionFromWin32Error( filesAndFoldersErrorsCode, "path" );
 
 	public static Exception GetExceptionFromWin32Error( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode, String parameterName ) {
 		var message = GetMessageFromErrorCode( filesAndFoldersErrorsCode );
@@ -107,7 +113,7 @@ public static class PriCommon {
 
 		var errorCode = TryGetFileAttributes( normalizedPath, out var fileAttributes );
 
-		if ( errorCode != ( Int32 )PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
+		if ( errorCode != ( Int32 ) PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
 			throw GetExceptionFromWin32Error( errorCode );
 		}
 
@@ -117,7 +123,7 @@ public static class PriCommon {
 	public static Boolean IsPathDots( this String path ) => path is "." or "..";
 
 	/// <summary>
-	/// Checks if <paramref name="path"/> starts with \\?\UNC\
+	///     Checks if <paramref name="path" /> starts with \\?\UNC\
 	/// </summary>
 	/// <param name="path"></param>
 	[DebuggerStepThrough]
@@ -146,8 +152,7 @@ public static class PriCommon {
 		return Uri.TryCreate( path, UriKind.Absolute, out uri ) && uri.IsUnc;
 	}
 
-	public static String NormalizeSearchPattern( this String searchPattern ) =>
-		String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
+	public static String NormalizeSearchPattern( this String searchPattern ) => String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
 
 	public static void SetAttributes( this String path, FileAttributes fileAttributes ) {
 		var normalizedPath = path.NormalizeLongPath();
@@ -298,7 +303,6 @@ public static class PriCommon {
 	public static void ThrowIfError( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode, IntPtr byteArray ) {
 		if ( filesAndFoldersErrorsCode == PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
 			if ( IntPtr.Zero.Equals( byteArray ) ) {
-
 				//
 				// This means that the object doesn't have a security descriptor. And thus we throw
 				// a specific exception for the caller to catch and handle properly.
@@ -337,7 +341,8 @@ public static class PriCommon {
 		}
 
 		// This doesn't have to be perfect, but is a perf optimization.
-		var isInvalidPath = filesAndFoldersErrorsCode is PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_NAME or PriNativeMethods.FilesAndFoldersErrors.ERROR_BAD_PATHNAME;
+		var isInvalidPath =
+			filesAndFoldersErrorsCode is PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_NAME or PriNativeMethods.FilesAndFoldersErrors.ERROR_BAD_PATHNAME;
 		var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
 		switch ( filesAndFoldersErrorsCode ) {
@@ -453,8 +458,9 @@ public static class PriCommon {
 			PriNativeMethods.SetErrorMode( errorMode );
 		}
 
-		attributes = ( FileAttributes )PriNativeMethods.INVALID_FILE_ATTRIBUTES;
+		attributes = ( FileAttributes ) PriNativeMethods.INVALID_FILE_ATTRIBUTES;
 
-		return ( PriNativeMethods.FilesAndFoldersErrors )Marshal.GetLastWin32Error();
+		return ( PriNativeMethods.FilesAndFoldersErrors ) Marshal.GetLastWin32Error();
 	}
+
 }

@@ -20,10 +20,10 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Time.cs" last touched on 2021-09-28 at 6:34 AM by Protiguous.
+// File "TimeClock.cs" last formatted on 2022-12-22 at 5:17 PM by Protiguous.
 
 namespace Librainian.Measurement.Time.Clocks;
 
@@ -36,27 +36,30 @@ using Newtonsoft.Json;
 /// </summary>
 [JsonObject]
 [Immutable]
-public record TimeClock(ClockHour Hour, ClockMinute Minute, ClockSecond Second, ClockMillisecond Millisecond, ClockMicrosecond Microsecond) : IStandardClock {
+public record TimeClock( ClockHour Hour, ClockMinute Minute, ClockSecond Second, ClockMillisecond Millisecond, ClockMicrosecond Microsecond ) : IStandardClock {
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name="dateTime"></param>
-	public TimeClock( DateTime dateTime ) : this( new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ),
-		new ClockSecond( ( Byte )dateTime.Second ), new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0 ) { }
+	public TimeClock( DateTime dateTime ) : this( new ClockHour( ( Byte ) dateTime.Hour ), new ClockMinute( ( Byte ) dateTime.Minute ),
+		new ClockSecond( ( Byte ) dateTime.Second ), new ClockMillisecond( ( UInt16 ) dateTime.Millisecond ), 0 ) { }
 
 	public static TimeClock Minimum { get; } = new(0, 0, 0, 0, 0);
 
 	public static TimeClock Maximum { get; } = new(new ClockHour( Hours.InOneDay - 1 ), new ClockMinute( Minutes.InOneHour - 1 ), new ClockSecond( Seconds.InOneMinute - 1 ),
 		new ClockMillisecond( Milliseconds.InOneSecond - 1 ), Microseconds.InOneMillisecond - 1);
 
-	public static implicit operator TimeClock( DateTime dateTime ) =>
-		new(new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ), new ClockSecond( ( Byte )dateTime.Second ),
-			new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0);
+	public Boolean IsAm() => this.Hour.Value < 12;
 
-		
+	public Boolean IsPm() => !this.IsAm();
+
+	public TimeClock Time() => this;
+
+	public static implicit operator TimeClock( DateTime dateTime ) =>
+		new(new ClockHour( ( Byte ) dateTime.Hour ), new ClockMinute( ( Byte ) dateTime.Minute ), new ClockSecond( ( Byte ) dateTime.Second ),
+			new ClockMillisecond( ( UInt16 ) dateTime.Millisecond ), 0);
+
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name="date"></param>
 	public static implicit operator DateTime( TimeClock date ) =>
@@ -66,21 +69,15 @@ public record TimeClock(ClockHour Hour, ClockMinute Minute, ClockSecond Second, 
 	public static TimeClock Now() {
 		var now = DateTime.Now;
 
-		return new TimeClock( new ClockHour( ( Byte )now.Hour ), new ClockMinute( ( Byte )now.Minute ), new ClockSecond( ( Byte )now.Second ),
-			new ClockMillisecond( ( UInt16 )now.Millisecond ), 0 );
+		return new TimeClock( new ClockHour( ( Byte ) now.Hour ), new ClockMinute( ( Byte ) now.Minute ), new ClockSecond( ( Byte ) now.Second ),
+			new ClockMillisecond( ( UInt16 ) now.Millisecond ), 0 );
 	}
 
 	public static TimeClock UtcNow() {
 		var now = DateTime.UtcNow;
 
-		return new TimeClock( new ClockHour( ( Byte )now.Hour ), new ClockMinute( ( Byte )now.Minute ), new ClockSecond( ( Byte )now.Second ),
-			new ClockMillisecond( ( UInt16 )now.Millisecond ), 0 );
+		return new TimeClock( new ClockHour( ( Byte ) now.Hour ), new ClockMinute( ( Byte ) now.Minute ), new ClockSecond( ( Byte ) now.Second ),
+			new ClockMillisecond( ( UInt16 ) now.Millisecond ), 0 );
 	}
-
-	public Boolean IsAm() => this.Hour.Value < 12;
-
-	public Boolean IsPm() => !this.IsAm();
-
-	public TimeClock Time() => this;
 
 }

@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "NativeMethods.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 #nullable enable
 
@@ -476,7 +476,7 @@ public static class NativeMethods {
 
 	public const Int32 WM_SETICON = 0x80;
 
-	private static readonly IntPtr NegativeOneIntPtr = new( -1 );
+	private static readonly IntPtr NegativeOneIntPtr = new(-1);
 
 	[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
 	public static extern Boolean PathMatchSpec( [In] String pszFileParam, [In] String pszSpec );
@@ -546,16 +546,7 @@ public static class NativeMethods {
 	public static extern Int32 AVIStreamStart( Int32 pavi );
 
 	[DllImport( "avifil32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-	public static extern Int32 AVIStreamWrite(
-		IntPtr aviStream,
-		Int32 lStart,
-		Int32 lSamples,
-		IntPtr lpBuffer,
-		Int32 cbBuffer,
-		Int32 dwFlags,
-		Int32 dummy1,
-		Int32 dummy2
-	);
+	public static extern Int32 AVIStreamWrite( IntPtr aviStream, Int32 lStart, Int32 lSamples, IntPtr lpBuffer, Int32 cbBuffer, Int32 dwFlags, Int32 dummy1, Int32 dummy2 );
 
 	[DllImport( "User32.Dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean ClientToScreen( IntPtr hWnd, ref Point point );
@@ -829,8 +820,8 @@ public static class NativeMethods {
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern UInt32 GetCompressedFileSizeW(
-		[In][MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
-		[Out][MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
+		[In] [MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
+		[Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
 	);
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
@@ -857,7 +848,7 @@ public static class NativeMethods {
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, PreserveSig = true )]
 	public static extern UInt32 GetDiskFreeSpaceW(
-		[In][MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName,
+		[In] [MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName,
 		out UInt32 lpSectorsPerCluster,
 		out UInt32 lpBytesPerSector,
 		out UInt32 lpNumberOfFreeClusters,
@@ -912,19 +903,19 @@ public static class NativeMethods {
 	[DoesNotReturn]
 	public static void HandleLastError( String fullPath, Int32 lastWin32Error ) {
 		switch ( lastWin32Error ) {
-			case ( Int32 )ErrorCodes.ERROR_FILE_NOT_FOUND: {
+			case ( Int32 ) ErrorCodes.ERROR_FILE_NOT_FOUND: {
 				ThrowFileNotFound( fullPath );
 
 				break;
 			}
 
-			case ( Int32 )ErrorCodes.ERROR_PATH_NOT_FOUND: {
+			case ( Int32 ) ErrorCodes.ERROR_PATH_NOT_FOUND: {
 				ThrowPathNotFound( fullPath );
 
 				break;
 			}
 
-			case ( Int32 )ErrorCodes.ERROR_ACCESS_DENIED: {
+			case ( Int32 ) ErrorCodes.ERROR_ACCESS_DENIED: {
 				ThrowAccessDenied( fullPath );
 
 				break;
@@ -1019,7 +1010,7 @@ public static class NativeMethods {
 	public static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
 
 	[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-	public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )][Out] StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
+	public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )] [Out] StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean QueryPerformanceCounter( out Int64 value );
@@ -1070,7 +1061,6 @@ public static class NativeMethods {
 	public static extern Boolean SetFileTime( SafeFileHandle hFile, ref Int64 lpCreationTime, ref Int64 lpLastAccessTime, ref Int64 lpLastWriteTime );
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name="hThread">             </param>
 	/// <param name="dwThreadAffinityMask"></param>
@@ -1164,9 +1154,9 @@ public static class NativeMethods {
 	[DebuggerStepThrough]
 	public static DateTime ToDateTime( this Filetime time ) {
 		try {
-			var high = ( UInt64 )time.dwHighDateTime;
+			var high = ( UInt64 ) time.dwHighDateTime;
 			var low = time.dwLowDateTime;
-			var fileTime = ( Int64 )( ( high << 32 ) + low );
+			var fileTime = ( Int64 ) ( ( high << 32 ) + low );
 
 			return DateTime.FromFileTimeUtc( fileTime );
 		}
@@ -1178,9 +1168,9 @@ public static class NativeMethods {
 	[DebuggerStepThrough]
 	public static DateTime? ToDateTime( this FILETIME time ) {
 		try {
-			var high = ( UInt64 )time.dwHighDateTime;
-			var low = ( UInt32 )time.dwLowDateTime;
-			var fileTime = ( Int64 )( ( high << 32 ) + low );
+			var high = ( UInt64 ) time.dwHighDateTime;
+			var low = ( UInt32 ) time.dwLowDateTime;
+			var fileTime = ( Int64 ) ( ( high << 32 ) + low );
 
 			return DateTime.FromFileTimeUtc( fileTime );
 		}
@@ -1281,7 +1271,7 @@ public static class NativeMethods {
 		var message = new StringBuilder( 255 );
 
 #pragma warning disable CA1806 // Do not ignore method results
-		FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, ( UInt32 )code, 0, message, ( UInt32 )message.Capacity, IntPtr.Zero );
+		FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, ( UInt32 ) code, 0, message, ( UInt32 ) message.Capacity, IntPtr.Zero );
 #pragma warning restore CA1806 // Do not ignore method results
 
 		return message.ToString();
@@ -1461,13 +1451,13 @@ public static class NativeMethods {
 		public readonly Int64 QuadPart;
 
 		/// <summary>use only when QuadPart cannot be passed</summary>
-		public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
+		public Int64 ToInt64() => ( ( Int64 ) this.High << 32 ) | ( UInt32 ) this.Low;
 
 		// just for demonstration
 		public static LargeInteger FromInt64( Int64 value ) =>
 			new() {
-				Low = ( Int32 )value,
-				High = ( Int32 )( value >> 32 )
+				Low = ( Int32 ) value,
+				High = ( Int32 ) ( value >> 32 )
 			};
 
 	}
