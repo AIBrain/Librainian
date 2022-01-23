@@ -25,7 +25,7 @@
 // 
 // File "Hash.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
-namespace Librainian.Financial.Currency.BTC;
+namespace Librainian.Financial.Currency.Bitcoin;
 
 using System;
 using System.Diagnostics.CodeAnalysis;

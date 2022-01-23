@@ -27,7 +27,7 @@
 
 #nullable enable
 
-namespace Librainian.Financial.Currency.BTC;
+namespace Librainian.Financial.Currency.Bitcoin;
 
 using System;
 using System.Diagnostics;

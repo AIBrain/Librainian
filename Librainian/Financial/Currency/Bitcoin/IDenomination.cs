@@ -23,49 +23,51 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ICoinWallet.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
+// File "IDenomination.cs" last formatted on 2022-12-22 at 4:32 AM by Protiguous.
 
-namespace Librainian.Financial.Currency.BTC;
+namespace Librainian.Financial.Currency.Bitcoin;
 
 using System;
-using System.Collections.Generic;
-using Utilities;
+using System.Diagnostics;
 
-public interface ICoinWallet {
+public interface IDenomination {
 
-	/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
-	IEnumerable<ICoin> Coins {
-		[NeedsTesting]
-		get;
-	}
+	Decimal FaceValue { get; }
 
-	IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
-		[NeedsTesting]
-		get;
-	}
+}
 
-	Guid ID { get; }
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record Btc : ICoin {
 
-	Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
+	public Decimal FaceValue => 1.00M;
 
-	Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
+	public override String ToString() => $"฿{this.FaceValue:f8}";
 
-	/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
-	Decimal Total { get; }
+}
 
-	Boolean Contains( ICoin coin );
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record MBtc : ICoin {
 
-	UInt64 Count( ICoin coin );
+	public Decimal FaceValue => 0.001M;
 
-	IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
+	public override String ToString() => $"฿{this.FaceValue:f8}";
 
-	/// <summary>
-	///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
-	///     <see cref="CoinWallet" /> .
-	/// </summary>
-	/// <param name="coin"></param>
-	/// <param name="quantity"></param>
-	/// <remarks>Locks the wallet.</remarks>
-	Boolean TryWithdraw( ICoin coin, UInt64 quantity );
+}
+
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record Satoshi : ICoin {
+
+	public Decimal FaceValue => 0.00000001M;
+
+	public override String ToString() => $"฿{this.FaceValue:f8}";
+
+}
+
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record ΜBtc : ICoin {
+
+	public Decimal FaceValue => 0.000001M;
+
+	public override String ToString() => $"฿{this.FaceValue:f8}";
 
 }

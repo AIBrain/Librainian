@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NullException.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
+// File "NullException.cs" last formatted on 2022-12-22 at 12:31 AM by Protiguous.
 
 namespace Librainian.Exceptions;
 
@@ -38,7 +38,9 @@ public class NullException : Exception {
 
 	protected NullException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-	/// <summary>Don't pass in a null nameof() lol.</summary>
+	/// <summary>
+	///     Don't pass in a null nameof() lol.
+	/// </summary>
 	/// <param name="nameOfObject"></param>
 	/// <param name="extraInfo"></param>
 	public NullException( String nameOfObject, String? extraInfo = null ) {

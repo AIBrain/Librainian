@@ -23,13 +23,49 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ICoin.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
+// File "ICoinWallet.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
-namespace Librainian.Financial.Currency.BTC;
+namespace Librainian.Financial.Currency.Bitcoin;
 
-/// <summary>
-/// </summary>
-/// <see cref="http://wikipedia.org/wiki/Bitcoin" />
-/// <see cref="http://en.bitcoin.it/wiki/FAQ" />
-/// <see cref="http://bitcoin.it/wiki/Units" />
-public interface ICoin : IDenomination { }
+using System;
+using System.Collections.Generic;
+using Utilities;
+
+public interface ICoinWallet {
+
+	/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
+	IEnumerable<ICoin> Coins {
+		[NeedsTesting]
+		get;
+	}
+
+	IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
+		[NeedsTesting]
+		get;
+	}
+
+	Guid ID { get; }
+
+	Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
+
+	Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
+
+	/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
+	Decimal Total { get; }
+
+	Boolean Contains( ICoin coin );
+
+	UInt64 Count( ICoin coin );
+
+	IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
+
+	/// <summary>
+	///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
+	///     <see cref="CoinWallet" /> .
+	/// </summary>
+	/// <param name="coin"></param>
+	/// <param name="quantity"></param>
+	/// <remarks>Locks the wallet.</remarks>
+	Boolean TryWithdraw( ICoin coin, UInt64 quantity );
+
+}

@@ -23,59 +23,13 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IDenomination.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
+// File "ICoin.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
-namespace Librainian.Financial.Currency.BTC {
+namespace Librainian.Financial.Currency.Bitcoin;
 
-	using System;
-
-	namespace Denominations {
-
-		using System;
-		using System.Diagnostics;
-
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct Btc : ICoin {
-
-			public Decimal FaceValue => 1.00M;
-
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-
-		}
-
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct MBtc : ICoin {
-
-			public Decimal FaceValue => 0.001M;
-
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-
-		}
-
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct Satoshi : ICoin {
-
-			public Decimal FaceValue => 0.00000001M;
-
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-
-		}
-
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct ΜBtc : ICoin {
-
-			public Decimal FaceValue => 0.000001M;
-
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-
-		}
-
-	}
-
-	public interface IDenomination {
-
-		Decimal FaceValue { get; }
-
-	}
-
-}
+/// <summary>
+/// </summary>
+/// <see cref="http://wikipedia.org/wiki/Bitcoin" />
+/// <see cref="http://en.bitcoin.it/wiki/FAQ" />
+/// <see cref="http://bitcoin.it/wiki/Units" />
+public interface ICoin : IDenomination { }

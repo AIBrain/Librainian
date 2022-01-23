@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Errors.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
+// File "Errors.cs" last formatted on 2022-12-22 at 12:32 AM by Protiguous.
 
 namespace Librainian.Exceptions;
 

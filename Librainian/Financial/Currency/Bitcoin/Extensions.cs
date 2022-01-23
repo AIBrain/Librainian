@@ -27,7 +27,7 @@
 
 #nullable enable
 
-namespace Librainian.Financial.Currency.BTC;
+namespace Librainian.Financial.Currency.Bitcoin;
 
 using System;
 using System.Collections.Concurrent;
@@ -36,7 +36,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using Denominations;
 using Exceptions;
 using Librainian.Extensions;
 using Threading;
@@ -157,7 +156,7 @@ public static class Extensions {
 
 		btc = btc.Sanitize();
 
-		var list = new List<String> {
+		var set = new HashSet<String> {
 			new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ),
 			$"{$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' )} m{coinSuffix}",
 			$"{$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' )} μ{coinSuffix}",
@@ -171,7 +170,7 @@ public static class Extensions {
 		//as μbtc
 
 		//as satoshi
-		var chosen = list.OrderBy( s => s.Length ).FirstOrDefault();
+		var chosen = set.OrderBy( s => s.Length ).FirstOrDefault();
 
 		return chosen;
 	}
@@ -236,7 +235,14 @@ public static class Extensions {
 
 			var denomination = pair.Key;
 			var count = pair.Value;
-			transferred.AddOrUpdate( denomination, count, ( denomination1, running ) => running + count );
+
+			transferred.AddOrUpdate( denomination, count, ( denomination1, running ) => {
+				if ( denomination1 == denomination ) {
+					return running + count;
+				}
+
+				return default( UInt64 );
+			} );
 		}
 
 		return transferred;
