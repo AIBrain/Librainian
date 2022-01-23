@@ -23,73 +23,18 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "VolatileBoolean.cs" last formatted on 2022-12-22 at 4:26 AM by Protiguous.
+// File "IAwaiter.cs" last formatted on 2022-01-21 at 4:25 AM by Protiguous.
 
-#nullable enable
-
-namespace Librainian.Threadsafe;
+namespace Librainian.Threading;
 
 using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Utilities;
 
-/// <summary>
-///     <para>A threadsafe boolean.</para>
-/// </summary>
-/// <copyright>
-///     Protiguous
-/// </copyright>
-[NeedsTesting]
-public record VolatileBoolean( Boolean _value = false ) {
+public interface IAwaiter<out T> {
 
-	private volatile Boolean _value = _value;
+	Boolean IsCompleted { get; }
 
-	public Boolean Value {
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[DebuggerStepThrough]
-		get => this.ReadFence();
+	T GetResult();
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[DebuggerStepThrough]
-		set => this.WriteFence( value );
-	}
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	private Boolean ReadFence() {
-		try {
-			return this._value;
-		}
-		finally {
-			Thread.MemoryBarrier();
-		}
-	}
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	private void WriteFence( Boolean value ) {
-		Thread.MemoryBarrier();
-		this._value = value;
-	}
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public static VolatileBoolean Create( Boolean value ) => new(value);
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public static implicit operator Boolean( VolatileBoolean value ) => value.ReadFence();
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public static implicit operator VolatileBoolean( Boolean value ) => Create( value );
-
-	public void Deconstruct( out Boolean value ) => value = this._value;
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public override String ToString() => this._value ? "true" : "false";
+	void OnCompleted( Action continuation );
 
 }

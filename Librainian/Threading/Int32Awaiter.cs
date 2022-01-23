@@ -20,76 +20,30 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "VolatileBoolean.cs" last formatted on 2022-12-22 at 4:26 AM by Protiguous.
+// File "Int32Awaiter.cs" last touched on 2022-01-19 at 4:55 PM by Protiguous.
 
-#nullable enable
-
-namespace Librainian.Threadsafe;
+namespace Librainian.Threading;
 
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using Utilities;
 
-/// <summary>
-///     <para>A threadsafe boolean.</para>
-/// </summary>
-/// <copyright>
-///     Protiguous
-/// </copyright>
-[NeedsTesting]
-public record VolatileBoolean( Boolean _value = false ) {
+public class Int32Awaiter : INotifyCompletion, IAwaiter<Int32> {
 
-	private volatile Boolean _value = _value;
+	private readonly Int32 _value;
 
-	public Boolean Value {
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[DebuggerStepThrough]
-		get => this.ReadFence();
+	public Int32Awaiter( Int32 value ) => this._value = value;
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[DebuggerStepThrough]
-		set => this.WriteFence( value );
-	}
+	public Boolean IsCompleted => true;
 
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	private Boolean ReadFence() {
-		try {
-			return this._value;
-		}
-		finally {
-			Thread.MemoryBarrier();
-		}
-	}
+	/// <summary>
+	///     Never called because already "<see cref="IsCompleted" />".
+	/// </summary>
+	/// <param name="continuation"></param>
+	public void OnCompleted( Action continuation ) { }
 
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	private void WriteFence( Boolean value ) {
-		Thread.MemoryBarrier();
-		this._value = value;
-	}
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public static VolatileBoolean Create( Boolean value ) => new(value);
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public static implicit operator Boolean( VolatileBoolean value ) => value.ReadFence();
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public static implicit operator VolatileBoolean( Boolean value ) => Create( value );
-
-	public void Deconstruct( out Boolean value ) => value = this._value;
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	public override String ToString() => this._value ? "true" : "false";
+	public Int32 GetResult() => this._value;
 
 }

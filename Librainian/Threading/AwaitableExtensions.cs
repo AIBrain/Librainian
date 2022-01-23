@@ -27,93 +27,87 @@
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Runtime.CompilerServices;
-	using System.Threading;
-	using System.Threading.Tasks;
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
-	namespace ExtremeConfigAwait {
+	
 
-		using System;
-		using System.Runtime.CompilerServices;
-		using System.Threading;
+/// <summary>
+///     From
+///     https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/SynchronizationContextRemover.cs
+/// </summary>
+public struct SynchronizationContextRemover : INotifyCompletion {
 
-		/// <summary>
-		///     From
-		///     https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/SynchronizationContextRemover.cs
-		/// </summary>
-		public struct SynchronizationContextRemover : INotifyCompletion {
+	public Boolean IsCompleted => SynchronizationContext.Current is null;
 
-			public Boolean IsCompleted => SynchronizationContext.Current is null;
+	public SynchronizationContextRemover GetAwaiter() => this;
 
-			public SynchronizationContextRemover GetAwaiter() => this;
+	public void GetResult() { }
 
-			public void GetResult() { }
+	public void OnCompleted( Action? continuation ) {
+		var prevContext = SynchronizationContext.Current;
 
-			public void OnCompleted( Action? continuation ) {
-				var prevContext = SynchronizationContext.Current;
-
-				try {
-					SynchronizationContext.SetSynchronizationContext( null );
-					continuation?.Invoke();
-				}
-				finally {
-					SynchronizationContext.SetSynchronizationContext( prevContext );
-				}
-			}
-
+		try {
+			SynchronizationContext.SetSynchronizationContext( null );
+			continuation?.Invoke();
 		}
+		finally {
+			SynchronizationContext.SetSynchronizationContext( prevContext );
+		}
+	}
 
+}
+
+	
+
+/// <summary>
+///     From
+///     https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/AwaitableExtensions.cs
+/// </summary>
+public static class AwaitableExtensions {
+
+	private static void PrintContext( [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+		var ctx = SynchronizationContext.Current;
+
+		if ( ctx != null ) {
+			Console.WriteLine( "{0}:{1:D4} await context will be {2}:", callerName, line, ctx );
+			Console.WriteLine( "    TSCHED:{0}", TaskScheduler.Current );
+		}
+		else {
+			Console.WriteLine( "{0}:{1:D4} await context will be <NO CONTEXT>", callerName, line );
+			Console.WriteLine( "    TSCHED:{0}", TaskScheduler.Current );
+		}
 	}
 
 	/// <summary>
-	///     From
-	///     https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/AwaitableExtensions.cs
+	///     Is this even legal? Just a shortcut for Task.FromResult{T}?
 	/// </summary>
-	public static class AwaitableExtensions {
+	/// <typeparam name="T"></typeparam>
+	/// <param name="value"></param>
+	public static Task<T> GetAwaiter<T>( this T value ) => Task.FromResult( value );
 
-		private static void PrintContext( [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
-			var ctx = SynchronizationContext.Current;
+	/// <summary>
+	///     Is this even legal?
+	/// </summary>
+	/// <param name="value"></param>
+	public static Task<Boolean> GetAwaiter( this Boolean value ) => Task.FromResult( value );
 
-			if ( ctx != null ) {
-				Console.WriteLine( "{0}:{1:D4} await context will be {2}:", callerName, line, ctx );
-				Console.WriteLine( "    TSCHED:{0}", TaskScheduler.Current );
-			}
-			else {
-				Console.WriteLine( "{0}:{1:D4} await context will be <NO CONTEXT>", callerName, line );
-				Console.WriteLine( "    TSCHED:{0}", TaskScheduler.Current );
-			}
-		}
+	public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
 
-		/// <summary>
-		///     Is this even legal? Just a shortcut for Task.FromResult{T}?
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="value"></param>
-		public static Task<T> GetAwaiter<T>( this T value ) => Task.FromResult( value );
+	public static ConfiguredTaskAwaitable PrintContext( this ConfiguredTaskAwaitable t, [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+		PrintContext( callerName, line );
 
-		/// <summary>
-		///     Is this even legal?
-		/// </summary>
-		/// <param name="value"></param>
-		public static Task<Boolean> GetAwaiter( this Boolean value ) => Task.FromResult( value );
+		return t;
+	}
 
-		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
+	public static Task? PrintContext( this Task? t, [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+		PrintContext( callerName, line );
 
-		public static ConfiguredTaskAwaitable PrintContext( this ConfiguredTaskAwaitable t, [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
-			PrintContext( callerName, line );
-
-			return t;
-		}
-
-		public static Task? PrintContext( this Task? t, [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
-			PrintContext( callerName, line );
-
-			return t;
-		}
-
+		return t;
 	}
 
 }
