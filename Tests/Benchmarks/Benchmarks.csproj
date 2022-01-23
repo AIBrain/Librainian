@@ -4,12 +4,11 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
-		<LangVersion>preview</LangVersion>
-		<AnalysisLevel>preview</AnalysisLevel>
+		<LangVersion>latest</LangVersion>
+		<AnalysisLevel>latest</AnalysisLevel>
 		<Platforms>x64</Platforms>
 		<Configurations>Release</Configurations>
 		<Platforms>x64</Platforms>
-		<LangVersion>preview</LangVersion>
 		<StartupObject>Benchmarks.Program</StartupObject>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	</PropertyGroup>
