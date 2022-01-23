@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29123.88
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32113.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librainian", "Librainian\Librainian.csproj", "{F6AE4772-F013-4F7F-BED4-57737BDE5719}"
 EndProject
@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianUnitTests", "Tests\LibrainianUnitTests\LibrainianUnitTests.csproj", "{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FAD726C1-FDFC-4D12-B6D9-4667E6C20526}"
 EndProject
@@ -22,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigDecimal", "Others\BigDec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBigDecimal", "Others\BigDecimal\TestBigDecimal\TestBigDecimal.csproj", "{A292C138-0571-4242-9BC7-DB379C672154}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianTests", "Tests\LibrainianTests\LibrainianTests.csproj", "{F4663078-5481-44AD-A263-867E165D1832}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -32,10 +32,6 @@ Global
 		{F6AE4772-F013-4F7F-BED4-57737BDE5719}.Debug|x64.Build.0 = Debug|x64
 		{F6AE4772-F013-4F7F-BED4-57737BDE5719}.Release|x64.ActiveCfg = Release|x64
 		{F6AE4772-F013-4F7F-BED4-57737BDE5719}.Release|x64.Build.0 = Release|x64
-		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Debug|x64.ActiveCfg = Debug|x64
-		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Debug|x64.Build.0 = Debug|x64
-		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Release|x64.ActiveCfg = Release|x64
-		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Release|x64.Build.0 = Release|x64
 		{202FCC90-79FE-430A-9FD6-03172F563831}.Debug|x64.ActiveCfg = Release|x64
 		{202FCC90-79FE-430A-9FD6-03172F563831}.Debug|x64.Build.0 = Release|x64
 		{202FCC90-79FE-430A-9FD6-03172F563831}.Release|x64.ActiveCfg = Release|x64
@@ -48,15 +44,19 @@ Global
 		{A292C138-0571-4242-9BC7-DB379C672154}.Debug|x64.Build.0 = Debug|x64
 		{A292C138-0571-4242-9BC7-DB379C672154}.Release|x64.ActiveCfg = Release|x64
 		{A292C138-0571-4242-9BC7-DB379C672154}.Release|x64.Build.0 = Release|x64
+		{F4663078-5481-44AD-A263-867E165D1832}.Debug|x64.ActiveCfg = Debug|x64
+		{F4663078-5481-44AD-A263-867E165D1832}.Debug|x64.Build.0 = Debug|x64
+		{F4663078-5481-44AD-A263-867E165D1832}.Release|x64.ActiveCfg = Release|Any CPU
+		{F4663078-5481-44AD-A263-867E165D1832}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
 		{202FCC90-79FE-430A-9FD6-03172F563831} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
 		{62F5BC67-B5F3-4723-857C-4F2EAF447C8D} = {30081CC8-ADB9-4A7F-8EA5-4DE26613586A}
 		{A292C138-0571-4242-9BC7-DB379C672154} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
+		{F4663078-5481-44AD-A263-867E165D1832} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
