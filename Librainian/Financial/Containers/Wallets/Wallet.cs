@@ -17,11 +17,11 @@
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // and PayPal: Protiguous@Protiguous.com
 //
-// ====================================================================
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied,
 // or given. We are NOT responsible for Anything You Do With Our Code. We are NOT responsible for
 // Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your
-// Computer. ====================================================================
+// Computer.
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our
 // code in your project(s). For business inquiries, please contact me at Protiguous@Protiguous.com.
@@ -61,6 +61,8 @@ using Utilities.Disposables;
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> {
 
+	public Wallet( Guid id ) => this.ID = id;
+
 	/// <summary>
 	///     Count of each <see cref="IBankNote" />.
 	/// </summary>
@@ -72,6 +74,12 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 	/// </summary>
 	[JsonProperty]
 	private ConcurrentDictionary<ICoin, UInt64> Coins { get; } = new();
+
+	[JsonProperty]
+	public Guid ID { get; }
+
+	[JsonProperty]
+	public WalletStatistics Statistics { get; } = new();
 
 	private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
 		try {
@@ -90,14 +98,6 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 			this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity;
 		}
 	}
-
-	public Wallet( Guid id ) => this.ID = id;
-
-	[JsonProperty]
-	public Guid ID { get; }
-
-	[JsonProperty]
-	public WalletStatistics Statistics { get; } = new();
 
 	/// <summary>
 	///     Create an empty wallet with a new random id.
@@ -258,6 +258,8 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 
 	public IEnumerator<(IDenomination, UInt64)> GetEnumerator() => this.GetGroups().GetEnumerator();
 
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
 	/// <summary>
 	///     Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.
 	/// </summary>
@@ -395,6 +397,4 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 			var _ => throw new WalletException( $"Unknown denomination {message.Denomination}" )
 		};
 	}
-
-	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

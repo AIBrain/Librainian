@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ConverterExtensions.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
@@ -145,7 +145,7 @@ public static class ConverterExtensions {
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static BigInteger ToBigInteger( this Guid self ) => new(self.ToByteArray());
+	public static BigInteger ToBigInteger( this Guid self ) => new( self.ToByteArray() );
 
 	/// <summary>
 	///     <para>Returns true if <paramref name="value" /> is a true, 'Y', "yes", "true", "1", or '1'.</para>
@@ -330,7 +330,7 @@ public static class ConverterExtensions {
 		//var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
 		return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ], bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ),
-			( DateTimeKind ) bytes[ 15 ] );
+			( DateTimeKind )bytes[ 15 ] );
 	}
 
 	[NeedsTesting]
@@ -368,15 +368,16 @@ public static class ConverterExtensions {
 		}
 
 		try {
+
 			//todo This really should look for BOTH "()" and replace with "-"
 			var s = value.Trimmed()
-			             ?.StripLetters()
-			             .Replace( "$", String.Empty )
-			             .Replace( ")", String.Empty )
-			             .Replace( "(", "-" )
-			             .Replace( "..", "." )
-			             .Replace( " ", String.Empty )
-			             .Trimmed();
+						 ?.StripLetters()
+						 .Replace( "$", String.Empty )
+						 .Replace( ")", String.Empty )
+						 .Replace( "(", "-" )
+						 .Replace( "..", "." )
+						 .Replace( " ", String.Empty )
+						 .Trimmed();
 
 			if ( String.IsNullOrEmpty( s ) ) {
 				return default( Decimal? );
@@ -409,7 +410,7 @@ public static class ConverterExtensions {
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new(guid.ToPath( reversed ));
+	public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new( guid.ToPath( reversed ) );
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
@@ -440,17 +441,17 @@ public static class ConverterExtensions {
 	public static Guid ToGuid( this DateTime dateTime ) {
 		try {
 			unchecked {
-				var guid = new Guid( ( UInt32 ) dateTime.Year //0,1,2,3
-					, ( UInt16 ) dateTime.DayOfYear //4,5
-					, ( UInt16 ) dateTime.Millisecond //6,7
-					, ( Byte ) dateTime.DayOfWeek //8
-					, ( Byte ) dateTime.Day //9
-					, ( Byte ) dateTime.Hour //10
-					, ( Byte ) dateTime.Minute //11
-					, ( Byte ) dateTime.Second //12
-					, ( Byte ) dateTime.Month //13
+				var guid = new Guid( ( UInt32 )dateTime.Year //0,1,2,3
+					, ( UInt16 )dateTime.DayOfYear //4,5
+					, ( UInt16 )dateTime.Millisecond //6,7
+					, ( Byte )dateTime.DayOfWeek //8
+					, ( Byte )dateTime.Day //9
+					, ( Byte )dateTime.Hour //10
+					, ( Byte )dateTime.Minute //11
+					, ( Byte )dateTime.Second //12
+					, ( Byte )dateTime.Month //13
 					, Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-					, ( Byte ) dateTime.Kind ); //15
+					, ( Byte )dateTime.Kind ); //15
 
 				return guid;
 			}
@@ -649,12 +650,11 @@ public static class ConverterExtensions {
 	/// <param name="guid"></param>
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static UBigInteger ToUBigInteger( this Guid guid ) => new(guid.ToByteArray());
+	public static UBigInteger ToUBigInteger( this Guid guid ) => new( guid.ToByteArray() );
 
 	/// <summary>Returns a 'Y' for true, or an 'N' for false.</summary>
 	/// <param name="value"></param>
 	[NeedsTesting]
 	[DebuggerStepThrough]
 	public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
-
 }

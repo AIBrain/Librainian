@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Instantiator.cs" last formatted on 2022-12-22 at 5:17 PM by Protiguous.
 
 namespace Librainian.Magic;
@@ -142,46 +142,38 @@ public static class Instantiator<T> {
 	private static class InstantiatorImpl {
 
 		public static readonly Func<T> CtorFunc = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
-
 	}
 
 	private static class InstantiatorImpl<TA> {
 
 		public static readonly Func<TA, T> CtorFunc = CreateLambdaExpression<Func<TA, T>>( typeof( TA ) ).Compile();
-
 	}
 
 	private static class InstantiatorImpl<TA, TB> {
 
 		public static readonly Func<TA, TB, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, T>>( typeof( TA ), typeof( TB ) ).Compile();
-
 	}
 
 	private static class InstantiatorImpl<TA, TB, TC> {
 
 		public static readonly Func<TA, TB, TC, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, TC, T>>( typeof( TA ), typeof( TB ), typeof( TC ) ).Compile();
-
 	}
 
 	private static class InstantiatorImpl<TA, TB, TC, TD> {
 
 		public static readonly Func<TA, TB, TC, TD, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, TC, TD, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ) )
 			.Compile();
-
 	}
 
 	private static class InstantiatorImpl<TA, TB, TC, TD, TE> {
 
 		public static readonly Func<TA, TB, TC, TD, TE, T> CtorFunc =
 			CreateLambdaExpression<Func<TA, TB, TC, TD, TE, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ), typeof( TE ) ).Compile();
-
 	}
 
 	private static class InstantiatorImpl<TA, TB, TC, TD, TE, TF> {
 
 		public static readonly Func<TA, TB, TC, TD, TE, TF, T> CtorFunc =
 			CreateLambdaExpression<Func<TA, TB, TC, TD, TE, TF, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ), typeof( TE ), typeof( TF ) ).Compile();
-
 	}
-
 }

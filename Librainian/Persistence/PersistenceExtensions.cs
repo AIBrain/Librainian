@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "PersistenceExtensions.cs" last formatted on 2022-12-22 at 5:20 PM by Protiguous.
 
 #nullable enable
@@ -62,7 +62,7 @@ public static class PersistenceExtensions {
 	///         <see cref="Environment.SpecialFolder.LocalApplicationData" />
 	///     </para>
 	/// </summary>
-	public static readonly Lazy<Folder> LocalDataFolder = new(() => {
+	public static readonly Lazy<Folder> LocalDataFolder = new( () => {
 		var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
 		if ( !folder.Info.Exists ) {
@@ -70,18 +70,19 @@ public static class PersistenceExtensions {
 		}
 
 		return folder;
-	});
+	} );
 
-	public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new(() => new JsonSerializer {
+	public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
 		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 		PreserveReferencesHandling = PreserveReferencesHandling.All
-	}, true);
+	}, true );
 
-	public static readonly ThreadLocal<StreamingContext> StreamingContexts = new(() => new StreamingContext( StreamingContextStates.All ), true);
+	public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
 
-	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new(MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte);
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte );
 
-	public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new(() => new JsonSerializerSettings {
+	public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
+
 		//TODO ContractResolver needs testing
 		ContractResolver = new MyContractResolver(),
 		TypeNameHandling = TypeNameHandling.Auto,
@@ -89,7 +90,7 @@ public static class PersistenceExtensions {
 		DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
 		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 		PreserveReferencesHandling = PreserveReferencesHandling.All
-	}, true);
+	}, true );
 
 	/// <summary>Bascially just calls <see cref="FromJSON{T}" />.</summary>
 	/// <typeparam name="T"></typeparam>
@@ -121,6 +122,7 @@ public static class PersistenceExtensions {
 		}
 
 		try {
+
 			//Report.Enter();
 			var stopwatch = Stopwatch.StartNew();
 
@@ -154,7 +156,7 @@ public static class PersistenceExtensions {
 								return;
 							}
 
-							( var key, var value ) = line.Deserialize<(TKey, TValue)>();
+							(var key, var value) = line.Deserialize<(TKey, TValue)>();
 
 							toDictionary[ key ] = value;
 						}
@@ -194,7 +196,7 @@ public static class PersistenceExtensions {
 
 		var binaryFormatter = new BinaryFormatter();
 
-		return ( T ) binaryFormatter.Deserialize( memoryStream );
+		return ( T )binaryFormatter.Deserialize( memoryStream );
 	}
 
 	/// <summary>Can the file be read from at this moment in time ?</summary>
@@ -316,6 +318,7 @@ public static class PersistenceExtensions {
 		}
 
 		try {
+
 			//Report.Enter();
 			var stopwatch = Stopwatch.StartNew();
 
@@ -323,7 +326,7 @@ public static class PersistenceExtensions {
 				throw new DirectoryNotFoundException( folder.FullPath );
 			}
 
-			var itemCount = ( UInt64 ) dictionary.Count;
+			var itemCount = ( UInt64 )dictionary.Count;
 
 			String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
@@ -342,7 +345,7 @@ public static class PersistenceExtensions {
 			foreach ( var pair in dictionary ) {
 				currentLine++;
 
-				var data = ( pair.Key, pair.Value ).Serialize();
+				var data = (pair.Key, pair.Value).Serialize();
 
 				var hereNow = DateTime.UtcNow.ToGuid();
 
@@ -547,7 +550,5 @@ public static class PersistenceExtensions {
 
 			return list;
 		}
-
 	}
-
 }

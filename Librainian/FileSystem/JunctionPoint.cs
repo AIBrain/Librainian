@@ -1,28 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "JunctionPoint.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 namespace Librainian.FileSystem;
@@ -38,6 +38,39 @@ using OperatingSystem;
 /// <summary>Provides access to NTFS junction points in .Net.</summary>
 public static class JunctionPoint {
 
+	/// <summary>The data present in the reparse point buffer is invalid.</summary>
+	private const Int32 ErrorInvalidReparseData = 4392;
+
+	/// <summary>The file or directory is not a reparse point.</summary>
+	private const Int32 ErrorNotAReparsePoint = 4390;
+
+	/// <summary>The reparse point attribute cannot be set because it conflicts with an existing attribute.</summary>
+	private const Int32 ErrorReparseAttributeConflict = 4391;
+
+	/// <summary>The tag present in the reparse point buffer is invalid.</summary>
+	private const Int32 ErrorReparseTagInvalid = 4393;
+
+	/// <summary>There is a mismatch between the tag specified in the request and the tag present in the reparse point.</summary>
+	private const Int32 ErrorReparseTagMismatch = 4394;
+
+	/// <summary>Command to delete the reparse point data base.</summary>
+	private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
+
+	/// <summary>Command to get the reparse point data block.</summary>
+	private const Int32 FsctlGetReparsePoint = 0x000900A8;
+
+	/// <summary>Command to set the reparse point data block.</summary>
+	private const Int32 FsctlSetReparsePoint = 0x000900A4;
+
+	/// <summary>Reparse point tag used to identify mount points and junction points.</summary>
+	private const UInt32 IOReparseTagMountPoint = 0xA0000003;
+
+	/// <summary>
+	///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file
+	///     system.
+	/// </summary>
+	private const String NonInterpretedPathPrefix = @"\??\";
+
 	public enum ECreationDisposition : UInt32 {
 
 		New = 1,
@@ -49,7 +82,6 @@ public static class JunctionPoint {
 		OpenAlways = 4,
 
 		TruncateExisting = 5
-
 	}
 
 	[Flags]
@@ -62,7 +94,6 @@ public static class JunctionPoint {
 		GenericExecute = 0x20000000,
 
 		GenericAll = 0x10000000
-
 	}
 
 	[Flags]
@@ -117,7 +148,6 @@ public static class JunctionPoint {
 		OpenNoRecall = 0x00100000,
 
 		FirstPipeInstance = 0x00080000
-
 	}
 
 	[Flags]
@@ -130,41 +160,7 @@ public static class JunctionPoint {
 		Write = 0x00000002,
 
 		Delete = 0x00000004
-
 	}
-
-	/// <summary>The data present in the reparse point buffer is invalid.</summary>
-	private const Int32 ErrorInvalidReparseData = 4392;
-
-	/// <summary>The file or directory is not a reparse point.</summary>
-	private const Int32 ErrorNotAReparsePoint = 4390;
-
-	/// <summary>The reparse point attribute cannot be set because it conflicts with an existing attribute.</summary>
-	private const Int32 ErrorReparseAttributeConflict = 4391;
-
-	/// <summary>The tag present in the reparse point buffer is invalid.</summary>
-	private const Int32 ErrorReparseTagInvalid = 4393;
-
-	/// <summary>There is a mismatch between the tag specified in the request and the tag present in the reparse point.</summary>
-	private const Int32 ErrorReparseTagMismatch = 4394;
-
-	/// <summary>Command to delete the reparse point data base.</summary>
-	private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
-
-	/// <summary>Command to get the reparse point data block.</summary>
-	private const Int32 FsctlGetReparsePoint = 0x000900A8;
-
-	/// <summary>Command to set the reparse point data block.</summary>
-	private const Int32 FsctlSetReparsePoint = 0x000900A4;
-
-	/// <summary>Reparse point tag used to identify mount points and junction points.</summary>
-	private const UInt32 IOReparseTagMountPoint = 0xA0000003;
-
-	/// <summary>
-	///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file
-	///     system.
-	/// </summary>
-	private const String NonInterpretedPathPrefix = @"\??\";
 
 	private static String? InternalGetTarget( SafeHandle handle ) {
 		var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
@@ -190,7 +186,7 @@ public static class JunctionPoint {
 				throw new InvalidOperationException();
 			}
 			else {
-				var reparseDataBuffer = ( ReparseDataBuffer ) toStructure;
+				var reparseDataBuffer = ( ReparseDataBuffer )toStructure;
 
 				if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
 					return default( String? );
@@ -257,10 +253,10 @@ public static class JunctionPoint {
 
 		var reparseDataBuffer = new ReparseDataBuffer {
 			ReparseTag = IOReparseTagMountPoint,
-			ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
+			ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ),
 			SubstituteNameOffset = 0,
-			SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
-			PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
+			SubstituteNameLength = ( UInt16 )targetDirBytes.Length,
+			PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ),
 			PrintNameLength = 0,
 			PathBuffer = new Byte[ 0x3ff0 ]
 		};
@@ -407,7 +403,5 @@ public static class JunctionPoint {
 		/// </summary>
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 0x3FF0 )]
 		public Byte[] PathBuffer;
-
 	}
-
 }

@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Shufflings.cs" last formatted on 2022-12-22 at 5:14 PM by Protiguous.
 
 #nullable enable
@@ -49,10 +49,10 @@ public static class Shufflings {
 	/// <typeparam name="T"></typeparam>
 	public static IEnumerable<T> AsRandom<T>( this IEnumerable<T> sequence ) =>
 		sequence.AsParallel()
-		        .AsUnordered()
-		        .WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
-		        .WithExecutionMode( ParallelExecutionMode.ForceParallelism )
-		        .WithMergeOptions( ParallelMergeOptions.AutoBuffered );
+				.AsUnordered()
+				.WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
+				.WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+				.WithMergeOptions( ParallelMergeOptions.AutoBuffered );
 
 	/// <summary>Take a buffer and scramble.</summary>
 	/// <param name="buffer"></param>
@@ -64,7 +64,7 @@ public static class Shufflings {
 			var indexa = 0.Next( length );
 			var indexb = 0.Next( length );
 
-			( buffer[ indexb ], buffer[ indexa ] ) = ( buffer[ indexa ], buffer[ indexb ] );
+			(buffer[ indexb ], buffer[ indexa ]) = (buffer[ indexa ], buffer[ indexb ]);
 		}
 	}
 
@@ -78,25 +78,8 @@ public static class Shufflings {
 			var indexa = 0.Next( length );
 			var indexb = 0.Next( length );
 
-			( list[ indexb ], list[ indexa ] ) = ( list[ indexa ], list[ indexb ] );
+			(list[ indexb ], list[ indexa ]) = (list[ indexa ], list[ indexb ]);
 		}
-	}
-
-	/// <summary>Take a list and scramble the order of its items.</summary>
-	/// <param name="list"></param>
-	/// <param name="cancellationToken"></param>
-	/// <remarks>Fisher-Yates shuffle</remarks>
-	public static async Task ShuffleAsync<T>( this IList<T> list, CancellationToken cancellationToken ) {
-		var length = list.Count;
-
-		await Parallel.ForEachAsync( list.ToAsyncEnumerable(), cancellationToken, ( _, _ ) => {
-			              var indexa = 0.Next( length );
-			              var indexb = 0.Next( length );
-
-			              ( list[ indexb ], list[ indexa ] ) = ( list[ indexa ], list[ indexb ] );
-			              return ValueTask.CompletedTask;
-		              } )
-		              .ConfigureAwait( false );
 	}
 
 	/// <summary>
@@ -169,6 +152,23 @@ public static class Shufflings {
 		}
 	}
 
+	/// <summary>Take a list and scramble the order of its items.</summary>
+	/// <param name="list"></param>
+	/// <param name="cancellationToken"></param>
+	/// <remarks>Fisher-Yates shuffle</remarks>
+	public static async Task ShuffleAsync<T>( this IList<T> list, CancellationToken cancellationToken ) {
+		var length = list.Count;
+
+		await Parallel.ForEachAsync( list.ToAsyncEnumerable(), cancellationToken, ( _, _ ) => {
+			var indexa = 0.Next( length );
+			var indexb = 0.Next( length );
+
+			(list[ indexb ], list[ indexa ]) = (list[ indexa ], list[ indexb ]);
+			return ValueTask.CompletedTask;
+		} )
+					  .ConfigureAwait( false );
+	}
+
 	/// <summary>Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list">         </param>
@@ -183,10 +183,10 @@ public static class Shufflings {
 		}
 
 		var bag = new ConcurrentBag<T>( list.AsParallel()
-		                                    .AsUnordered()
-		                                    .WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
-		                                    .WithExecutionMode( ParallelExecutionMode.ForceParallelism )
-		                                    .WithMergeOptions( ParallelMergeOptions.AutoBuffered ) );
+											.AsUnordered()
+											.WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
+											.WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+											.WithMergeOptions( ParallelMergeOptions.AutoBuffered ) );
 
 		while ( iterations.Any() ) {
 			iterations--;
@@ -286,5 +286,4 @@ public static class Shufflings {
 			//TODO Benchmark list = list.OrderBy( _ => Randem.NextDouble() ).ThenBy( _ => Randem.NextDouble() ).ToListTrimExcess();
 		}
 	}
-
 }

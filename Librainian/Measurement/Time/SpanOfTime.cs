@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "SpanOfTime.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 #nullable enable
@@ -74,19 +74,19 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
 		this.Milliseconds = new Milliseconds( PlanckTimes.InOneMillisecond.PullPlancks( ref planckTimes ) );
 
-		this.Microseconds = new(PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ));
+		this.Microseconds = new( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
 
-		this.Nanoseconds = new(PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ));
+		this.Nanoseconds = new( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
 
-		this.Picoseconds = new(PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ));
+		this.Picoseconds = new( PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ) );
 
-		this.Femtoseconds = new(PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ));
+		this.Femtoseconds = new( PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ) );
 
-		this.Attoseconds = new(PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ));
+		this.Attoseconds = new( PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ) );
 
-		this.Zeptoseconds = new(PlanckTimes.InOneZeptosecond.PullPlancks( ref planckTimes ));
+		this.Zeptoseconds = new( PlanckTimes.InOneZeptosecond.PullPlancks( ref planckTimes ) );
 
-		this.Yoctoseconds = new(PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ));
+		this.Yoctoseconds = new( PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ) );
 
 		this.PlanckTimes = new PlanckTimes( planckTimes );
 	}
@@ -185,6 +185,7 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 		BigDecimal? months = null,
 		BigDecimal? years = null
 	) {
+
 		//TODO Unit testing needed to verify the math.
 
 		this.PlanckTimes = PlanckTimes.Zero;
@@ -295,11 +296,11 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 	/// <summary>
 	///     <para>1 of each measure of time</para>
 	/// </summary>
-	public static SpanOfTime Identity { get; } = new(1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1);
+	public static SpanOfTime Identity { get; } = new( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1 );
 
 	/// <summary></summary>
-	public static SpanOfTime Zero { get; } = new(0);
+	public static SpanOfTime Zero { get; } = new( 0 );
 
 	/// <summary></summary>
 	[JsonProperty]
@@ -452,13 +453,13 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 	///     <para>Allow an explicit cast from a <see cref="TimeSpan" /> into a <see cref="SpanOfTime" />.</para>
 	/// </summary>
 	/// <param name="span"></param>
-	public static explicit operator SpanOfTime( TimeSpan span ) => new(span);
+	public static explicit operator SpanOfTime( TimeSpan span ) => new( span );
 
 	/// <summary>Allow an automatic cast to <see cref="TimeSpan" />.</summary>
 	/// <param name="spanOfTime"></param>
 	public static implicit operator TimeSpan( SpanOfTime spanOfTime ) =>
-		new(( Int32 ) spanOfTime.Days.Value, ( Int32 ) spanOfTime.Hours.Value, ( Int32 ) spanOfTime.Minutes.Value, ( Int32 ) spanOfTime.Seconds.Value,
-			( Int32 ) spanOfTime.Milliseconds.Value);
+		new( ( Int32 )spanOfTime.Days.Value, ( Int32 )spanOfTime.Hours.Value, ( Int32 )spanOfTime.Minutes.Value, ( Int32 )spanOfTime.Seconds.Value,
+			( Int32 )spanOfTime.Milliseconds.Value );
 
 	/// <summary>
 	///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
@@ -571,10 +572,10 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
 	public PlanckTimes CalcTotalPlanckTimes() {
 		return this._totalPlankTimes ??= this.PlanckTimes.ToPlanckTimes() + this.Yoctoseconds.ToPlanckTimes() + this.Zeptoseconds.ToPlanckTimes() +
-		                                 this.Attoseconds.ToPlanckTimes() + this.Femtoseconds.ToPlanckTimes() + this.Picoseconds.ToPlanckTimes() +
-		                                 this.Nanoseconds.ToPlanckTimes() + this.Microseconds.ToPlanckTimes() + this.Milliseconds.ToPlanckTimes() +
-		                                 this.Seconds.ToPlanckTimes() + this.Minutes.ToPlanckTimes() + this.Hours.ToPlanckTimes() + this.Days.ToPlanckTimes() +
-		                                 this.Weeks.ToPlanckTimes() + this.Months.ToPlanckTimes() + this.Years.ToPlanckTimes();
+										 this.Attoseconds.ToPlanckTimes() + this.Femtoseconds.ToPlanckTimes() + this.Picoseconds.ToPlanckTimes() +
+										 this.Nanoseconds.ToPlanckTimes() + this.Microseconds.ToPlanckTimes() + this.Milliseconds.ToPlanckTimes() +
+										 this.Seconds.ToPlanckTimes() + this.Minutes.ToPlanckTimes() + this.Hours.ToPlanckTimes() + this.Days.ToPlanckTimes() +
+										 this.Weeks.ToPlanckTimes() + this.Months.ToPlanckTimes() + this.Years.ToPlanckTimes();
 	}
 
 	/// <summary>
@@ -595,15 +596,15 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 		mill += this.Hours.ToMinutes().ToSeconds().ToMilliseconds();
 		mill += this.Days.ToHours().ToMinutes().ToSeconds().ToMilliseconds();
 
-		return ( Double ) mill.Value;
+		return ( Double )mill.Value;
 	}
 
 	/// <summary>Returns the hash code for this instance.</summary>
 	/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
 	/// <filterpriority>2</filterpriority>
 	public override Int32 GetHashCode() =>
-		( this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds,
-			this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years ).GetHashCode();
+		(this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds,
+			this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years).GetHashCode();
 
 	/// <summary>
 	///     <para>Returns a <see cref="BigInteger" /> of all the whole (integer) years in this <see cref="SpanOfTime" />.</para>
@@ -611,7 +612,7 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 	public BigInteger GetWholeYears() {
 		var span = new SpanOfTime( this.CalcTotalPlanckTimes() );
 
-		return ( BigInteger ) span.Years.Value;
+		return ( BigInteger )span.Years.Value;
 	}
 
 	public override String ToString() {
@@ -770,5 +771,4 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
                 return String.Format( "{0} seconds", asSeconds );
             }
     */
-
 }

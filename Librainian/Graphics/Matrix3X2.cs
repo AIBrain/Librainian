@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Matrix3X2.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 namespace Librainian.Graphics;
@@ -147,7 +147,7 @@ public class Matrix3X2 : ICloneable {
 	/// <summary>Creates a new object that is a copy of the current instance.</summary>
 	/// <returns>A new object that is a copy of this instance.</returns>
 	public Object Clone() {
-		var coeffCopy = ( Double[] ) this._coeffs.Clone();
+		var coeffCopy = ( Double[] )this._coeffs.Clone();
 
 		return new Matrix3X2( coeffCopy );
 	}
@@ -176,6 +176,7 @@ public class Matrix3X2 : ICloneable {
 	/// <summary>Multiplies the 3x3 matrix passed in with the current 3x2 matrix</summary>
 	/// <param name="left">The 3x3 Matrix X</param>
 	public void Multiply( Matrix3X3 left ) {
+
 		// Multiply the 3x3 matrix with the 3x2 matrix and store inside the current 2x3 matrix
 		//
 		// [a b c] [j k] [(aj + bl + cn) (ak + bm + co)] [d e f] * [l m] = [(dj + el + fn) (dk + em + fo)] [g h i] [n o] [(gj + hl + in) (gk + hm + io)]
@@ -205,5 +206,4 @@ public class Matrix3X2 : ICloneable {
 		this._coeffs[ _M31 ] = g * j + h * l + i * n;
 		this._coeffs[ _M32 ] = g * k + h * m + i * o;
 	}
-
 }

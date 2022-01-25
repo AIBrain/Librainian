@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "SimpleWallet.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 namespace Librainian.Financial.Currency;
@@ -40,7 +40,7 @@ using Utilities.Disposables;
 [JsonObject]
 public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
 
-	private readonly ReaderWriterLockSlim _access = new(LockRecursionPolicy.SupportsRecursion);
+	private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
 	[JsonProperty]
 	private Decimal _balance;
@@ -50,16 +50,6 @@ public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<Simpl
 	/// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
 	/// <param name="balance"></param>
 	public SimpleWallet( Decimal balance ) : this() => this._balance = balance;
-
-	//TODO add in support for automatic persisting?
-	/// <summary>
-	///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
-	/// </summary>
-	public TimeSpan Timeout { get; set; }
-
-	/// <summary>Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.</summary>
-	/// <param name="other">Annother to compare with this wallet.</param>
-	public Boolean Equals( SimpleWallet other ) => Equals( this, other );
 
 	public Decimal Balance {
 		get {
@@ -85,6 +75,69 @@ public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<Simpl
 	public Action<Decimal>? OnBeforeDeposit { get; set; }
 
 	public Action<Decimal>? OnBeforeWithdraw { get; set; }
+
+	//TODO add in support for automatic persisting?
+	/// <summary>
+	///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+	/// </summary>
+	public TimeSpan Timeout { get; set; }
+
+	/// <summary>
+	///     <para>Static comparison.</para>
+	///     <para>Returns true if the wallets ARE the same instance.</para>
+	///     <para>Returns true if the wallets HAVE the same balance.</para>
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( SimpleWallet? left, SimpleWallet? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
+		}
+
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		return left.Balance == right.Balance;
+	}
+
+	/// <summary>Returns a value that indicates whether two <see cref="SimpleWallet" /> objects have different values.</summary>
+	/// <param name="left">The first value to compare.</param>
+	/// <param name="right">The second value to compare.</param>
+	/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+	public static Boolean operator !=( SimpleWallet? left, SimpleWallet? right ) => !Equals( left, right );
+
+	/// <summary>Returns a value that indicates whether the values of two <see cref="SimpleWallet" /> objects are equal.</summary>
+	/// <param name="left">The first value to compare.</param>
+	/// <param name="right">The second value to compare.</param>
+	/// <returns>
+	///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
+	///     false.
+	/// </returns>
+	public static Boolean operator ==( SimpleWallet? left, SimpleWallet? right ) => Equals( left, right );
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		using ( this._access ) { }
+	}
+
+	/// <summary>Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.</summary>
+	/// <param name="other">Annother to compare with this wallet.</param>
+	public Boolean Equals( SimpleWallet other ) => Equals( this, other );
+
+	/// <summary>Determines whether the specified object is equal to the current object.</summary>
+	/// <param name="obj">The object to compare with the current object.</param>
+	/// <returns>
+	///     <see langword="true" /> if the specified object is equal to the current object; otherwise,
+	///     <see langword="false" />.
+	/// </returns>
+	public override Boolean Equals( Object? obj ) => Equals( this, obj as SimpleWallet );
+
+	/// <summary>Serves as the default hash function.</summary>
+	/// <returns>A hash code for the current object.</returns>
+	public override Int32 GetHashCode() => this._access.GetHashCode();
+
+	public override String ToString() => $"{this.Balance:F8}";
 
 	/// <summary>Add any (+-)amount directly to the balance.</summary>
 	/// <param name="amount"></param>
@@ -238,58 +291,4 @@ public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<Simpl
 
 		return this.TryWithdraw( wallet.Balance );
 	}
-
-	/// <summary>
-	///     <para>Static comparison.</para>
-	///     <para>Returns true if the wallets ARE the same instance.</para>
-	///     <para>Returns true if the wallets HAVE the same balance.</para>
-	/// </summary>
-	/// <param name="left"></param>
-	/// <param name="right"></param>
-	public static Boolean Equals( SimpleWallet? left, SimpleWallet? right ) {
-		if ( ReferenceEquals( left, right ) ) {
-			return true;
-		}
-
-		if ( left is null || right is null ) {
-			return false;
-		}
-
-		return left.Balance == right.Balance;
-	}
-
-	/// <summary>Returns a value that indicates whether two <see cref="SimpleWallet" /> objects have different values.</summary>
-	/// <param name="left">The first value to compare.</param>
-	/// <param name="right">The second value to compare.</param>
-	/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-	public static Boolean operator !=( SimpleWallet? left, SimpleWallet? right ) => !Equals( left, right );
-
-	/// <summary>Returns a value that indicates whether the values of two <see cref="SimpleWallet" /> objects are equal.</summary>
-	/// <param name="left">The first value to compare.</param>
-	/// <param name="right">The second value to compare.</param>
-	/// <returns>
-	///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
-	///     false.
-	/// </returns>
-	public static Boolean operator ==( SimpleWallet? left, SimpleWallet? right ) => Equals( left, right );
-
-	/// <summary>Dispose any disposable members.</summary>
-	public override void DisposeManaged() {
-		using ( this._access ) { }
-	}
-
-	/// <summary>Determines whether the specified object is equal to the current object.</summary>
-	/// <param name="obj">The object to compare with the current object.</param>
-	/// <returns>
-	///     <see langword="true" /> if the specified object is equal to the current object; otherwise,
-	///     <see langword="false" />.
-	/// </returns>
-	public override Boolean Equals( Object? obj ) => Equals( this, obj as SimpleWallet );
-
-	/// <summary>Serves as the default hash function.</summary>
-	/// <returns>A hash code for the current object.</returns>
-	public override Int32 GetHashCode() => this._access.GetHashCode();
-
-	public override String ToString() => $"{this.Balance:F8}";
-
 }

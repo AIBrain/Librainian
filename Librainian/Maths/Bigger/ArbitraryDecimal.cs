@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ArbitraryDecimal.cs" last formatted on 2022-12-22 at 4:22 AM by Protiguous.
 
 namespace Librainian.Maths.Bigger;
@@ -44,7 +44,7 @@ public class ArbitraryDecimal {
 		this._digits = new Byte[ tmp.Length ];
 
 		for ( var i = 0; i < tmp.Length; i++ ) {
-			this._digits[ i ] = ( Byte ) ( tmp[ i ] - '0' );
+			this._digits[ i ] = ( Byte )( tmp[ i ] - '0' );
 		}
 
 		this.Normalize();
@@ -56,8 +56,8 @@ public class ArbitraryDecimal {
 
 		for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
 			var resultDigit = this._digits[ i ] * amount + result[ i + 1 ];
-			result[ i ] = ( Byte ) ( resultDigit / 10 );
-			result[ i + 1 ] = ( Byte ) ( resultDigit % 10 );
+			result[ i ] = ( Byte )( resultDigit / 10 );
+			result[ i + 1 ] = ( Byte )( resultDigit % 10 );
 		}
 
 		if ( result[ 0 ] != 0 ) {
@@ -114,7 +114,7 @@ public class ArbitraryDecimal {
 		var digitString = new Char[ this._digits.Length ];
 
 		for ( var i = 0; i < this._digits.Length; i++ ) {
-			digitString[ i ] = ( Char ) ( this._digits[ i ] + '0' );
+			digitString[ i ] = ( Char )( this._digits[ i ] + '0' );
 		}
 
 		// Simplest case - nothing after the System.Decimal point, and last real digit is
@@ -139,5 +139,4 @@ public class ArbitraryDecimal {
 		return
 			$"{new String( digitString, 0, digitString.Length - this._decimalPoint )}.{new String( digitString, digitString.Length - this._decimalPoint, this._decimalPoint )}";
 	}
-
 }

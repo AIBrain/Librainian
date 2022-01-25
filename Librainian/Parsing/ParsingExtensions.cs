@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ParsingExtensions.cs" last formatted on 2022-12-22 at 5:20 PM by Protiguous.
 
 #nullable enable
@@ -57,6 +57,8 @@ using Utilities;
 
 public static class ParsingExtensions {
 
+	public static readonly Lazy<Regex> RegexJustNumbers = new( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
+
 	[Flags]
 	public enum CompareOptions {
 
@@ -69,58 +71,55 @@ public static class ParsingExtensions {
 		IgnoreTrailingWhitespace = 0b1000,
 
 		IgnoreAllWhitespace = 0b10000
-
 	}
 
-	public static readonly Lazy<Regex> RegexJustNumbers = new(() => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ));
-
 	private static Lazy<ParallelQuery<Char>> AllPossibleLetters { get; } =
-		new(() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter ));
+		new( () => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ) );
 
-	private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new(() => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ));
+	private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new( () => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ) );
 
-	internal static IAppCache? LazyCache { get; set; }
+	private static Lazy<Regex> LowerUnderscore { get; } = new( () => new Regex( @"([a-z\d])([A-Z])", RegexOptions.Compiled ) );
 
-	private static Lazy<Regex> LowerUnderscore { get; } = new(() => new Regex( @"([a-z\d])([A-Z])", RegexOptions.Compiled ));
-
-	private static Lazy<Regex> NoIdeaToUnderscore { get; } = new(() => new Regex( @"[-\s]", RegexOptions.Compiled ));
+	private static Lazy<Regex> NoIdeaToUnderscore { get; } = new( () => new Regex( @"[-\s]", RegexOptions.Compiled ) );
 
 	private static String[] OrdinalSuffixes { get; } = {
 		"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"
 	};
 
-	private static Lazy<Regex> SoundExPart1 { get; } = new(() => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true);
+	private static Lazy<Regex> SoundExPart1 { get; } = new( () => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true );
 
-	private static Lazy<Regex> SoundExPart2 { get; } = new(() => new Regex( "^D+", RegexOptions.Compiled ), true);
+	private static Lazy<Regex> SoundExPart2 { get; } = new( () => new Regex( "^D+", RegexOptions.Compiled ), true );
 
-	private static Lazy<Regex> SoundExPart3 { get; } = new(() => new Regex( "[D0]", RegexOptions.Compiled ), true);
+	private static Lazy<Regex> SoundExPart3 { get; } = new( () => new Regex( "[D0]", RegexOptions.Compiled ), true );
 
-	private static Lazy<Regex> UpperToUnderscore { get; } = new(() => new Regex( @"([A-Z]+)([A-Z][a-z])", RegexOptions.Compiled ));
+	private static Lazy<Regex> UpperToUnderscore { get; } = new( () => new Regex( @"([A-Z]+)([A-Z][a-z])", RegexOptions.Compiled ) );
 
-	private static Lazy<Pluralizer> WordPluralizer { get; } = new(() => new Pluralizer());
+	private static Lazy<Pluralizer> WordPluralizer { get; } = new( () => new Pluralizer() );
 
-	/// <summary>
-	///     WHY?? For fun?
-	/// </summary>
-	public static Lazy<String> AllLowercaseLetters { get; } = new(() => new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ));
+	internal static IAppCache? LazyCache { get; set; }
 
 	/// <summary>
 	///     WHY?? For fun?
 	/// </summary>
-	public static Lazy<String> AllUppercaseLetters { get; } = new(() => new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ));
+	public static Lazy<String> AllLowercaseLetters { get; } = new( () => new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
+
+	/// <summary>
+	///     WHY?? For fun?
+	/// </summary>
+	public static Lazy<String> AllUppercaseLetters { get; } = new( () => new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
 
 	/// <summary>
 	///     this doesn't handle apostrophe well
 	/// </summary>
 	public static Lazy<Regex> RegexBySentenceNotworking { get; } =
-		new(() => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ));
+		new( () => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ) );
 
-	public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new(() => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
-		RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ));
+	public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new( () => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
+		   RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ) );
 
-	public static Lazy<Regex> RegexByWordBreak { get; } = new(() => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ));
+	public static Lazy<Regex> RegexByWordBreak { get; } = new( () => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
-	public static Lazy<Regex> RegexJustDigits { get; } = new(() => new Regex( @"\D+", RegexOptions.Compiled | RegexOptions.Singleline ));
+	public static Lazy<Regex> RegexJustDigits { get; } = new( () => new Regex( @"\D+", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 	public static Char[] SplitBySpace { get; } = {
 		ParsingConstants.Strings.Singlespace[ 0 ]
@@ -396,7 +395,7 @@ public static class ParsingExtensions {
 	/// <param name="text"></param>
 	/// <param name="character"></param>
 	[NeedsTesting]
-	public static UInt32 Count( this String text, Char character ) => ( UInt32 ) text.Count( c => c == character );
+	public static UInt32 Count( this String text, Char character ) => ( UInt32 )text.Count( c => c == character );
 
 	/// <summary>
 	///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
@@ -446,6 +445,7 @@ public static class ParsingExtensions {
 		var jm1 = 0;
 
 		for ( var j = 1; j <= maxj; j++ ) {
+
 			// Rotate
 			var dSwap = dMinus2;
 			dMinus2 = dMinus1;
@@ -550,10 +550,10 @@ public static class ParsingExtensions {
 
 	public static (Status status, String? end) EndsWith( this String value, IEnumerable<String> ofThese, StringComparison comparison = StringComparison.CurrentCulture ) {
 		foreach ( var end in ofThese.Where( s => value.EndsWith( s, comparison ) ) ) {
-			return ( true.ToStatus(), end );
+			return (true.ToStatus(), end);
 		}
 
-		return ( false.ToStatus(), default( String? ) );
+		return (false.ToStatus(), default( String? ));
 	}
 
 	public static Boolean EndsWith( this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[ ^1 ] == value;
@@ -599,6 +599,7 @@ public static class ParsingExtensions {
 	/// </remarks>
 	[NeedsTesting]
 	public static Uri EscapeUriDataStringRfc3986( this String value ) {
+
 		// Start with RFC 2396 escaping by calling the .NET method to do the work. This MAY sometimes exhibit RFC 3986 behavior
 		// (according to the documentation). If it does, the escaping we do that follows it will be a no-op since the
 		// characters we search for to replace can't possibly exist in the String.
@@ -718,6 +719,7 @@ public static class ParsingExtensions {
 	/// <param name="s"></param>
 	[NeedsTesting]
 	public static String FullSoundex( this String s ) {
+
 		// the encoding information
 		//const String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		const String codes = "0123012D02245501262301D202";
@@ -911,7 +913,7 @@ public static class ParsingExtensions {
 	///     <seealso cref="LimitLength" />
 	/// </remarks>
 	[NeedsTesting]
-	public static String? Left( this String? self, UInt32 count ) => self?[ ..( Int32 ) Math.Min( count, ( UInt32 ) self.Length ) ];
+	public static String? Left( this String? self, UInt32 count ) => self?[ ..( Int32 )Math.Min( count, ( UInt32 )self.Length ) ];
 
 	/// <summary>
 	///     <para>Case insensitive string comparison.</para>
@@ -984,8 +986,8 @@ public static class ParsingExtensions {
 
 		var length = Math.Min( maxlength, self.Length );
 		return new StringBuilder( self, length ) {
-				Length = length
-			}.ToString()
+			Length = length
+		}.ToString()
 			 .TrimEnd();
 	}
 
@@ -999,7 +1001,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <param name="maxlength"></param>
 	[NeedsTesting]
-	public static String? LimitLength( this String? self, UInt32 maxlength ) => self?[ ..( Int32 ) Math.Min( maxlength, ( UInt32 ) self.Length ) ];
+	public static String? LimitLength( this String? self, UInt32 maxlength ) => self?[ ..( Int32 )Math.Min( maxlength, ( UInt32 )self.Length ) ];
 
 	/// <summary>
 	///     Convert the first letter of a String to lower case
@@ -1248,6 +1250,7 @@ public static class ParsingExtensions {
 	[NeedsTesting]
 	public static String RemoveSurroundingQuotes( this String input ) {
 		if ( input.StartsWith( "\"", StringComparison.Ordinal ) && input.EndsWith( "\"", StringComparison.Ordinal ) ) {
+
 			// remove leading/trailing quotes
 			input = input[ 1..^1 ];
 		}
@@ -1263,7 +1266,7 @@ public static class ParsingExtensions {
 	[DebuggerStepThrough]
 	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static String Repeat( this Char c, Int32 count ) => new(c, count);
+	public static String Repeat( this Char c, Int32 count ) => new( c, count );
 
 	/// <summary>
 	///     Repeats the first char of the string <paramref name="self" /><paramref name="count" /> times.
@@ -1656,7 +1659,7 @@ public static class ParsingExtensions {
 
 		votes.ForB( compare.Length );
 
-		if ( ( tempcounter = ( Int32 ) votes.ForA( compare.Count( c => Contains( source, c, StringComparison.Ordinal ) ) ) ).Any() ) {
+		if ( ( tempcounter = ( Int32 )votes.ForA( compare.Count( c => Contains( source, c, StringComparison.Ordinal ) ) ) ).Any() ) {
 			matchReasons.Enqueue( $"{tempcounter} characters found in compare from source" );
 		}
 
@@ -1685,12 +1688,13 @@ public static class ParsingExtensions {
 		}
 
 		Single threshold = Math.Max( source.Length, compare.Length );
-		var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 ) threshold );
+		var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 )threshold );
 
 		//TODO votes.ForB ???
 		similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
 		if ( stopwatch.Elapsed > timeout ) {
+
 			//TODO
 		}
 
@@ -1777,12 +1781,12 @@ public static class ParsingExtensions {
 		}
 
 		var res = Enumerable.Range( 0, s.Length )
-		                    .Select( index => new {
-			                    index,
-			                    ch = s[ index ]
-		                    } )
-		                    .GroupBy( f => f.index / chunks )
-		                    .Select( g => String.Join( "", g.Select( z => z.ch ) ) );
+							.Select( index => new {
+								index,
+								ch = s[ index ]
+							} )
+							.GroupBy( f => f.index / chunks )
+							.Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 		return res;
 	}
@@ -1795,10 +1799,10 @@ public static class ParsingExtensions {
 	/// <param name="comparison"></param>
 	public static (Status status, String? start) StartsWith( this String value, IEnumerable<String> ofThese, StringComparison comparison = StringComparison.CurrentCulture ) {
 		foreach ( var start in ofThese.Where( s => value.StartsWith( s, comparison ) ) ) {
-			return ( true.ToStatus(), start );
+			return (true.ToStatus(), start);
 		}
 
-		return ( false.ToStatus(), default( String? ) );
+		return (false.ToStatus(), default( String? ));
 	}
 
 	[NeedsTesting]
@@ -1848,7 +1852,7 @@ public static class ParsingExtensions {
 			return String.Empty;
 		}
 
-		StringBuilder sb = new(value.Length, value.Length);
+		StringBuilder sb = new( value.Length, value.Length );
 		foreach ( var c in value.Where( c => !Char.IsWhiteSpace( c ) ) ) {
 			sb.Append( c );
 		}
@@ -1877,6 +1881,7 @@ public static class ParsingExtensions {
 			var isAllowed = false;
 
 			foreach ( var allowedTag in allowedTags ) {
+
 				// Determine if it is an allowed tag "<tag>" , "<tag " and "</tag"
 				var offset = htmlTag.IndexOf( '<' + allowedTag + '>', StringComparison.Ordinal );
 
@@ -2106,8 +2111,8 @@ public static class ParsingExtensions {
 	[NeedsTesting]
 	public static IEnumerable<String> ToSplit( this String? sentence ) =>
 		RegexByWordBreak.Value.Split( $"{ParsingConstants.Strings.Singlespace}{sentence}{ParsingConstants.Strings.Singlespace}" )
-		                .ToStrings( ParsingConstants.Strings.Singlespace )
-		                .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+						.ToStrings( ParsingConstants.Strings.Singlespace )
+						.Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
 	[NeedsTesting]
 	public static String ToStrings( this IEnumerable<Object?> list, Char separator, String? atTheEnd = null, Boolean? trimEnd = true ) {
@@ -2255,18 +2260,18 @@ public static class ParsingExtensions {
 				return "minus " + ToVerbalWord( Math.Abs( number ) );
 		}
 
-		var intPortion = ( Int32 ) number;
+		var intPortion = ( Int32 )number;
 		var fraction = ( number - intPortion ) * 100;
-		var decPortion = ( Int32 ) fraction; //TODO eh?
+		var decPortion = ( Int32 )fraction; //TODO eh?
 
-		var words = ( ( Decimal ) intPortion ).ToVerbalWord();
+		var words = ( ( Decimal )intPortion ).ToVerbalWord();
 
 		if ( decPortion <= 0 ) {
 			return words.Trim();
 		}
 
 		words += " and ";
-		words += ( ( Decimal ) decPortion ).ToVerbalWord();
+		words += ( ( Decimal )decPortion ).ToVerbalWord();
 
 		return words.Trim();
 	}
@@ -2403,7 +2408,7 @@ public static class ParsingExtensions {
 			return s;
 		}
 
-		return ( UInt32 ) s.Length <= maximumLength ? s : s.AsMemory()[ ..( Int32 ) maximumLength ].ToString();
+		return ( UInt32 )s.Length <= maximumLength ? s : s.AsMemory()[ ..( Int32 )maximumLength ].ToString();
 	}
 
 	[DebuggerStepThrough]
@@ -2452,5 +2457,4 @@ public static class ParsingExtensions {
 			return -1;
 		}
 	}
-
 }

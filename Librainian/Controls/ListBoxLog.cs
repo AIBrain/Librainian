@@ -1,28 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ListBoxLog.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
@@ -79,14 +79,16 @@ public class ListBoxLog : ABetterClassDispose {
 		this.Box.DrawItem += this.DrawItemHandler;
 		this.Box.KeyDown += this.KeyDownHandler;
 
-		this.Box.ContextMenuStrip = new ContextMenuStrip( 
-			//new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) } //TODO
+		this.Box.ContextMenuStrip = new ContextMenuStrip(
+
+		//new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) } //TODO
 		) {
 			AutoClose = true,
 			AutoSize = true
 		};
 
 		if ( this.Box.ContextMenuStrip != null ) {
+
 			//this.Box.ContextMenuStrip.Popup += this.CopyMenuPopupHandler;	//TODO
 		}
 
@@ -96,7 +98,7 @@ public class ListBoxLog : ABetterClassDispose {
 		this.CanAdd = listBox.IsHandleCreated;
 	}
 
-	private static (SolidBrush fore, SolidBrush back) InformationBrushes { get; } = ( new SolidBrush( InformationColors.fore ), new SolidBrush( InformationColors.back ) );
+	private static (SolidBrush fore, SolidBrush back) InformationBrushes { get; } = (new SolidBrush( InformationColors.fore ), new SolidBrush( InformationColors.back ));
 
 	private static (Color fore, Color back) InformationColors { get; } = LogLevel.Information.Colors();
 
@@ -105,7 +107,7 @@ public class ListBoxLog : ABetterClassDispose {
 	private Boolean CanAdd { get; set; }
 
 	/// <summary>Used during every <see cref="DrawItemHandler" />.</summary>
-	private Font HackFont { get; } = new("Hack", 8.25f, FontStyle.Regular);
+	private Font HackFont { get; } = new( "Hack", 8.25f, FontStyle.Regular );
 
 	private Int32 MaxEntriesInListBox { get; }
 
@@ -149,10 +151,10 @@ public class ListBoxLog : ABetterClassDispose {
 
 		if ( sender is ListBox listBox ) {
 			e.ItemHeight = margin + listBox.Items[ e.Index ] switch {
-				String s => ( Int32 ) e.Graphics.MeasureString( s, listBox.Font, listBox.Width ).Height,
+				String s => ( Int32 )e.Graphics.MeasureString( s, listBox.Font, listBox.Width ).Height,
 
 				//LogEvent logEvent => ( Int32 )e.Graphics.MeasureString( logEvent.Message, listBox.Font, listBox.Width ).Height,
-				var _ => ( Int32 ) e.Graphics.MeasureString( listBox.Items[ e.Index ].ToString(), listBox.Font, listBox.Width ).Height
+				var _ => ( Int32 )e.Graphics.MeasureString( listBox.Items[ e.Index ].ToString(), listBox.Font, listBox.Width ).Height
 			};
 		}
 	}
@@ -210,6 +212,7 @@ public class ListBoxLog : ABetterClassDispose {
 
 	private void KeyDownHandler( Object? sender, KeyEventArgs e ) {
 		if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) {
+
 			//this.CopyToClipboard();	//TODO
 			this.Nop(); //just to stop the "convert to static" prompt
 		}
@@ -352,5 +355,4 @@ public class ListBoxLog : ABetterClassDispose {
 		public DateTime EventTime { get; } = DateTime.Now;
 	}
 	*/
-
 }

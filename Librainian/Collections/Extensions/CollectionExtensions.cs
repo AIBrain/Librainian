@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "CollectionExtensions.cs" last formatted on 2022-12-22 at 5:14 PM by Protiguous.
 
 #nullable enable
@@ -115,10 +115,10 @@ public static class CollectionExtensions {
 		return self.All( element => !predicate( element ) || ++numInstSoFar <= maxInstances );
 	}
 
-	public static Int32 Clear<T>( this IProducerConsumerCollection<T> collection ) => collection.RemoveAll();
-
 	public static IEnumerable<IEnumerable<T>> ChunkBy<T>( this IEnumerable<T> source, Int32 chunkSize ) =>
-		source.Select( ( x, i ) => ( x, i ) ).GroupBy( x => x.i / chunkSize ).Select( x => x.Select( v => v.x ) );
+		source.Select( ( x, i ) => (x, i) ).GroupBy( x => x.i / chunkSize ).Select( x => x.Select( v => v.x ) );
+
+	public static Int32 Clear<T>( this IProducerConsumerCollection<T> collection ) => collection.RemoveAll();
 
 	/// <summary>
 	///     Removes items from the <paramref name="bag" /> while <paramref name="cancellationToken" /> has not been cancelled.
@@ -129,37 +129,14 @@ public static class CollectionExtensions {
 	/// <param name="cancellationToken"></param>
 	public static async PooledValueTask<Boolean> Clear<T>( this ConcurrentBag<T> bag, CancellationToken cancellationToken ) {
 		await Task.Run( () => {
-			          while ( !bag.IsEmpty && !cancellationToken.IsCancellationRequested ) {
-				          bag.TryTake( out var _ );
-			          }
-		          }, cancellationToken )
-		          .ConfigureAwait( false );
+			while ( !bag.IsEmpty && !cancellationToken.IsCancellationRequested ) {
+				bag.TryTake( out var _ );
+			}
+		}, cancellationToken )
+				  .ConfigureAwait( false );
 
 		return bag.IsEmpty;
 	}
-
-	/// <summary>
-	///     Transfers <paramref name="count" /> items from <paramref name="fromBag" /> into <paramref name="toBag" /> while
-	///     <paramref
-	///         name="cancellationToken" />
-	///     has not been cancelled.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="fromBag"></param>
-	/// <param name="toBag"></param>
-	/// <param name="cancellationToken"></param>
-	/// <param name="count"></param>
-	public static async Task Transfer<T>( this ConcurrentBag<T> fromBag, ConcurrentBag<T> toBag, CancellationToken cancellationToken, Int32 count = Int32.MaxValue ) =>
-		await Task.Run( () => {
-			          while ( count.Any() && fromBag.Any() ) {
-				          --count;
-				          while ( count.Any() && fromBag.TryTake( out var result ) && !cancellationToken.IsCancellationRequested ) {
-					          --count;
-					          toBag.Add( result );
-				          }
-			          }
-		          }, cancellationToken )
-		          .ConfigureAwait( false );
 
 	/// <summary>Side effects of <paramref name="items" /> other than a byte[] (array) are unknown!</summary>
 	/// <typeparam name="T"></typeparam>
@@ -216,7 +193,7 @@ public static class CollectionExtensions {
 	/// <param name="arrays"></param>
 	[NeedsTesting]
 	public static Byte[] Concat<T>( params T[][] arrays ) {
-		var totalLength = arrays.Select( bytes => ( UInt64 ) bytes.Length ).Aggregate<UInt64, UInt64>( 0, ( current, i ) => current + i );
+		var totalLength = arrays.Select( bytes => ( UInt64 )bytes.Length ).Aggregate<UInt64, UInt64>( 0, ( current, i ) => current + i );
 
 		if ( totalLength > Int32.MaxValue ) {
 			throw new OutOfRangeException( $"The total size of the arrays ({totalLength:N0}) is too large." );
@@ -312,6 +289,13 @@ public static class CollectionExtensions {
 	[NeedsTesting]
 	public static IAsyncEnumerable<T> EmptyAsync<T>( this T _ ) where T : notnull => Enumerable.Empty<T>().ToAsyncEnumerable();
 
+	/// <summary>Determines whether <paramref name="list" /> ends with <paramref name="sequence" />.</summary>
+	/// <typeparam name="T"><see cref="List{T}" /> type</typeparam>
+	/// <param name="list">Larger <see cref="List{T}" /></param>
+	/// <param name="sequence">Smaller <see cref="List{T}" /></param>
+	/// <returns><c>true</c> if <paramref name="list" /> ends with <paramref name="sequence" />; <c>false</c> otherwise</returns>
+	public static Boolean EndsWith<T>( this IEnumerable<T> list, IList<T> sequence ) => list.TakeLast( sequence.Count ).SequenceEqual( sequence );
+
 	/// <summary>
 	///     Returns the first two items to in the source collection that satisfy the given <paramref name="relationship" /> ,
 	///     or
@@ -330,7 +314,7 @@ public static class CollectionExtensions {
 
 		foreach ( var a in enumerable ) {
 			foreach ( var b in enumerable.Skip( ++index ).Where( b => relationship( a, b ) || relationship( b, a ) ) ) {
-				return ( a, b );
+				return (a, b);
 			}
 		}
 
@@ -344,6 +328,44 @@ public static class CollectionExtensions {
 
 			yield return item;
 		}
+	}
+
+	/// <summary>Enumerate the items of a tuple.</summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="tuple"></param>
+	public static IEnumerator<T?> GetEnumerator<T>( this (T, T) tuple ) {
+		yield return tuple.Item1;
+		yield return tuple.Item2;
+	}
+
+	/// <summary>Enumerate the items of a tuple.</summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="tuple"></param>
+	public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T) tuple ) {
+		yield return tuple.Item1;
+		yield return tuple.Item2;
+		yield return tuple.Item3;
+	}
+
+	/// <summary>Enumerate the items of a tuple.</summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="tuple"></param>
+	public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T, T) tuple ) {
+		yield return tuple.Item1;
+		yield return tuple.Item2;
+		yield return tuple.Item3;
+		yield return tuple.Item4;
+	}
+
+	/// <summary>Enumerate the items of a tuple.</summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="tuple"></param>
+	public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T, T, T) tuple ) {
+		yield return tuple.Item1;
+		yield return tuple.Item2;
+		yield return tuple.Item3;
+		yield return tuple.Item4;
+		yield return tuple.Item5;
 	}
 
 	/// <summary>http://blogs.msdn.com/b/pfxteam/archive/2012/02/04/10264111.aspx</summary>
@@ -374,6 +396,12 @@ public static class CollectionExtensions {
 			return dictionary[ key ];
 		}
 	}
+
+	/// <summary>Retrieves a random element from <paramref name="list" />.</summary>
+	/// <typeparam name="T"><see cref="List{T}" /> type</typeparam>
+	/// <param name="list"><see cref="List{T}" /> from which to retrieve a random element</param>
+	/// <returns>A random element</returns>
+	public static T GetRandomElement<T>( this IList<T> list ) => list[ list.Count.Next() ];
 
 	[NeedsTesting]
 	public static Boolean HasDuplicates<T>( this IEnumerable<T> sequence ) {
@@ -435,6 +463,7 @@ public static class CollectionExtensions {
 		var prospects = new List<Int32>(); // list of prospective matches
 
 		foreach ( var item in source ) {
+
 			// Remove bad prospective matches
 			prospects.RemoveAll( k => !comparer.Equals( item, seq[ p - k ] ) );
 
@@ -449,6 +478,7 @@ public static class CollectionExtensions {
 
 				// Do we have a complete match ?
 				if ( i == seq.Length ) {
+
 					// Bingo !
 					return p - seq.Length + 1;
 				}
@@ -457,11 +487,13 @@ public static class CollectionExtensions {
 			{
 				// Do we have prospective matches to fall back to ?
 				if ( prospects.Count > 0 ) {
+
 					// Yes, use the first one
 					var k = prospects[ 0 ];
 					i = p - k + 1;
 				}
 				else {
+
 					// No, start from beginning of searched sequence
 					i = 0;
 				}
@@ -619,6 +651,7 @@ public static class CollectionExtensions {
 
 	[NeedsTesting]
 	public static IEnumerable<TU?> Rank<T, TKey, TU>( this IEnumerable<T> source, Func<T, TKey> keySelector, Func<T, Int32, TU> selector ) {
+
 		//if ( !source.Any() ) {
 		//    yield break;
 		//}
@@ -673,7 +706,7 @@ public static class CollectionExtensions {
 	public static T? Remove<T>( this IProducerConsumerCollection<T> collection ) => collection.TryTake( out var result ) ? result : default( T? );
 
 	[NeedsTesting]
-	public static T Remove<T>( this Enum type, T value ) where T : struct => ( T ) ( ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( value as ValueType ) ) as ValueType );
+	public static T Remove<T>( this Enum type, T value ) where T : struct => ( T )( ( ( Int32 )( ValueType )type & ~( Int32 )( value as ValueType ) ) as ValueType );
 
 	/// <summary>
 	///     Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and returns how many
@@ -888,7 +921,7 @@ public static class CollectionExtensions {
 
 		var sources = source as IList<TSource> ?? source.ToList();
 
-		return sources.Take( ( Int32 ) ( x * sources.Count ) );
+		return sources.Take( ( Int32 )( x * sources.Count ) );
 	}
 
 	[NeedsTesting]
@@ -898,6 +931,29 @@ public static class CollectionExtensions {
 
 		return list;
 	}
+
+	/// <summary>
+	///     Transfers <paramref name="count" /> items from <paramref name="fromBag" /> into <paramref name="toBag" /> while
+	///     <paramref
+	///         name="cancellationToken" />
+	///     has not been cancelled.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="fromBag"></param>
+	/// <param name="toBag"></param>
+	/// <param name="cancellationToken"></param>
+	/// <param name="count"></param>
+	public static async Task Transfer<T>( this ConcurrentBag<T> fromBag, ConcurrentBag<T> toBag, CancellationToken cancellationToken, Int32 count = Int32.MaxValue ) =>
+		await Task.Run( () => {
+			while ( count.Any() && fromBag.Any() ) {
+				--count;
+				while ( count.Any() && fromBag.TryTake( out var result ) && !cancellationToken.IsCancellationRequested ) {
+					--count;
+					toBag.Add( result );
+				}
+			}
+		}, cancellationToken )
+				  .ConfigureAwait( false );
 
 	/// <summary>Extension to aomtically remove a KVP.</summary>
 	/// <typeparam name="TKey"></typeparam>
@@ -912,7 +968,7 @@ public static class CollectionExtensions {
 			throw new ArgumentEmptyException( nameof( dictionary ) );
 		}
 
-		return ( ( ICollection<KeyValuePair<TKey, TValue>> ) dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
+		return ( ( ICollection<KeyValuePair<TKey, TValue>> )dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
 	}
 
 	/// <summary>Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" /></summary>
@@ -930,19 +986,19 @@ public static class CollectionExtensions {
 	public static Boolean TryTake<T>( this ConcurrentStack<T> stack, out T? item ) => stack.TryPop( out item! );
 
 	[NeedsTesting]
-	public static UInt64 ULongSum( this IEnumerable<SByte> collection ) => ( UInt64 ) ( ( SByte[] ) collection ).SumS();
+	public static UInt64 ULongSum( this IEnumerable<SByte> collection ) => ( UInt64 )( ( SByte[] )collection ).SumS();
 
 	[NeedsTesting]
-	public static UInt64 ULongSum( this IEnumerable<Byte> collection ) => ( ( Byte[] ) collection ).SumS();
+	public static UInt64 ULongSum( this IEnumerable<Byte> collection ) => ( ( Byte[] )collection ).SumS();
 
 	[NeedsTesting]
-	public static UInt64 ULongSum( this IEnumerable<Int16> collection ) => ( UInt64 ) ( ( Int16[] ) collection ).SumS();
+	public static UInt64 ULongSum( this IEnumerable<Int16> collection ) => ( UInt64 )( ( Int16[] )collection ).SumS();
 
 	[NeedsTesting]
-	public static UInt64 ULongSum( this IEnumerable<Int32> collection ) => ( UInt64 ) ( ( Int32[] ) collection ).SumS();
+	public static UInt64 ULongSum( this IEnumerable<Int32> collection ) => ( UInt64 )( ( Int32[] )collection ).SumS();
 
 	[NeedsTesting]
-	public static UInt64 ULongSum( this IEnumerable<Int64> collection ) => ( UInt64 ) ( ( Int64[] ) collection ).SumS();
+	public static UInt64 ULongSum( this IEnumerable<Int64> collection ) => ( UInt64 )( ( Int64[] )collection ).SumS();
 
 	/// <summary>why?</summary>
 	/// <typeparam name="TKey"></typeparam>
@@ -957,6 +1013,12 @@ public static class CollectionExtensions {
 
 		dictionary[ key ] = value;
 	}
+
+	/// <summary>Returns a sequence with the null instances removed.</summary>
+	public static IEnumerable<T> WhereNotNull<T>( this IEnumerable<T?> source ) where T : class => source.Where( x => x is not null )!;
+
+	/// <summary>Returns a sequence with the null instances removed.</summary>
+	public static IAsyncEnumerable<T> WhereNotNull<T>( this IAsyncEnumerable<T?> source ) where T : class => source.Where( x => x is not null )!;
 
 	/// <summary>
 	///     Returns all combinations of items in the source collection that satisfy the given
@@ -988,62 +1050,4 @@ public static class CollectionExtensions {
 			}
 		}
 	}
-
-	/// <summary>Returns a sequence with the null instances removed.</summary>
-	public static IEnumerable<T> WhereNotNull<T>( this IEnumerable<T?> source ) where T : class => source.Where( x => x is not null )!;
-
-	/// <summary>Returns a sequence with the null instances removed.</summary>
-	public static IAsyncEnumerable<T> WhereNotNull<T>( this IAsyncEnumerable<T?> source ) where T : class => source.Where( x => x is not null )!;
-
-	/// <summary>Enumerate the items of a tuple.</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="tuple"></param>
-	public static IEnumerator<T?> GetEnumerator<T>( this (T, T) tuple ) {
-		yield return tuple.Item1;
-		yield return tuple.Item2;
-	}
-
-	/// <summary>Enumerate the items of a tuple.</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="tuple"></param>
-	public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T) tuple ) {
-		yield return tuple.Item1;
-		yield return tuple.Item2;
-		yield return tuple.Item3;
-	}
-
-	/// <summary>Enumerate the items of a tuple.</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="tuple"></param>
-	public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T, T) tuple ) {
-		yield return tuple.Item1;
-		yield return tuple.Item2;
-		yield return tuple.Item3;
-		yield return tuple.Item4;
-	}
-
-	/// <summary>Enumerate the items of a tuple.</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="tuple"></param>
-	public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T, T, T) tuple ) {
-		yield return tuple.Item1;
-		yield return tuple.Item2;
-		yield return tuple.Item3;
-		yield return tuple.Item4;
-		yield return tuple.Item5;
-	}
-
-	/// <summary>Determines whether <paramref name="list" /> ends with <paramref name="sequence" />.</summary>
-	/// <typeparam name="T"><see cref="List{T}" /> type</typeparam>
-	/// <param name="list">Larger <see cref="List{T}" /></param>
-	/// <param name="sequence">Smaller <see cref="List{T}" /></param>
-	/// <returns><c>true</c> if <paramref name="list" /> ends with <paramref name="sequence" />; <c>false</c> otherwise</returns>
-	public static Boolean EndsWith<T>( this IEnumerable<T> list, IList<T> sequence ) => list.TakeLast( sequence.Count ).SequenceEqual( sequence );
-
-	/// <summary>Retrieves a random element from <paramref name="list" />.</summary>
-	/// <typeparam name="T"><see cref="List{T}" /> type</typeparam>
-	/// <param name="list"><see cref="List{T}" /> from which to retrieve a random element</param>
-	/// <returns>A random element</returns>
-	public static T GetRandomElement<T>( this IList<T> list ) => list[ list.Count.Next() ];
-
 }

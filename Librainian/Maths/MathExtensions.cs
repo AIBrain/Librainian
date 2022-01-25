@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MathExtensions.cs" last formatted on 2022-12-22 at 5:24 AM by Protiguous.
 
 #nullable enable
@@ -51,10 +51,6 @@ public static class MathExtensions {
 	/// </summary>
 	public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
-	/// <summary>Fake!</summary>
-	public static BigDecimal EpsilonBigDecimal =>
-		0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
-
 	// you may want to pass this and use generics to allow more or less bits
 	/// <summary>Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.</summary>
 	private static UInt32[] FibonacciLookup { get; } = {
@@ -64,6 +60,10 @@ public static class MathExtensions {
 		1346269, 2178309, 3524578, 5702887, 9227465, 14930352, 24157817, 39088169, 63245986, 102334155,
 		165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903, 2971215073
 	};
+
+	/// <summary>Fake!</summary>
+	public static BigDecimal EpsilonBigDecimal =>
+		0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
 
 	/// <summary>Add two <see cref="UInt64" />.</summary>
 	/// <param name="left"></param>
@@ -115,7 +115,7 @@ public static class MathExtensions {
 	/// <param name="high"></param>
 	/// <param name="low"></param>
 	[NeedsTesting]
-	public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( ( UInt64 ) high << 32 ) | low;
+	public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( ( UInt64 )high << 32 ) | low;
 
 	/// <summary>Combine two bytes into one <see cref="UInt16" />.</summary>
 	/// <param name="low"></param>
@@ -132,14 +132,14 @@ public static class MathExtensions {
 	/// <param name="high"></param>
 	/// <see cref="CombineTwoBytesLittleEndianess" />
 	[NeedsTesting]
-	public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 ) ( high + ( low << 8 ) );
+	public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 )( high + ( low << 8 ) );
 
 	/// <summary>Combine two bytes into one <see cref="UInt16" /> with little endianess.</summary>
 	/// <param name="low"></param>
 	/// <param name="high"></param>
 	/// <see cref="CombineTwoBytesHighEndianess" />
 	[NeedsTesting]
-	public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 ) ( low + ( high << 8 ) );
+	public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 )( low + ( high << 8 ) );
 
 	/// <summary>
 	///     Combine two byte arrays into one byte array.
@@ -187,7 +187,7 @@ public static class MathExtensions {
 
 			if ( i == strNumber.Length - 1 && i % 2 == 0 ) {
 				convertedNumber[ i / 2 ] = 0xf;
-				convertedNumber[ i / 2 ] |= ( Byte ) ( ( Int32.Parse( currentNumber ) % 10 ) << 4 );
+				convertedNumber[ i / 2 ] |= ( Byte )( ( Int32.Parse( currentNumber ) % 10 ) << 4 );
 			}
 
 			if ( i % 2 == 0 ) {
@@ -195,8 +195,8 @@ public static class MathExtensions {
 			}
 
 			var value = Int32.Parse( currentNumber );
-			convertedNumber[ ( i - 1 ) / 2 ] = ( Byte ) ( value % 10 );
-			convertedNumber[ ( i - 1 ) / 2 ] |= ( Byte ) ( ( value / 10 ) << 4 );
+			convertedNumber[ ( i - 1 ) / 2 ] = ( Byte )( value % 10 );
+			convertedNumber[ ( i - 1 ) / 2 ] |= ( Byte )( ( value / 10 ) << 4 );
 			currentNumber = String.Empty;
 		}
 
@@ -211,7 +211,7 @@ public static class MathExtensions {
 	/// <summary>Remove everything after the decimal point.</summary>
 	/// <param name="x"></param>
 	[NeedsTesting]
-	public static Single Crop( this Single x ) => ( Single ) ( Math.Truncate( x * 100.0f ) / 100.0f );
+	public static Single Crop( this Single x ) => ( Single )( Math.Truncate( x * 100.0f ) / 100.0f );
 
 	/// <summary>Return the cube (^3) of the number.</summary>
 	/// <param name="number"></param>
@@ -235,7 +235,7 @@ public static class MathExtensions {
 		var input = new Boolean[ 12 ];
 
 		for ( var i = 0; i < 3; i++ ) {
-			var a = ( Int32 ) ( ( Int32 ) d / Math.Pow( 10, i ) ) % 10;
+			var a = ( Int32 )( ( Int32 )d / Math.Pow( 10, i ) ) % 10;
 
 			for ( var j = 0; j < 4; j++ ) {
 				input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
@@ -272,6 +272,7 @@ public static class MathExtensions {
 
 	[NeedsTesting]
 	public static Double Erf( this Double x ) {
+
 		// constants
 		const Double a1 = 0.254829592;
 		const Double a2 = -0.284496736;
@@ -326,7 +327,7 @@ public static class MathExtensions {
 	public static Int32 FiftyPercentOf( this Int32 x ) {
 		var result = x * 0.5;
 
-		return result < 1.0 ? 1 : ( Int32 ) result;
+		return result < 1.0 ? 1 : ( Int32 )result;
 	}
 
 	public static Int32 FlipBit( this Int32 value, Byte bitToFlip ) => value ^ bitToFlip;
@@ -335,7 +336,7 @@ public static class MathExtensions {
 
 	public static UInt64 FlipBit( this UInt64 value, Byte bitToFlip ) => value ^ bitToFlip;
 
-	public static Byte FlipBit( this Byte value, Byte bitToFlip ) => ( Byte ) ( value ^ bitToFlip );
+	public static Byte FlipBit( this Byte value, Byte bitToFlip ) => ( Byte )( value ^ bitToFlip );
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
@@ -394,7 +395,7 @@ public static class MathExtensions {
 	public static Int32 FractionOf( this Int32 x, Double top, Double bottom ) {
 		var result = top * x / bottom;
 
-		return result < 1.0 ? 1 : ( Int32 ) result;
+		return result < 1.0 ? 1 : ( Int32 )result;
 	}
 
 	[DebuggerStepThrough]
@@ -507,7 +508,7 @@ public static class MathExtensions {
 	/// <param name="b">The byte value</param>
 	/// <param name="position">The position of the bit</param>
 	/// <returns>The value of the bit</returns>
-	public static Boolean GetBit( this Byte b, Byte position ) => ( b & ( Byte ) ( 1 << position ) ) != 0;
+	public static Boolean GetBit( this Byte b, Byte position ) => ( b & ( Byte )( 1 << position ) ) != 0;
 
 	public static UInt16[] GetBitFields( UInt32 packedBits, Byte[] bitFields ) {
 		const Int32 maxBits = 32;
@@ -522,7 +523,7 @@ public static class MathExtensions {
 
 			var leftShift = maxBits - curPos; // we figure how much left shift we gotta apply for the other numbers to overflow into oblivion
 
-			retArr[ f ] = ( UInt16 ) ( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
+			retArr[ f ] = ( UInt16 )( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
 		}
 
 		return retArr;
@@ -541,7 +542,7 @@ public static class MathExtensions {
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Byte Half( this Byte number ) => ( Byte ) ( number / 2 );
+	public static Byte Half( this Byte number ) => ( Byte )( number / 2 );
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
@@ -555,17 +556,12 @@ public static class MathExtensions {
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Int32 Twice( this Int32 number ) => number * 2;
+	public static Int16 Half( this Int16 number ) => ( Int16 )( number / 2 );
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Int16 Half( this Int16 number ) => ( Int16 ) ( number / 2 );
-
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[DebuggerStepThrough]
-	[NeedsTesting]
-	public static UInt16 Half( this UInt16 number ) => ( UInt16 ) ( number / 2 );
+	public static UInt16 Half( this UInt16 number ) => ( UInt16 )( number / 2 );
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
@@ -610,20 +606,6 @@ public static class MathExtensions {
 	[DebuggerStepThrough]
 	[NeedsTesting]
 	public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
-
-	/*
-
-	/// <summary>
-	/// <para>
-	/// If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return <see cref="Decimal.Zero" />.
-	/// </para>
-	/// <para>Otherwise return the <paramref name="number" />.</para>
-	/// </summary>
-	/// <param name="number"></param>
-	[DebuggerStepThrough]
-	[NeedsTesting]
-	public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
-	*/
 
 	/// <summary>
 	///     <para>
@@ -736,7 +718,7 @@ public static class MathExtensions {
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 ) ( source + ( target - source ) * amount );
+	public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( target - source ) * amount );
 
 	/// <summary>Linearly interpolates between two values.</summary>
 	/// <param name="source">Source value.</param>
@@ -744,7 +726,7 @@ public static class MathExtensions {
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 ) ( source + ( target - source ) * amount );
+	public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( target - source ) * amount );
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
@@ -774,6 +756,7 @@ public static class MathExtensions {
 		}
 
 		if ( Math.Abs( x ) > 1e-4 ) {
+
 			// x is large enough that the obvious evaluation is OK
 			return Math.Log( 1.0 + x );
 		}
@@ -843,7 +826,7 @@ public static class MathExtensions {
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Single Nested( this Single x ) => ( Single ) ( Math.Sqrt( x * 100.0 ) / 100.0f );
+	public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( x * 100.0 ) / 100.0f );
 
 	/// <summary>Remove all the trailing zeros from the decimal</summary>
 	/// <param name="value"></param>
@@ -1023,7 +1006,7 @@ public static class MathExtensions {
 	public static Double Root( this Double x, Double root ) => Math.Pow( x, 1.0 / root );
 
 	[DebuggerStepThrough]
-	public static Double Root( this Decimal x, Decimal root ) => Math.Pow( ( Double ) x, ( Double ) ( 1.0m / root ) );
+	public static Double Root( this Decimal x, Decimal root ) => Math.Pow( ( Double )x, ( Double )( 1.0m / root ) );
 
 	[DebuggerStepThrough]
 	public static void Ror( ref this UInt64 ul ) => ul = ( ul << 63 ) | ( ul >> 1 );
@@ -1037,34 +1020,19 @@ public static class MathExtensions {
 	[DebuggerStepThrough]
 	public static void RotateRight( ref this UInt64 original, Int32 bits ) => original = ( original >> bits ) | ( original << ( 64 - bits ) );
 
-	/*
-	/// <summary>Truncate, don't round. Just chop it off after <paramref name="decimalPlaces" />.</summary>
-	/// <param name="number"></param>
-	/// <param name="decimalPlaces"></param>
-	public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
-		number *= ( Decimal ) Math.Pow( 10, decimalPlaces );
-
-		number = Math.Truncate( number ); //Don't round. Just Truncate.
-
-		number *= ( Decimal ) Math.Pow( 10, -decimalPlaces );
-
-		return number;
-	}
-	*/
-
 	/// <summary>Set a bit to [newBitValue]</summary>
 	/// <param name="b">The byte value</param>
 	/// <param name="position">The position (1-8) of the bit</param>
 	/// <param name="newBitValue">The new value of the bit in position [position]</param>
 	/// <returns>The new byte value</returns>
 	public static Byte SetBit( Byte b, Byte position, Boolean newBitValue ) {
-		var mask = ( Byte ) ( 1 << position );
+		var mask = ( Byte )( 1 << position );
 
 		if ( newBitValue ) {
-			return ( Byte ) ( b | mask );
+			return ( Byte )( b | mask );
 		}
 
-		return ( Byte ) ( b & ~mask );
+		return ( Byte )( b & ~mask );
 	}
 
 	/// <summary>Smooths a value to between 0 and 1.</summary>
@@ -1077,7 +1045,7 @@ public static class MathExtensions {
 	/// <param name="x"></param>
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Decimal Sigmoid0To1( this Decimal x ) => 1.0M / ( 1.0M + ( Decimal ) Math.Exp( ( Double ) ( -x ) ) );
+	public static Decimal Sigmoid0To1( this Decimal x ) => 1.0M / ( 1.0M + ( Decimal )Math.Exp( ( Double )( -x ) ) );
 
 	/// <summary>Smooths a value to between -1 and 1.</summary>
 	/// <param name="x"></param>
@@ -1111,8 +1079,8 @@ public static class MathExtensions {
 	/// <param name="high"></param>
 	/// <param name="low"></param>
 	public static void Split( this UInt64 value, out UInt32 high, out UInt32 low ) {
-		high = ( UInt32 ) ( value >> 32 );
-		low = ( UInt32 ) ( value & UInt32.MaxValue );
+		high = ( UInt32 )( value >> 32 );
+		low = ( UInt32 )( value & UInt32.MaxValue );
 	}
 
 	[DebuggerStepThrough]
@@ -1154,7 +1122,7 @@ public static class MathExtensions {
 	public static Decimal SquareRootOfProducts( this IEnumerable<Decimal> data ) {
 		var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
 
-		return ( Decimal ) Math.Sqrt( ( Double ) aggregate );
+		return ( Decimal )Math.Sqrt( ( Double )aggregate );
 	}
 
 	/// <summary>
@@ -1185,7 +1153,7 @@ public static class MathExtensions {
 			return UInt64.MinValue;
 		}
 
-		return ( UInt64 ) integer;
+		return ( UInt64 )integer;
 	}
 
 	/// <summary>
@@ -1204,7 +1172,7 @@ public static class MathExtensions {
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Int32 ThreeFourths( this Int32 x ) => ( Int32 ) ( 3.0 * x / 4.0 );
+	public static Int32 ThreeFourths( this Int32 x ) => ( Int32 )( 3.0 * x / 4.0 );
 
 	[DebuggerStepThrough]
 	[NeedsTesting]
@@ -1290,11 +1258,11 @@ public static class MathExtensions {
 			number = -number;
 		}
 
-		var n = ( UInt32 ) number;
-		var b = ( UInt32 ) @base;
+		var n = ( UInt32 )number;
+		var b = ( UInt32 )@base;
 
 		while ( n > 0 || minDigits-- > 0 ) {
-			s = MathConstants.NumberBaseChars[ ( Int32 ) ( n % b ) ] + s;
+			s = MathConstants.NumberBaseChars[ ( Int32 )( n % b ) ] + s;
 			n /= b;
 		}
 
@@ -1308,12 +1276,83 @@ public static class MathExtensions {
 	public static UInt64? ToUInt64( this String? text ) => UInt64.TryParse( text, out var result ) ? result : null;
 
 	public static UInt64 ToUInt64( this Byte[] bytes, Int32 pos ) =>
-		( UInt64 ) ( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );
+		( UInt64 )( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );
 
-	public static Int64 Truncate( this Single number ) => ( Int64 ) number;
+	public static Int64 Truncate( this Single number ) => ( Int64 )number;
 
-	public static Int64 Truncate( this Double number ) => ( Int64 ) number;
+	public static Int64 Truncate( this Double number ) => ( Int64 )number;
 
+	public static Boolean TrySplitDecimal( this BigDecimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
+		var theString = value.ToString();
+
+		if ( !theString.Contains( '.', StringComparison.CurrentCulture ) ) {
+			theString += ".0";
+		}
+
+		var split = theString.Split( '.' );
+
+		afterDecimalPoint = BigInteger.Zero;
+
+		return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
+	}
+
+	[NeedsTesting]
+	public static Int32 TurnBitsOff( this Int32 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
+
+	[NeedsTesting]
+	public static Int64 TurnBitsOff( this Int64 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
+
+	[NeedsTesting]
+	public static UInt64 TurnBitsOff( this UInt64 value, Byte bitToTurnOff ) => value & ( UInt64 )~bitToTurnOff;
+
+	[NeedsTesting]
+	public static Byte TurnBitsOff( this Byte value, Byte bitToTurnOff ) => ( Byte )( value & ~bitToTurnOff );
+
+	[NeedsTesting]
+	public static Int32 TurnBitsOn( this Int32 value, Byte bitToTurnOn ) => value | bitToTurnOn;
+
+	[NeedsTesting]
+	public static Int64 TurnBitsOn( this Int64 value, Byte bitToTurnOn ) => value | bitToTurnOn;
+
+	[NeedsTesting]
+	public static UInt64 TurnBitsOn( this UInt64 value, Byte bitToTurnOn ) => value | bitToTurnOn;
+
+	[NeedsTesting]
+	public static Byte TurnBitsOn( this Byte value, Byte bitToTurnOn ) => ( Byte )( value | bitToTurnOn );
+
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static Int32 Twice( this Int32 number ) => number * 2;
+
+	/*
+
+	/// <summary>
+	/// <para>
+	/// If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return <see cref="Decimal.Zero" />.
+	/// </para>
+	/// <para>Otherwise return the <paramref name="number" />.</para>
+	/// </summary>
+	/// <param name="number"></param>
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
+	*/
+	/*
+
+	/// <summary>Truncate, don't round. Just chop it off after <paramref name="decimalPlaces" />.</summary>
+	/// <param name="number"></param>
+	/// <param name="decimalPlaces"></param>
+	public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
+		number *= ( Decimal ) Math.Pow( 10, decimalPlaces );
+
+		number = Math.Truncate( number ); //Don't round. Just Truncate.
+
+		number *= ( Decimal ) Math.Pow( 10, -decimalPlaces );
+
+		return number;
+	}
+	*/
 	/*
 
 	/// <summary>
@@ -1374,44 +1413,6 @@ public static class MathExtensions {
 	}
 	*/
 
-	public static Boolean TrySplitDecimal( this BigDecimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
-		var theString = value.ToString();
-
-		if ( !theString.Contains( '.', StringComparison.CurrentCulture ) ) {
-			theString += ".0";
-		}
-
-		var split = theString.Split( '.' );
-
-		afterDecimalPoint = BigInteger.Zero;
-
-		return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
-	}
-
-	[NeedsTesting]
-	public static Int32 TurnBitsOff( this Int32 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
-
-	[NeedsTesting]
-	public static Int64 TurnBitsOff( this Int64 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
-
-	[NeedsTesting]
-	public static UInt64 TurnBitsOff( this UInt64 value, Byte bitToTurnOff ) => value & ( UInt64 ) ~bitToTurnOff;
-
-	[NeedsTesting]
-	public static Byte TurnBitsOff( this Byte value, Byte bitToTurnOff ) => ( Byte ) ( value & ~bitToTurnOff );
-
-	[NeedsTesting]
-	public static Int32 TurnBitsOn( this Int32 value, Byte bitToTurnOn ) => value | bitToTurnOn;
-
-	[NeedsTesting]
-	public static Int64 TurnBitsOn( this Int64 value, Byte bitToTurnOn ) => value | bitToTurnOn;
-
-	[NeedsTesting]
-	public static UInt64 TurnBitsOn( this UInt64 value, Byte bitToTurnOn ) => value | bitToTurnOn;
-
-	[NeedsTesting]
-	public static Byte TurnBitsOn( this Byte value, Byte bitToTurnOn ) => ( Byte ) ( value | bitToTurnOn );
-
 	[NeedsTesting]
 	public static TimeSpan Twice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
 
@@ -1426,5 +1427,4 @@ public static class MathExtensions {
 
 	[NeedsTesting]
 	public static Int64 Twice( this Int64 number ) => number * 2;
-
 }

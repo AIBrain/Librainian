@@ -1,28 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Pixelyx.cs" last formatted on 2022-12-22 at 5:16 PM by Protiguous.
 
 namespace Librainian.Graphics.Moving;
@@ -75,7 +75,7 @@ public class Pixelyx : IEquatable<Pixelyx> {
 		this.X = x;
 		this.Y = y;
 		this.Timestamp = timestamp;
-		this.Checksum = ( this.Blue, this.Red, this.Alpha, this.Timestamp, this.X, this.Y ).GetHashCode();
+		this.Checksum = (this.Blue, this.Red, this.Alpha, this.Timestamp, this.X, this.Y).GetHashCode();
 	}
 
 	public virtual Boolean Equals( Pixelyx? other ) {
@@ -88,7 +88,7 @@ public class Pixelyx : IEquatable<Pixelyx> {
 		}
 
 		return this.Alpha == other.Alpha && this.Blue == other.Blue && this.Checksum == other.Checksum && this.Green == other.Green && this.Red == other.Red &&
-		       this.Timestamp == other.Timestamp && this.X == other.X && this.Y == other.Y;
+			   this.Timestamp == other.Timestamp && this.X == other.X && this.Y == other.Y;
 	}
 
 	/*
@@ -134,5 +134,4 @@ public class Pixelyx : IEquatable<Pixelyx> {
 	public override Int32 GetHashCode() => this.Checksum;
 
 	//public override Int32 GetHashCode() => HashCode.Combine( this.Alpha, this.Blue, this.Checksum, this.Green, this.Red, this.Timestamp, this.X, this.Y );
-
 }

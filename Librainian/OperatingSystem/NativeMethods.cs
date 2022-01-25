@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "NativeMethods.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 #nullable enable
@@ -89,7 +89,6 @@ public static class NativeMethods {
 		TOP_DOWN = 0x100000,
 
 		WRITE_WATCH = 0x200000
-
 	}
 
 	/// <summary>The reason that CopyProgressRoutine was called.</summary>
@@ -103,7 +102,6 @@ public static class NativeMethods {
 		///     routine is first invoked.
 		/// </summary>
 		CALLBACK_STREAM_SWITCH = 0x00000001
-
 	}
 
 	public enum ErrorCodes {
@@ -113,7 +111,6 @@ public static class NativeMethods {
 		ERROR_PATH_NOT_FOUND = 3,
 
 		ERROR_ACCESS_DENIED = 5
-
 	}
 
 	public enum FILE_INFO_BY_HANDLE_CLASS {
@@ -161,7 +158,6 @@ public static class NativeMethods {
 		FileIdExtdDirectoryRestartInfo = 20, // 0x14
 
 		MaximumFileInfoByHandlesClass
-
 	}
 
 	[Flags]
@@ -170,7 +166,6 @@ public static class NativeMethods {
 		FindFirstExCaseSensitive,
 
 		FindFirstExLargeFetch
-
 	}
 
 	public enum FINDEX_INFO_LEVELS {
@@ -180,7 +175,6 @@ public static class NativeMethods {
 		FindExInfoBasic = 1,
 
 		FindExInfoMaxInfoLevel = 2
-
 	}
 
 	public enum FINDEX_SEARCH_OPS {
@@ -192,7 +186,6 @@ public static class NativeMethods {
 		FindExSearchLimitToDevices,
 
 		FindExSearchMaxSearchOp
-
 	}
 
 	[Flags]
@@ -203,7 +196,6 @@ public static class NativeMethods {
 		HEAP_GENERATE_EXCEPTIONS = 0x4,
 
 		HEAP_ZERO_MEMORY = 0x8
-
 	}
 
 	public enum IconSize : Byte {
@@ -211,7 +203,6 @@ public static class NativeMethods {
 		Small = ICON_SMALL,
 
 		Big = ICON_BIG
-
 	}
 
 	[Flags]
@@ -238,7 +229,6 @@ public static class NativeMethods {
 		NOCACHE_Modifierflag = 0x200,
 
 		WRITECOMBINE_Modifierflag = 0x400
-
 	}
 
 	public enum PLATFORM_ID {
@@ -252,7 +242,6 @@ public static class NativeMethods {
 		PlatformIDOsf = 600,
 
 		PlatformIDVms = 700
-
 	}
 
 	public enum PNP_VETO_TYPE {
@@ -282,7 +271,6 @@ public static class NativeMethods {
 		NonDisableable,
 
 		LegacyDriver
-
 	}
 
 	[Flags]
@@ -353,7 +341,6 @@ public static class NativeMethods {
 		SvTypeDomainEnum = 0x80000000,
 
 		SvTypeAll = 0xFFFFFFFF
-
 	}
 
 	internal const Int32 CREATE_ALWAYS = 2;
@@ -476,7 +463,7 @@ public static class NativeMethods {
 
 	public const Int32 WM_SETICON = 0x80;
 
-	private static readonly IntPtr NegativeOneIntPtr = new(-1);
+	private static readonly IntPtr NegativeOneIntPtr = new( -1 );
 
 	[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
 	public static extern Boolean PathMatchSpec( [In] String pszFileParam, [In] String pszSpec );
@@ -820,8 +807,8 @@ public static class NativeMethods {
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern UInt32 GetCompressedFileSizeW(
-		[In] [MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
-		[Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
+		[In][MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
+		[Out][MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
 	);
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
@@ -848,7 +835,7 @@ public static class NativeMethods {
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, PreserveSig = true )]
 	public static extern UInt32 GetDiskFreeSpaceW(
-		[In] [MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName,
+		[In][MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName,
 		out UInt32 lpSectorsPerCluster,
 		out UInt32 lpBytesPerSector,
 		out UInt32 lpNumberOfFreeClusters,
@@ -903,19 +890,19 @@ public static class NativeMethods {
 	[DoesNotReturn]
 	public static void HandleLastError( String fullPath, Int32 lastWin32Error ) {
 		switch ( lastWin32Error ) {
-			case ( Int32 ) ErrorCodes.ERROR_FILE_NOT_FOUND: {
+			case ( Int32 )ErrorCodes.ERROR_FILE_NOT_FOUND: {
 				ThrowFileNotFound( fullPath );
 
 				break;
 			}
 
-			case ( Int32 ) ErrorCodes.ERROR_PATH_NOT_FOUND: {
+			case ( Int32 )ErrorCodes.ERROR_PATH_NOT_FOUND: {
 				ThrowPathNotFound( fullPath );
 
 				break;
 			}
 
-			case ( Int32 ) ErrorCodes.ERROR_ACCESS_DENIED: {
+			case ( Int32 )ErrorCodes.ERROR_ACCESS_DENIED: {
 				ThrowAccessDenied( fullPath );
 
 				break;
@@ -1010,7 +997,7 @@ public static class NativeMethods {
 	public static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
 
 	[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-	public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )] [Out] StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
+	public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )][Out] StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean QueryPerformanceCounter( out Int64 value );
@@ -1154,9 +1141,9 @@ public static class NativeMethods {
 	[DebuggerStepThrough]
 	public static DateTime ToDateTime( this Filetime time ) {
 		try {
-			var high = ( UInt64 ) time.dwHighDateTime;
+			var high = ( UInt64 )time.dwHighDateTime;
 			var low = time.dwLowDateTime;
-			var fileTime = ( Int64 ) ( ( high << 32 ) + low );
+			var fileTime = ( Int64 )( ( high << 32 ) + low );
 
 			return DateTime.FromFileTimeUtc( fileTime );
 		}
@@ -1168,13 +1155,14 @@ public static class NativeMethods {
 	[DebuggerStepThrough]
 	public static DateTime? ToDateTime( this FILETIME time ) {
 		try {
-			var high = ( UInt64 ) time.dwHighDateTime;
-			var low = ( UInt32 ) time.dwLowDateTime;
-			var fileTime = ( Int64 ) ( ( high << 32 ) + low );
+			var high = ( UInt64 )time.dwHighDateTime;
+			var low = ( UInt32 )time.dwLowDateTime;
+			var fileTime = ( Int64 )( ( high << 32 ) + low );
 
 			return DateTime.FromFileTimeUtc( fileTime );
 		}
 		catch ( ArgumentOutOfRangeException ) {
+
 			//return DateTime.FromFileTimeUtc( 0xFFFFFFFF ); //shouldn't this actually be null or something?
 			return default( DateTime? );
 		}
@@ -1199,6 +1187,7 @@ public static class NativeMethods {
 	*/
 
 	/*
+
 	/// <summary>this must be used if NETRESOURCE is defined as a struct???</summary>
 	/// <param name="netResource"></param>
 	/// <param name="password">   </param>
@@ -1271,7 +1260,7 @@ public static class NativeMethods {
 		var message = new StringBuilder( 255 );
 
 #pragma warning disable CA1806 // Do not ignore method results
-		FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, ( UInt32 ) code, 0, message, ( UInt32 ) message.Capacity, IntPtr.Zero );
+		FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, ( UInt32 )code, 0, message, ( UInt32 )message.Capacity, IntPtr.Zero );
 #pragma warning restore CA1806 // Do not ignore method results
 
 		return message.ToString();
@@ -1285,7 +1274,6 @@ public static class NativeMethods {
 
 		[SecurityCritical]
 		protected override Boolean ReleaseHandle() => FindClose( this.handle );
-
 	}
 
 	public interface IHandle {
@@ -1293,7 +1281,6 @@ public static class NativeMethods {
 		/// <summary>Returns the value of the handle field.</summary>
 		/// <returns>An IntPtr representing the value of the handle field.</returns>
 		IntPtr DangerousGetHandle();
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1320,7 +1307,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
 		public String cAlternateFileName;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1351,7 +1337,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
 		public Byte[] CurrentTaskFile;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1361,7 +1346,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
 		public UInt16[] data;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1373,7 +1357,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.U1 )]
 		public readonly Boolean IncursSeekPenalty;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1384,7 +1367,6 @@ public static class NativeMethods {
 		public readonly Int64 StartingOffset;
 
 		public readonly Int64 ExtentLength;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1421,7 +1403,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
 		public readonly String FileName;
-
 	}
 
 	/// <summary>
@@ -1435,7 +1416,6 @@ public static class NativeMethods {
 		public readonly UInt32 dwLowDateTime;
 
 		public readonly UInt32 dwHighDateTime;
-
 	}
 
 	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
@@ -1451,15 +1431,14 @@ public static class NativeMethods {
 		public readonly Int64 QuadPart;
 
 		/// <summary>use only when QuadPart cannot be passed</summary>
-		public Int64 ToInt64() => ( ( Int64 ) this.High << 32 ) | ( UInt32 ) this.Low;
+		public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
 
 		// just for demonstration
 		public static LargeInteger FromInt64( Int64 value ) =>
 			new() {
-				Low = ( Int32 ) value,
-				High = ( Int32 ) ( value >> 32 )
+				Low = ( Int32 )value,
+				High = ( Int32 )( value >> 32 )
 			};
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1482,7 +1461,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.LPWStr )]
 		public readonly String sv101_comment;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1495,7 +1473,6 @@ public static class NativeMethods {
 		public Guid InterfaceClassGuid;
 
 		private readonly IntPtr Reserved;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, Pack = 2 )]
@@ -1504,7 +1481,6 @@ public static class NativeMethods {
 		public Int32 cbSize;
 
 		public readonly Int16 devicePath;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1517,7 +1493,6 @@ public static class NativeMethods {
 		public readonly UInt32 devInst;
 
 		public IntPtr reserved;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1528,7 +1503,6 @@ public static class NativeMethods {
 		public Int32 DeviceNumber;
 
 		public Int32 PartitionNumber;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1540,7 +1514,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
 		public readonly Byte[] AdditionalParameters;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1567,7 +1540,6 @@ public static class NativeMethods {
 			this.nFileSizeHigh = findData.nFileSizeHigh;
 			this.nFileSizeLow = findData.nFileSizeLow;
 		}
-
 	}
 
 	/// <summary>
@@ -1600,7 +1572,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
 		public readonly String cAlternateFileName;
-
 	}
 
 	/// <summary>Base class for all native handles.</summary>
@@ -1690,7 +1661,6 @@ public static class NativeMethods {
 
 		// ReSharper disable once NonReadonlyMemberInGetHashCode
 		public override Int32 GetHashCode() => this.handle.GetHashCode();
-
 	}
 
 	/// <summary>
@@ -1715,7 +1685,5 @@ public static class NativeMethods {
 
 			return FindClose( this );
 		}
-
 	}
-
 }

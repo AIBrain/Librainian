@@ -17,11 +17,11 @@
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // and PayPal: Protiguous@Protiguous.com
 //
-// ====================================================================
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied,
 // or given. We are NOT responsible for Anything You Do With Our Code. We are NOT responsible for
 // Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your
-// Computer. ====================================================================
+// Computer.
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our
 // code in your project(s). For business inquiries, please contact me at Protiguous@Protiguous.com.
@@ -85,6 +85,24 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T?> /*, IEquatable<I
 	[JsonIgnore]
 	private Int64 _itemCount;
 
+	/// <summary>
+	///     Create an empty list with different timeout values.
+	/// </summary>
+	/// <param name="enumerable">Fill the list with the given enumerable.</param>
+	/// <param name="readTimeout">Defaults to 60 seconds.</param>
+	/// <param name="writeTimeout">Defaults to 60 seconds.</param>
+	public ConcurrentList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
+		this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
+		this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
+
+		if ( enumerable is not null ) {
+			this.AddRange( enumerable );
+		}
+	}
+
+	public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
+
 	private ConcurrentQueue<T> InputBuffer { get; } = new();
 
 	[JsonIgnore]
@@ -95,6 +113,77 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T?> /*, IEquatable<I
 	/// </summary>
 	[JsonProperty]
 	private List<T?> TheList { get; } = new();
+
+	/// <summary>
+	///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
+	/// </summary>
+	[JsonIgnore]
+	public Int32 Count => ( Int32 )Interlocked.Read( ref this._itemCount );
+
+	/// <summary>
+	///     Get or set if the list is read-only. (Readonly will prevent modifications to list.)
+	/// </summary>
+	public Boolean IsReadOnly {
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		get => Interlocked.Read( ref this._isReadOnly ) == 1;
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		set => Interlocked.Exchange( ref this._isReadOnly, value ? 1 : 0 );
+	}
+
+	[JsonProperty]
+	public TimeSpan TimeoutForReads { get; set; }
+
+	[JsonProperty]
+	public TimeSpan TimeoutForWrites { get; set; }
+
+	/// <summary>
+	///     Gets or sets the element at the specified index.
+	/// </summary>
+	/// <returns>The element at the specified index.</returns>
+	/// <param name="index">The zero-based index of the element to get or set.</param>
+	/// <exception cref="ArgumentOutOfRangeException">
+	///     <paramref name="index" /> is not a valid index in the <see cref="IList" />.
+	/// </exception>
+	/// <exception cref="NotSupportedException">
+	///     The property is set and the <see cref="IList" /> is read-only.
+	/// </exception>
+	public T? this[ Int32 index ] {
+		get {
+			var count = this.Count;
+
+			if ( index < 0 || index > count ) {
+				ThrowWhenOutOfRange( index, count );
+			}
+
+			return this.Read( () => this.TheList[ index ] );
+		}
+
+		set {
+			if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+				return;
+			}
+
+			this.Write( () => {
+				if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+					return false;
+				}
+
+				try {
+					this.TheList[ index ] = value;
+
+					return true;
+				}
+				catch ( ArgumentOutOfRangeException ) {
+					ThrowWhenOutOfRange( index, this.Count );
+				}
+
+				return false;
+			} );
+		}
+	}
 
 	[DoesNotReturn]
 	private static void ThrowWhenOutOfRange( Int32 index, Int32 count ) {
@@ -196,95 +285,6 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T?> /*, IEquatable<I
 		}
 
 		throw new TimeoutException( CouldNotObtainWriteLock );
-	}
-
-	/// <summary>
-	///     Create an empty list with different timeout values.
-	/// </summary>
-	/// <param name="enumerable">Fill the list with the given enumerable.</param>
-	/// <param name="readTimeout">Defaults to 60 seconds.</param>
-	/// <param name="writeTimeout">Defaults to 60 seconds.</param>
-	public ConcurrentList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
-		this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-		this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
-		this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
-
-		if ( enumerable is not null ) {
-			this.AddRange( enumerable );
-		}
-	}
-
-	public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
-
-	/// <summary>
-	///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
-	/// </summary>
-	[JsonIgnore]
-	public Int32 Count => ( Int32 )Interlocked.Read( ref this._itemCount );
-
-	/// <summary>
-	///     Get or set if the list is read-only. (Readonly will prevent modifications to list.)
-	/// </summary>
-	public Boolean IsReadOnly {
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[DebuggerStepThrough]
-		get => Interlocked.Read( ref this._isReadOnly ) == 1;
-
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[DebuggerStepThrough]
-		set => Interlocked.Exchange( ref this._isReadOnly, value ? 1 : 0 );
-	}
-
-	[JsonProperty]
-	public TimeSpan TimeoutForReads { get; set; }
-
-	[JsonProperty]
-	public TimeSpan TimeoutForWrites { get; set; }
-
-	/// <summary>
-	///     Gets or sets the element at the specified index.
-	/// </summary>
-	/// <returns>The element at the specified index.</returns>
-	/// <param name="index">The zero-based index of the element to get or set.</param>
-	/// <exception cref="ArgumentOutOfRangeException">
-	///     <paramref name="index" /> is not a valid index in the <see cref="IList" />.
-	/// </exception>
-	/// <exception cref="NotSupportedException">
-	///     The property is set and the <see cref="IList" /> is read-only.
-	/// </exception>
-	public T? this[ Int32 index ] {
-		get {
-			var count = this.Count;
-
-			if ( index < 0 || index > count ) {
-				ThrowWhenOutOfRange( index, count );
-			}
-
-			return this.Read( () => this.TheList[ index ] );
-		}
-
-		set {
-			if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
-				return;
-			}
-
-			this.Write( () => {
-				if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
-					return false;
-				}
-
-				try {
-					this.TheList[ index ] = value;
-
-					return true;
-				}
-				catch ( ArgumentOutOfRangeException ) {
-					ThrowWhenOutOfRange( index, this.Count );
-				}
-
-				return false;
-			} );
-		}
 	}
 
 	/// <summary>
@@ -516,6 +516,11 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T?> /*, IEquatable<I
 	}
 
 	/// <summary>
+	///     Returns the enumerator of this list's <see cref="Clone" />.
+	/// </summary>
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+	/// <summary>
 	///     <para>
 	///         Searches at this moment in time for the first occurrence of <paramref name="item" />
 	///         and returns the zero-based index, or -1 if not found.
@@ -676,9 +681,4 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T?> /*, IEquatable<I
 			return true;
 		} );
 	}
-
-	/// <summary>
-	///     Returns the enumerator of this list's <see cref="Clone" />.
-	/// </summary>
-	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

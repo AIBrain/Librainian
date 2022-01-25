@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "NumberExtensions.cs" last formatted on 2022-12-22 at 4:22 AM by Protiguous.
 
 #nullable enable
@@ -226,7 +226,7 @@ public static class NumberExtensions {
 		Int32 i;
 
 		for ( i = 0; value != 0; i++ ) {
-			value &= ( Int16 ) ( value - 1 );
+			value &= ( Int16 )( value - 1 );
 		}
 
 		return i;
@@ -240,7 +240,7 @@ public static class NumberExtensions {
 		Int32 i;
 
 		for ( i = 0; value != 0; i++ ) {
-			value &= ( UInt16 ) ( value - 1 );
+			value &= ( UInt16 )( value - 1 );
 		}
 
 		return i;
@@ -254,7 +254,7 @@ public static class NumberExtensions {
 		Int32 i;
 
 		for ( i = 0; value != 0; i++ ) {
-			value &= ( Byte ) ( value - 1 );
+			value &= ( Byte )( value - 1 );
 		}
 
 		return i;
@@ -268,7 +268,7 @@ public static class NumberExtensions {
 		Int32 i;
 
 		for ( i = 0; value != 0; i++ ) {
-			value &= ( SByte ) ( value - 1 );
+			value &= ( SByte )( value - 1 );
 		}
 
 		return i;
@@ -406,14 +406,14 @@ public static class NumberExtensions {
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 ) ( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
+	public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 	/// <param name="source">Source value to reverse</param>
 	/// <returns>Input value with reversed bits</returns>
 	[DebuggerStepThrough]
 	[NeedsTesting]
-	public static Byte ReverseBits( this Byte source ) => ( Byte ) ( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
+	public static Byte ReverseBits( this Byte source ) => ( Byte )( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 	/// <param name="source">Source value to reverse</param>
@@ -426,29 +426,29 @@ public static class NumberExtensions {
 	/// <param name="source">Source value to reverse</param>
 	/// <returns>Input value with reversed bits</returns>
 	public static UInt32 ReverseBits( this UInt32 source ) =>
-		( UInt32 ) ( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
-		             ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
+		( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
+					 ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 	/// <param name="source">Source value to reverse</param>
 	/// <returns>Input value with reversed bits</returns>
 	public static UInt16 ReverseBits( this UInt16 source ) {
-		source = ( UInt16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-		source = ( UInt16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-		source = ( UInt16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
+		source = ( UInt16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+		source = ( UInt16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+		source = ( UInt16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-		return ( UInt16 ) ( ( source >> 8 ) | ( source << 8 ) );
+		return ( UInt16 )( ( source >> 8 ) | ( source << 8 ) );
 	}
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 	/// <param name="source">Source value to reverse</param>
 	/// <returns>Input value with reversed bits</returns>
 	public static Int16 ReverseBits( this Int16 source ) {
-		source = ( Int16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-		source = ( Int16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-		source = ( Int16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
+		source = ( Int16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+		source = ( Int16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+		source = ( Int16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-		return ( Int16 ) ( ( source >> 8 ) | ( source << 8 ) );
+		return ( Int16 )( ( source >> 8 ) | ( source << 8 ) );
 	}
 
 	[DebuggerStepThrough]
@@ -463,10 +463,10 @@ public static class NumberExtensions {
 		}
 
 		// mag is 0 for bytes, 1 for KB, 2, for MB.
-		var mag = ( Int32 ) Math.Log( value, 1024 );
+		var mag = ( Int32 )Math.Log( value, 1024 );
 
 		// 1L << (mag * 10) == 2 ^ (10 * mag) [i.e. the number of bytes in the unit corresponding to mag]
-		var adjustedSize = ( Decimal ) value / ( 1L << ( mag * 10 ) );
+		var adjustedSize = ( Decimal )value / ( 1L << ( mag * 10 ) );
 
 		// make adjustment when the value is large enough that it would round up to 1000 or more
 		if ( Math.Round( adjustedSize, decimalPlaces ) >= 1000 ) {
@@ -530,13 +530,13 @@ public static class NumberExtensions {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
 		}
 
-		var start = ( Decimal ) begin;
+		var start = ( Decimal )begin;
 
 		if ( start <= end ) {
 			const Decimal maxValue = UInt64.MaxValue;
 
 			for ( var value = start; value <= end; value += step ) {
-				yield return ( UInt64 ) value; //TODO needs unit tested
+				yield return ( UInt64 )value; //TODO needs unit tested
 
 				if ( value >= maxValue ) {
 					yield break; //special case to deal with overflow
@@ -547,7 +547,7 @@ public static class NumberExtensions {
 			const Decimal minValue = UInt64.MinValue;
 
 			for ( var ul = start; ul >= end; ul -= step ) {
-				yield return ( UInt64 ) ul; //TODO needs unit test
+				yield return ( UInt64 )ul; //TODO needs unit test
 
 				if ( ul < minValue ) {
 					yield break; //special case to deal with overflow
@@ -817,5 +817,4 @@ public static class NumberExtensions {
 	public static String ToHexNumberString( this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
 
 	public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
-
 }

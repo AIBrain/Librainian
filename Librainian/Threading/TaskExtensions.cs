@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "TaskExtensions.cs" last formatted on 2022-12-22 at 5:21 PM by Protiguous.
 
 #nullable enable
@@ -65,17 +65,17 @@ public static class TaskExtensions {
 		}
 
 		return FluentTimer.Create( delay, () => {
-			                  if ( condition() ) {
-				                  try {
-					                  action();
-				                  }
-				                  catch ( Exception exception ) {
-					                  exception.Log();
-				                  }
-			                  }
-		                  } )
-		                  .Once()
-		                  .Start();
+			if ( condition() ) {
+				try {
+					action();
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+			}
+		} )
+						  .Once()
+						  .Start();
 	}
 
 	/// <summary>Quietly consume the <paramref name="task" /> on a background thread. Fire & forget.</summary>
@@ -131,8 +131,8 @@ public static class TaskExtensions {
 		foreach ( var method in action.GetInvocationList() ) {
 			try {
 				if ( method.Target is ISynchronizeInvoke {
-					    InvokeRequired: true
-				    } syncInvoke ) {
+					InvokeRequired: true
+				} syncInvoke ) {
 					syncInvoke.Invoke( method, args );
 				}
 				else {
@@ -152,8 +152,8 @@ public static class TaskExtensions {
 		foreach ( var method in action.GetInvocationList() ) {
 			try {
 				if ( method.Target is ISynchronizeInvoke {
-					    InvokeRequired: true
-				    } syncInvoke ) {
+					InvokeRequired: true
+				} syncInvoke ) {
 					syncInvoke.Invoke( method, args );
 				}
 				else {
@@ -229,6 +229,7 @@ public static class TaskExtensions {
 			return await tcs.Task.ConfigureAwait( false );
 		}
 		finally {
+
 			// Unsubscribe from event.
 			unregisterDelegate( del );
 		}
@@ -237,7 +238,18 @@ public static class TaskExtensions {
 	/// <summary>Required for await support.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="lazy"></param>
-	public static Awaiter<T> GetAwaiter<T>( this Lazy<T> lazy ) => new(lazy);
+	public static Awaiter<T> GetAwaiter<T>( this Lazy<T> lazy ) => new( lazy );
+
+	/// <summary>
+	///     If the given <paramref name="task" /> is not null, then await it.
+	/// </summary>
+	/// <param name="task"></param>
+	/// <returns></returns>
+	public static async Task IgnoreNullTask( this Task? task ) {
+		if ( task != null ) {
+			await task.ConfigureAwait( false );
+		}
+	}
 
 	/// <summary>http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other</summary>
 	/// <typeparam name="T"></typeparam>
@@ -314,7 +326,7 @@ public static class TaskExtensions {
 
 		await foreach ( var inputTask in tasks.ToAsyncEnumerable().ConfigureAwait( false ) ) {
 			await inputTask.Value.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default )
-			               .ConfigureAwait( false );
+						   .ConfigureAwait( false );
 		}
 
 		return results;
@@ -1112,17 +1124,6 @@ public static class TaskExtensions {
 	/// <param name="input"></param>
 	public static Task<TOut> Wrap<TIn, TOut>( this Func<TIn, TOut> selector, TIn? input ) => Task.Run( () => selector( input ) );
 
-	/// <summary>
-	///     If the given <paramref name="task" /> is not null, then await it.
-	/// </summary>
-	/// <param name="task"></param>
-	/// <returns></returns>
-	public static async Task IgnoreNullTask( this Task? task ) {
-		if ( task != null ) {
-			await task.ConfigureAwait( false );
-		}
-	}
-
 	/// <summary></summary>
 	/// <typeparam name="T"></typeparam>
 	/// <see cref="http://www.codeproject.com/Articles/5274659/How-to-Use-the-Csharp-Await-Keyword-On-Anything" />
@@ -1137,7 +1138,6 @@ public static class TaskExtensions {
 		public T GetResult() => this._lazy.Value;
 
 		public void OnCompleted( Action continuation ) => Task.Run( continuation );
-
 	}
 
 	public class ResourceLoader<T> : IResourceLoader<T> {
@@ -1162,6 +1162,15 @@ public static class TaskExtensions {
 
 		public Int32 MaxConcurrency { get; }
 
+		[NeedsTesting]
+		private async Task<T> WaitAndLoadAsync( CancellationToken cancelToken ) {
+			Interlocked.Increment( ref this._count );
+
+			using ( await this.Semaphore.UseWaitAsync( cancelToken ).ConfigureAwait( false ) ) {
+				return await this.Loader( cancelToken ).ConfigureAwait( false );
+			}
+		}
+
 		public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
 			lock ( this.Lock ) {
 				return this.WaitAndLoadAsync( cancelToken );
@@ -1181,16 +1190,5 @@ public static class TaskExtensions {
 				return true;
 			}
 		}
-
-		[NeedsTesting]
-		private async Task<T> WaitAndLoadAsync( CancellationToken cancelToken ) {
-			Interlocked.Increment( ref this._count );
-
-			using ( await this.Semaphore.UseWaitAsync( cancelToken ).ConfigureAwait( false ) ) {
-				return await this.Loader( cancelToken ).ConfigureAwait( false );
-			}
-		}
-
 	}
-
 }

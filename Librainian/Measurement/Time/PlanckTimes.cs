@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "PlanckTimes.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
 
 namespace Librainian.Measurement.Time;
@@ -51,18 +51,17 @@ using Newtonsoft.Json;
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
 public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQuantityOfTime> {
+	public PlanckTimes( Decimal value ) : this( ( BigInteger )value ) { }
 
-	public PlanckTimes( Decimal value ) : this( ( BigInteger ) value ) { }
+	public PlanckTimes( BigDecimal value ) : this( ( BigInteger )value ) { }
 
-	public PlanckTimes( BigDecimal value ) : this( ( BigInteger ) value ) { }
+	public PlanckTimes( UInt64 value ) : this( ( BigInteger )value ) { }
 
-	public PlanckTimes( UInt64 value ) : this( ( BigInteger ) value ) { }
-
-	public PlanckTimes( Int64 value ) : this( ( BigInteger ) value ) { }
+	public PlanckTimes( Int64 value ) : this( ( BigInteger )value ) { }
 
 	public static BigDecimal InOneAttosecond => InOneFemtosecond / Attoseconds.InOneFemtosecond;
 
-	public static BigDecimal InOneDay => InOneSecond * ( BigInteger ) Seconds.InOneDay;
+	public static BigDecimal InOneDay => InOneSecond * ( BigInteger )Seconds.InOneDay;
 
 	public static BigDecimal InOneFemtosecond => InOnePicosecond / Femtoseconds.InOnePicosecond;
 
@@ -74,7 +73,7 @@ public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQu
 
 	public static BigDecimal InOneMinute => InOneSecond * Seconds.InOneMinute;
 
-	public static BigDecimal InOneMonth => InOneSecond * ( BigInteger ) Seconds.InOneMonth;
+	public static BigDecimal InOneMonth => InOneSecond * ( BigInteger )Seconds.InOneMonth;
 
 	public static BigDecimal InOneNanosecond => InOneMicrosecond / Nanoseconds.InOneMicrosecond;
 
@@ -83,7 +82,7 @@ public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQu
 	/// <summary>
 	///     <para>18550948324478400000 (where did I get this number??? It's so.. specific?)</para>
 	/// </summary>
-	public static BigDecimal InOneSecond => new(18550948324478E30);
+	public static BigDecimal InOneSecond => new( 18550948324478E30 );
 
 	public static BigDecimal InOneWeek => InOneSecond * Seconds.InOneWeek;
 
@@ -96,17 +95,17 @@ public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQu
 	/// <summary>
 	///     One <see cref="PlanckTimes" />.
 	/// </summary>
-	public static PlanckTimes One { get; } = new(1L);
+	public static PlanckTimes One { get; } = new( 1L );
 
 	/// <summary>
 	///     Two <see cref="PlanckTimes" />.
 	/// </summary>
-	public static PlanckTimes Two { get; } = new(2L);
+	public static PlanckTimes Two { get; } = new( 2L );
 
 	/// <summary>
 	///     Zero <see cref="PlanckTimes" />.
 	/// </summary>
-	public static PlanckTimes Zero { get; } = new(0L);
+	public static PlanckTimes Zero { get; } = new( 0L );
 
 	/// <summary>
 	///     Compares the current instance with another object of the same type and returns an integer that indicates whether
@@ -134,15 +133,15 @@ public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQu
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public PlanckTimes ToPlanckTimes() => this;
 
-	public Seconds ToSeconds() => new(this.Value * InOneSecond);
+	public Seconds ToSeconds() => new( this.Value * InOneSecond );
 
 	public IQuantityOfTime ToCoarserGranularity() => this.ToYoctoseconds();
 
 	public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-	public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new(left.Value + right.Value);
+	public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new( left.Value + right.Value );
 
-	public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new(left.Value + planckTimes);
+	public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new( left.Value + planckTimes );
 
 	/// <summary>
 	///     <para>static equality test</para>
@@ -151,7 +150,7 @@ public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQu
 	/// <param name="right"></param>
 	public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value.Equals( right.Value );
 
-	public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new(planckTimes);
+	public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new( planckTimes );
 
 	/// <summary>
 	///     Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.
@@ -177,12 +176,11 @@ public record PlanckTimes( BigInteger Value ) : IQuantityOfTime, IComparable<IQu
 	///     <para>Convert to a larger unit.</para>
 	/// </summary>
 	/// <param name="planckTimes"></param>
-	public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new(planckTimes.Value / InOneYoctosecond);
+	public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new( planckTimes.Value / InOneYoctosecond );
 
-	public Yoctoseconds ToYoctoseconds() => new(this.Value / InOneYoctosecond);
+	public Yoctoseconds ToYoctoseconds() => new( this.Value / InOneYoctosecond );
 
 	public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other.Value );
 
 	public override String ToString() => $"{this.Value} tP";
-
 }

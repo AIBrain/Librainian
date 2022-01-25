@@ -17,11 +17,11 @@
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // and PayPal: Protiguous@Protiguous.com
 //
-// ====================================================================
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied,
 // or given. We are NOT responsible for Anything You Do With Our Code. We are NOT responsible for
 // Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your
-// Computer. ====================================================================
+// Computer.
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our
 // code in your project(s). For business inquiries, please contact me at Protiguous@Protiguous.com.
@@ -50,6 +50,18 @@ using Threading;
 
 public static class WalletExtensions {
 
+	static WalletExtensions() {
+		foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
+			PossibleDenominations.Add( denomination );
+		}
+
+		foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
+			PossibleDenominations.Add( denomination );
+		}
+	}
+
+	public static HashSet<IDenomination> PossibleDenominations { get; } = new();
+
 	private static async Task StartDeposit( Wallet wallet, Dictionary<IDenomination, UInt64> dictionary ) {
 		if ( wallet is null ) {
 			throw new ArgumentEmptyException( nameof( wallet ) );
@@ -63,18 +75,6 @@ public static class WalletExtensions {
 
 		await actionBlock.Completion.ConfigureAwait( false );
 	}
-
-	static WalletExtensions() {
-		foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
-			PossibleDenominations.Add( denomination );
-		}
-
-		foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
-			PossibleDenominations.Add( denomination );
-		}
-	}
-
-	public static HashSet<IDenomination> PossibleDenominations { get; } = new();
 
 	/// <summary>
 	/// </summary>

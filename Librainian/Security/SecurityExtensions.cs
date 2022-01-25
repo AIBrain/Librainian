@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "SecurityExtensions.cs" last formatted on 2022-12-22 at 5:20 PM by Protiguous.
 
 #nullable enable
@@ -60,7 +60,7 @@ public static class SecurityExtensions {
 
 	public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
 
-	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new(MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte);
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte );
 
 	public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes( $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
@@ -68,7 +68,7 @@ public static class SecurityExtensions {
 		var numArray = new Byte[ s.Length ];
 
 		for ( var i = 0; i < s.Length; i++ ) {
-			numArray[ i ] = ( Byte ) ( s[ i ] & '\u007F' );
+			numArray[ i ] = ( Byte )( s[ i ] & '\u007F' );
 		}
 
 		return numArray;
@@ -86,7 +86,7 @@ public static class SecurityExtensions {
 
 		filesize /= Environment.ProcessorCount;
 
-		var fs = new FileStream( fileinfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, ( Int32 ) filesize, true );
+		var fs = new FileStream( fileinfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, ( Int32 )filesize, true );
 		await using var _ = fs.ConfigureAwait( false );
 		using var md5 = MD5.Create();
 		return await md5.ComputeHashAsync( fs, cancellationToken ).ConfigureAwait( false );
@@ -150,6 +150,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String DecryptRSA( this String inputString, Int32 keySize, String xmlString ) {
+
 		// TODO: Add Proper Exception Handlers
 		if ( inputString is null ) {
 			throw new NullException( nameof( inputString ) );
@@ -183,6 +184,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String DecryptStringUsingRegistryKey( this String decryptValue, String privateKey ) {
+
 		// this is the variable that will be returned to the user
 		if ( decryptValue is null ) {
 			throw new NullException( nameof( decryptValue ) );
@@ -207,6 +209,7 @@ public static class SecurityExtensions {
 		// Supply the provider name
 
 		try {
+
 			//Create new RSA object passing our key info
 			var rsa = new RSACryptoServiceProvider( csp );
 
@@ -285,6 +288,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String EncryptRSA( this String inputString, Int32 dwKeySize, String xmlString ) {
+
 		// TODO: Add Proper Exception Handlers
 		if ( inputString is null ) {
 			throw new NullException( nameof( inputString ) );
@@ -324,6 +328,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String EncryptStringUsingRegistryKey( this String stringToEncrypt, String publicKey ) {
+
 		// this is the variable that will be returned to the user
 		if ( stringToEncrypt is null ) {
 			throw new NullException( nameof( stringToEncrypt ) );
@@ -348,6 +353,7 @@ public static class SecurityExtensions {
 		// Supply the provider name
 
 		try {
+
 			//Create new RSA object passing our key info
 			var rsa = new RSACryptoServiceProvider( csp );
 
@@ -381,14 +387,14 @@ public static class SecurityExtensions {
 			var n2 = ( n >> 4 ) & 15;
 
 			if ( n2 > 9 ) {
-				s += ( ( Char ) ( n2 - 10 + 'A' ) ).ToString();
+				s += ( ( Char )( n2 - 10 + 'A' ) ).ToString();
 			}
 			else {
 				s += n2.ToString();
 			}
 
 			if ( n1 > 9 ) {
-				s += ( ( Char ) ( n1 - 10 + 'A' ) ).ToString();
+				s += ( ( Char )( n1 - 10 + 'A' ) ).ToString();
 			}
 			else {
 				s += n1.ToString();
@@ -625,7 +631,7 @@ public static class SecurityExtensions {
 		if ( await input.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
 			exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-			return ( Status.Exception, exceptions );
+			return (Status.Exception, exceptions);
 		}
 
 		var size = await input.Size( cancellationToken ).ConfigureAwait( false );
@@ -633,21 +639,21 @@ public static class SecurityExtensions {
 		if ( !size.Any() ) {
 			exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-			return ( Status.Exception, exceptions );
+			return (Status.Exception, exceptions);
 		}
 
-		var inputFileSize = ( Single ) size!.Value;
+		var inputFileSize = ( Single )size!.Value;
 
 		if ( await output.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 			exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-			return ( Status.Exception, exceptions );
+			return (Status.Exception, exceptions);
 		}
 
 		if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 			exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-			return ( Status.Exception, exceptions );
+			return (Status.Exception, exceptions);
 		}
 
 		try {
@@ -656,7 +662,7 @@ public static class SecurityExtensions {
 			if ( !await containingingFolder.Create( cancellationToken ).ConfigureAwait( false ) ) {
 				exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-				return ( Status.Exception, exceptions );
+				return (Status.Exception, exceptions);
 			}
 
 			using var aes = Aes.Create();
@@ -683,7 +689,7 @@ public static class SecurityExtensions {
 
 			while ( ( data = cs.ReadByte() ) != -1 ) {
 				if ( reportProgress is not null ) {
-					var position = ( UInt64 ) inputStream.Position;
+					var position = ( UInt64 )inputStream.Position;
 
 					if ( position % reportEveryXBytes == 0 ) {
 						var progress = position / inputFileSize;
@@ -691,21 +697,20 @@ public static class SecurityExtensions {
 					}
 				}
 
-				outputStream.WriteByte( ( Byte ) data );
+				outputStream.WriteByte( ( Byte )data );
 			}
 
-			return ( await output.Exists( cancellationToken ).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions );
+			return (await output.Exists( cancellationToken ).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
 		}
 		catch ( AggregateException exceptionss ) {
 			exceptions.AddRange( exceptionss.InnerExceptions );
 
-			return ( Status.Exception, exceptions );
+			return (Status.Exception, exceptions);
 		}
 		catch ( Exception exception ) {
 			exceptions.Add( exception );
 
-			return ( Status.Exception, exceptions );
+			return (Status.Exception, exceptions);
 		}
 	}
-
 }

@@ -1,28 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ControlExtensions.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
@@ -56,45 +56,13 @@ using Utilities;
 
 public static class ControlExtensions {
 
-	/// <summary>
-	///     Allows the form's size and location to be persisted after shown event.
-	/// </summary>
-	/// <param name="form"></param>
-	public static void PersistPlacement<TForm>( this TForm form ) where TForm : Form {
-		form.Shown += ( _, _ ) => form.InvokeAction( SizeAndLocation );
-
-		void SizeAndLocation() {
-			try {
-				form.SuspendLayout();
-				form.WindowState = FormWindowState.Normal;
-				form.StartPosition = FormStartPosition.WindowsDefaultBounds;
-
-				form.LoadLocation();
-				form.LoadSize();
-
-				if ( !form.IsFullyVisibleOnAnyScreen() ) {
-					form.WindowState = FormWindowState.Normal;
-					form.StartPosition = FormStartPosition.CenterScreen;
-				}
-
-				form.ResumeLayout( true );
-
-				form.LocationChanged += ( _, _ ) => form.InvokeAction( form.SaveLocation );
-				form.SizeChanged += ( _, _ ) => form.InvokeAction( form.SaveSize );
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-		}
-	}
-
 	[DebuggerStepThrough]
 	public static void Append( this RichTextBox box, String text, Color color, params Object[]? args ) =>
-		box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
+			box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
 
 	[DebuggerStepThrough]
 	public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) =>
-		box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
+			box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
 
 	[DebuggerStepThrough]
 	public static void AppendText( this RichTextBox box, String text, Color color, params Object[]? args ) {
@@ -131,11 +99,11 @@ public static class ControlExtensions {
 
 		return Color.FromArgb( Red(), Green(), Blue() );
 
-		Byte Red() => ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * i );
+		Byte Red() => ( Byte )( thisColor.R * blendToPercent + blendToColor.R * i );
 
-		Byte Green() => ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * i );
+		Byte Green() => ( Byte )( thisColor.G * blendToPercent + blendToColor.G * i );
 
-		Byte Blue() => ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * i );
+		Byte Blue() => ( Byte )( thisColor.B * blendToPercent + blendToColor.B * i );
 	}
 
 	/// <summary>
@@ -192,11 +160,30 @@ public static class ControlExtensions {
 	}
 
 	/// <summary>
+	/// </summary>
+	/// <param name="topLeftX"></param>
+	/// <param name="topLeftY"></param>
+	/// <param name="bottomRightX"></param>
+	/// <param name="bottomRightY"></param>
+	/// <param name="nWidthEllipse"></param>
+	/// <param name="nHeightEllipse"></param>
+	/// <returns></returns>
+	/// <code>
+	///  protected override void OnPaint(PaintEventArgs pevent) {
+	/// 		base.OnPaint( pevent);
+	/// 		Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
+	///  }
+	///  </code>
+	[DllImport( DLL.GDI32, EntryPoint = "CreateRoundRectRgn" )]
+	public static extern IntPtr CreateRoundRectRgn( Int32 topLeftX, Int32 topLeftY, Int32 bottomRightX, Int32 bottomRightY, Int32 nWidthEllipse, Int32 nHeightEllipse );
+
+	/// <summary>
 	///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the
 	///     lightForeColor is returned. If the BackColor is light, then
 	///     the darkForeColor is returned.
 	/// </summary>
 	public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
+
 		// Counting the perceptive luminance - human eye favors green color...
 		return A() < 0.5 ? darkForeColor : lightForeColor;
 
@@ -277,9 +264,9 @@ public static class ControlExtensions {
 
 		spanOff ??= Milliseconds.FiveHundred;
 		FluentTimer.Create( spanOff.Value,
-			           () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) )
-		           .Once()
-		           .Start();
+					   () => control.InvokeAction( () => (control.ForeColor, control.BackColor) = (control.BackColor, control.ForeColor), RefreshOrInvalidate.Refresh ) )
+				   .Once()
+				   .Start();
 	}
 
 	/// <summary>
@@ -330,33 +317,6 @@ public static class ControlExtensions {
 	[DebuggerStepThrough]
 	public static void ForeColor( this Control control, Color value, RefreshOrInvalidate redraw ) => control.InvokeAction( () => control.ForeColor = value, redraw );
 
-	/*
-	/// <summary>
-	///     wpf, I think
-	/// </summary>
-	/// <param name="window"></param>
-	public static void FullScreen( this Window window ) {
-		window.WindowState = WindowState.Maximized;
-		window.WindowStyle = WindowStyle.None;
-	}
-	*/
-
-	/*
-	/// <summary>
-	///     wpf, I think
-	/// </summary>
-	/// <param name="window"></param>
-	/// <param name="icon"></param>
-	/// <param name="redraw"></param>
-	public static void Icon( this Window window, ImageSource icon, RefreshOrInvalidate redraw ) {
-		window.Dispatcher?.InvokeAsync( Action, DispatcherPriority.Background, CancellationToken.None );
-
-		void Action() {
-			window.Icon = icon;
-		}
-	}
-	*/
-
 	/// <summary>
 	///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
 	/// </summary>
@@ -379,77 +339,23 @@ public static class ControlExtensions {
 			}
 		}
 
-		action += MaybeRedraw;
+		//action += MaybeRedraw;
 
-		SafeInvoke( control, _ => action() );
+		//SafeInvoke( control, _ => action() );
 
-		/*
-		I need some data on which is better for .NET 6+: SafeInvoke or control.InvokeRequired+BeginInvoke+EndInvoke?
+		//I need some data on which is better for .NET 6+: SafeInvoke or control.InvokeRequired+BeginInvoke+EndInvoke?
 
 		if ( control.InvokeRequired ) {
-			if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
-				action += MaybeRedraw;
-			}
-
 			control.BeginInvoke( action );
+			if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
+				control.BeginInvoke( MaybeRedraw );
+			}
 		}
 		else {
 			action();
-			if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
-				MaybeRedraw();
-			}
-		}
-		*/
-	}
-
-	public static TResult? SafeInvoke<T, TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
-		if ( synchronizeInvoke.InvokeRequired ) {
-			var result = synchronizeInvoke.BeginInvoke( call, new Object[] {
-				synchronizeInvoke
-			} );
-			var endResult = synchronizeInvoke.EndInvoke( result );
-			return ( TResult? ) endResult;
-		}
-
-		return call( synchronizeInvoke );
-	}
-
-	public static void SafeInvoke<T>( this T isi, Action<T> call ) where T : ISynchronizeInvoke {
-		if ( isi.InvokeRequired ) {
-			isi.BeginInvoke( call, new Object[] {
-				isi
-			} );
-		}
-		else {
-			call( isi );
+			MaybeRedraw();
 		}
 	}
-
-	/*
-
-	/// <summary>
-	///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
-	/// </summary>
-	/// <param name="control"></param>
-	/// <param name="action"> </param>
-	/// <param name="thing">  </param>
-	/// <seealso />
-	public static void InvokeAction<T>( [NeedsTesting] this Control control, [NeedsTesting] Action<T> action, [NeedsTesting] T thing ) {
-		if ( control.InvokeRequired ) {
-			if ( !control.IsDisposed ) {
-				if ( thing is null ) {
-					control.Invoke( action );
-				}
-				else {
-					control.Invoke( action, thing );
-				}
-			}
-		}
-		else {
-			action( thing );
-		}
-	}
-	*/
 
 	public static T? InvokeFunction<T>( this Control? control, Func<T?> function ) {
 		if ( control is null ) {
@@ -478,7 +384,7 @@ public static class ControlExtensions {
 	public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
 		transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-		return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
+		return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
 	}
 
 	public static Task MarqueeAsync( this Control control, TimeSpan timeSpan, String message ) {
@@ -539,6 +445,67 @@ public static class ControlExtensions {
 
 		control.InvokeAction( control.PerformClick, RefreshOrInvalidate.Neither );
 	}
+
+	/// <summary>
+	///     Allows the form's size and location to be persisted after shown event.
+	/// </summary>
+	/// <param name="form"></param>
+	public static void PersistPlacement<TForm>( this TForm form ) where TForm : Form {
+		form.Shown += ( _, _ ) => form.InvokeAction( SizeAndLocation );
+
+		void SizeAndLocation() {
+			try {
+				form.SuspendLayout();
+				form.WindowState = FormWindowState.Normal;
+				form.StartPosition = FormStartPosition.WindowsDefaultBounds;
+
+				form.LoadLocation();
+				form.LoadSize();
+
+				if ( !form.IsFullyVisibleOnAnyScreen() ) {
+					form.WindowState = FormWindowState.Normal;
+					form.StartPosition = FormStartPosition.CenterScreen;
+				}
+
+				form.ResumeLayout( true );
+
+				form.LocationChanged += ( _, _ ) => form.InvokeAction( form.SaveLocation );
+				form.SizeChanged += ( _, _ ) => form.InvokeAction( form.SaveSize );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+		}
+	}
+
+	/*
+
+	/// <summary>
+	///     wpf, I think
+	/// </summary>
+	/// <param name="window"></param>
+	public static void FullScreen( this Window window ) {
+		window.WindowState = WindowState.Maximized;
+		window.WindowStyle = WindowStyle.None;
+	}
+	*/
+
+	/*
+
+	/// <summary>
+	///     wpf, I think
+	/// </summary>
+	/// <param name="window"></param>
+	/// <param name="icon"></param>
+	/// <param name="redraw"></param>
+	public static void Icon( this Window window, ImageSource icon, RefreshOrInvalidate redraw ) {
+		window.Dispatcher?.InvokeAsync( Action, DispatcherPriority.Background, CancellationToken.None );
+
+		void Action() {
+			window.Icon = icon;
+		}
+	}
+	*/
 
 	/// <summary>
 	///     Threadsafe <see cref="Button.PerformClick" />.
@@ -616,6 +583,55 @@ public static class ControlExtensions {
 			control.Invalidate( false );
 		}
 	}
+
+	public static TResult? SafeInvoke<T, TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
+		if ( synchronizeInvoke.InvokeRequired ) {
+			var result = synchronizeInvoke.BeginInvoke( call, new Object[] {
+				synchronizeInvoke
+			} );
+			var endResult = synchronizeInvoke.EndInvoke( result );
+			return ( TResult? )endResult;
+		}
+
+		return call( synchronizeInvoke );
+	}
+
+	public static void SafeInvoke<T>( this T synchronizeInvoke, Action<T> call ) where T : ISynchronizeInvoke {
+		if ( synchronizeInvoke.InvokeRequired ) {
+			synchronizeInvoke.BeginInvoke( call, new Object[] {
+				synchronizeInvoke
+			} );
+		}
+		else {
+			call( synchronizeInvoke );
+		}
+	}
+
+	/*
+
+	/// <summary>
+	///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
+	/// </summary>
+	/// <param name="control"></param>
+	/// <param name="action"> </param>
+	/// <param name="thing">  </param>
+	/// <seealso />
+	public static void InvokeAction<T>( [NeedsTesting] this Control control, [NeedsTesting] Action<T> action, [NeedsTesting] T thing ) {
+		if ( control.InvokeRequired ) {
+			if ( !control.IsDisposed ) {
+				if ( thing is null ) {
+					control.Invoke( action );
+				}
+				else {
+					control.Invoke( action, thing );
+				}
+			}
+		}
+		else {
+			action( thing );
+		}
+	}
+	*/
 
 	/// <summary>
 	///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
@@ -722,7 +738,7 @@ public static class ControlExtensions {
 			textBox.AppendText( message );
 
 			while ( textBox.Lines?.Length > maxlines ) {
-				( ( IList ) textBox.Lines ).RemoveAt( 0 );
+				( ( IList )textBox.Lines ).RemoveAt( 0 );
 			}
 		}, redraw );
 	}
@@ -837,23 +853,4 @@ public static class ControlExtensions {
 	public static Boolean Yes( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 
 	public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
-
-	/// <summary>
-	/// </summary>
-	/// <param name="topLeftX"></param>
-	/// <param name="topLeftY"></param>
-	/// <param name="bottomRightX"></param>
-	/// <param name="bottomRightY"></param>
-	/// <param name="nWidthEllipse"></param>
-	/// <param name="nHeightEllipse"></param>
-	/// <returns></returns>
-	/// <code>
-	///  protected override void OnPaint(PaintEventArgs pevent) {
-	/// 		base.OnPaint( pevent);
-	/// 		Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
-	///  }
-	///  </code>
-	[DllImport( DLL.GDI32, EntryPoint = "CreateRoundRectRgn" )]
-	public static extern IntPtr CreateRoundRectRgn( Int32 topLeftX, Int32 topLeftY, Int32 bottomRightX, Int32 bottomRightY, Int32 nWidthEllipse, Int32 nHeightEllipse );
-
 }

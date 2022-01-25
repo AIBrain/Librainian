@@ -1,28 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Types.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
@@ -47,7 +47,9 @@ public static class Types {
 
 	private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
 
-	public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new(() => AppDomain.CurrentDomain.GetAssemblies());
+	private delegate Object ObjectActivator();
+
+	public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new( () => AppDomain.CurrentDomain.GetAssemblies() );
 
 	public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new();
 
@@ -62,7 +64,7 @@ public static class Types {
 	/// <summary>Creates a new <see cref="IList{T}" /> with a clone of each item.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list"></param>
-	public static IList<T> Clone<T>( this IEnumerable<T> list ) where T : ICloneable => list.Select( item => ( T ) item.Clone() ).ToList();
+	public static IList<T> Clone<T>( this IEnumerable<T> list ) where T : ICloneable => list.Select( item => ( T )item.Clone() ).ToList();
 
 	public static void CopyField<TSource>( [DisallowNull] this TSource source, [DisallowNull] TSource destination, FieldInfo field, Boolean mergeDictionaries = true ) {
 		try {
@@ -315,7 +317,7 @@ public static class Types {
 		}
 
 		if ( self.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )
-		         .Any( fieldInfo => !fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsPointer ) ) {
+				 .Any( fieldInfo => !fieldInfo.FieldType.IsValueType && !fieldInfo.FieldType.IsPointer ) ) {
 			return false;
 		}
 
@@ -417,11 +419,11 @@ public static class Types {
 
 			ilGenerator.Emit( OpCodes.Ret );
 
-			activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+			activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
 			ObjectActivators.Add( type, activator );
 		}
 
-		return ( T ) activator.Invoke();
+		return ( T )activator.Invoke();
 	}
 
 	public static Func<Object?> NewInstanceByCreate( this Type type ) => () => Activator.CreateInstance( type );
@@ -468,6 +470,7 @@ public static class Types {
 		var underlyingType = Nullable.GetUnderlyingType( type ) ?? type;
 
 		try {
+
 			// Just one edge case you might want to handle.
 			if ( underlyingType == typeof( Guid ) ) {
 				value = value switch {
@@ -477,7 +480,7 @@ public static class Types {
 				};
 			}
 
-			result = ( T ) Convert.ChangeType( value, underlyingType );
+			result = ( T )Convert.ChangeType( value, underlyingType );
 
 			return true;
 		}
@@ -487,8 +490,6 @@ public static class Types {
 			return false;
 		}
 	}
-
-	private delegate Object ObjectActivator();
 
 	/*
             public static String GetName<T>( [NeedsTesting] this Expression<Func<T>> propertyExpression ) {
@@ -560,5 +561,4 @@ public static class Types {
 	//            }
 	//    }
 	//}
-
 }

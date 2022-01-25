@@ -1,28 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// ====================================================================
+//
+//
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+//
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Document.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
 
 #nullable enable
@@ -63,13 +63,13 @@ using Utilities.Disposables;
 [JsonObject]
 public class Document : ABetterClassDispose, IDocument {
 
+	private Folder? _containingFolder;
+
 	/// <summary>
 	///     Largest amount of memory that will be allocated for file reads.
 	///     <para>1 gibibyte</para>
 	/// </summary>
 	public const Int32 MaximumBufferSize = MathConstants.Sizes.OneGigaByte;
-
-	private Folder? _containingFolder;
 
 	private Document() => throw new NotAllowedWarning( "Private contructor is not allowed." );
 
@@ -100,6 +100,7 @@ public class Document : ABetterClassDispose, IDocument {
 
 		if ( Uri.TryCreate( fullPath, UriKind.Absolute, out var uri ) ) {
 			if ( uri.IsFile ) {
+
 				//this.FullPath = Path.GetFullPath( uri.AbsolutePath );
 				this.FullPath = Path.GetFullPath( fullPath );
 				this.PathTypeAttributes = PathTypeAttributes.Document;
@@ -146,18 +147,22 @@ public class Document : ABetterClassDispose, IDocument {
 		}
 	}
 
-	public Document( String justPath, String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ), deleteAfterClose ) { }
+	public Document( String justPath, String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ), deleteAfterClose ) {
+	}
 
-	public Document( FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName, deleteAfterClose ) { }
+	public Document( FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName, deleteAfterClose ) {
+	}
 
-	public Document( IFolder folder, String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
+	public Document( IFolder folder, String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) {
+	}
 
-	public Document( IFolder folder, IDocument document, Boolean deleteAfterClose = false ) : this( Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) { }
+	public Document( IFolder folder, IDocument document, Boolean deleteAfterClose = false ) : this( Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) {
+	}
 
-	private ThreadLocal<JsonSerializer> JsonSerializers { get; } = new(() => new JsonSerializer {
+	private ThreadLocal<JsonSerializer> JsonSerializers { get; } = new( () => new JsonSerializer {
 		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 		PreserveReferencesHandling = PreserveReferencesHandling.All
-	});
+	} );
 
 	private Lazy<FileSystemWatcher>? Watcher { get; }
 
@@ -169,14 +174,14 @@ public class Document : ABetterClassDispose, IDocument {
 	/// </summary>
 	public static TimeSpan DefaultDocumentTimeout { get; set; } = Seconds.Thirty;
 
-	public static String InvalidFileNameCharacters { get; } = new(Path.GetInvalidFileNameChars());
+	public static String InvalidFileNameCharacters { get; } = new( Path.GetInvalidFileNameChars() );
 
-	public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new(() =>
-		new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ));
-
-	public CancellationTokenSource? CancellationTokenSource { get; set; }
+	public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new( () =>
+		   new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 	public Byte[]? Buffer { get; set; }
+
+	public CancellationTokenSource? CancellationTokenSource { get; set; }
 
 	/// <summary>Local file creation <see cref="DateTime" />.</summary>
 	[JsonIgnore]
@@ -292,6 +297,150 @@ public class Document : ABetterClassDispose, IDocument {
 	public FileStream? Writer { get; set; }
 
 	public StreamWriter? WriterStream { get; set; }
+
+	private CancellationToken GetCancelToken() {
+		this.CancellationTokenSource ??= new CancellationTokenSource();
+		return this.CancellationTokenSource.Token;
+	}
+
+	private void ReleaseWriterStream() {
+		using ( this.WriterStream ) {
+			this.WriterStream = null;
+		}
+	}
+
+	/// <summary>this seems to work great!</summary>
+	/// <param name="address"></param>
+	/// <param name="fileName"></param>
+	/// <param name="progress"></param>
+	[NeedsTesting]
+	public static async PooledValueTask<WebClient> DownloadFileTaskAsync(
+		Uri address,
+		String fileName,
+		IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
+	) {
+		if ( address is null ) {
+			throw new ArgumentEmptyException( nameof( address ) );
+		}
+
+		if ( String.IsNullOrWhiteSpace( fileName ) ) {
+			throw new NullException( nameof( fileName ) );
+		}
+
+		var tcs = new TaskCompletionSource<Object?>( address, TaskCreationOptions.RunContinuationsAsynchronously );
+
+		void CompletedHandler( Object? cs, AsyncCompletedEventArgs ce ) {
+			if ( ce.UserState != tcs ) {
+				return;
+			}
+
+			if ( ce.Error != null ) {
+				tcs.TrySetException( ce.Error );
+			}
+			else if ( ce.Cancelled ) {
+				tcs.TrySetCanceled();
+			}
+			else {
+				tcs.TrySetResult( null );
+			}
+		}
+
+		void ProgressChangedHandler( Object? ps, DownloadProgressChangedEventArgs? pe ) {
+			if ( pe?.UserState == tcs ) {
+				progress?.Report( (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
+			}
+		}
+
+		var webClient = new WebClient();
+
+		try {
+			webClient.DownloadFileCompleted += CompletedHandler;
+			webClient.DownloadProgressChanged += ProgressChangedHandler;
+			webClient.DownloadFileAsync( address, fileName, tcs );
+
+			await tcs.Task.ConfigureAwait( false );
+		}
+		finally {
+			webClient.DownloadFileCompleted -= CompletedHandler;
+			webClient.DownloadProgressChanged -= ProgressChangedHandler;
+		}
+
+		return webClient;
+	}
+
+	/// <summary>
+	///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
+	///     <para>To compare the contents of two <see cref="Document" /> use <see cref="IDocument.SameContent" />.</para>
+	///     <para>
+	///         To quickly compare the contents of two <see cref="Document" /> use <see cref="CRC32" />,
+	///         <see cref="HarkerHash32" />, <see cref="HarkerHash64" />, or
+	///         <see cref="CRC64" /> .
+	///     </para>
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	[NeedsTesting]
+	public static Boolean Equals( IDocument? left, IDocument? right ) {
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
+		}
+
+		return left.FullPath.Is( right.FullPath ); //&& left.Size() == right.Size();
+	}
+
+	[NeedsTesting]
+	public static IDocument GetTempDocument( String? extension = null ) {
+		if ( String.IsNullOrEmpty( extension ) ) {
+			extension = Guid.NewGuid().ToString();
+		}
+
+		extension = extension.TrimLeading( ".", StringComparison.OrdinalIgnoreCase );
+
+		return new Document( Folder.GetTempFolder(), $"{Guid.NewGuid()}.{extension}" );
+	}
+
+	/// <summary>Pull a new <see cref="FileInfo" /> for the <paramref name="document" />.</summary>
+	/// <param name="document"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	/// <exception cref="FileNotFoundException"></exception>
+	[NeedsTesting]
+	public static implicit operator FileInfo( Document document ) => ToFileInfo( document ).AsValueTask().AsTask().Result;
+
+	/// <summary>
+	///     <para>Compares the file names (case sensitive) and file sizes for inequality.</para>
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	[NeedsTesting]
+	public static Boolean operator !=( Document? left, IDocument? right ) => !Equals( left, right );
+
+	/// <summary>
+	///     <para>Compares the file names (case sensitive) and file sizes for equality.</para>
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	[NeedsTesting]
+	public static Boolean operator ==( Document? left, IDocument? right ) => Equals( left, right );
+
+	[NeedsTesting]
+	public static async PooledValueTask<FileInfo> ToFileInfo( Document document ) {
+		if ( document is null ) {
+			throw new ArgumentEmptyException( nameof( document ) );
+		}
+
+		return await Task.Run( () => {
+			var info = new FileInfo( document.FullPath );
+
+			info.Refresh();
+
+			return info;
+		} )
+						 .ConfigureAwait( false );
+	}
 
 	/// <summary>
 	///     <para>If the file does not exist, it is created.</para>
@@ -520,21 +669,22 @@ public class Document : ABetterClassDispose, IDocument {
 		try {
 			if ( ( await this.Length( cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				if ( Uri.TryCreate( this.FullPath, UriKind.Absolute, out var sourceAddress ) ) {
+
 					//BUG Obsolete
 					using var client = new WebClient().Add( cancellationToken );
 
 					await client.DownloadFileTaskAsync( sourceAddress, destination.FullPath ).ConfigureAwait( false );
 
-					return ( Status.Success, stopwatch.Elapsed );
+					return (Status.Success, stopwatch.Elapsed);
 				}
 			}
 		}
 		catch ( WebException exception ) {
 			exception.Log();
-			return ( Status.Exception, stopwatch.Elapsed );
+			return (Status.Exception, stopwatch.Elapsed);
 		}
 
-		return ( Status.Failure, stopwatch.Elapsed );
+		return (Status.Failure, stopwatch.Elapsed);
 	}
 
 	[NeedsTesting]
@@ -543,6 +693,7 @@ public class Document : ABetterClassDispose, IDocument {
 			var directoryName = Path.GetDirectoryName( this.FullPath );
 
 			if ( String.IsNullOrWhiteSpace( directoryName ) ) {
+
 				//empty means a root-level folder (C:\) was found. Right?
 				directoryName = Path.GetPathRoot( this.FullPath );
 			}
@@ -566,7 +717,7 @@ public class Document : ABetterClassDispose, IDocument {
 				};
 			}
 
-			( var exists, var size ) = await CheckSourceSize().ConfigureAwait( false );
+			(var exists, var size) = await CheckSourceSize().ConfigureAwait( false );
 
 			if ( exists is false || size is null ) {
 				return fileCopyData with {
@@ -587,6 +738,7 @@ public class Document : ABetterClassDispose, IDocument {
 			await DownloadAndVerifySize().WithTimeout( estimatedTimeToCopy, fileCopyData.CancellationTokenSource.Token ).ConfigureAwait( false );
 		}
 		catch ( TaskCanceledException exception ) {
+
 			//what is thrown when a Task<T> times out or is cancelled? TaskCanceledException or OperationCanceledException?
 			RecordException( exception );
 		}
@@ -628,12 +780,12 @@ public class Document : ABetterClassDispose, IDocument {
 			var size = await fileCopyData.Source.Size( cancellationToken ).ConfigureAwait( false );
 
 			if ( size is > 0 ) {
-				return ( true, size );
+				return (true, size);
 			}
 
 			RecordException( new FileNotFoundException( "Empty file.", fileCopyData.Source.FullPath ) );
 
-			return ( false, default( UInt64? ) );
+			return (false, default( UInt64? ));
 		}
 
 		async Task<Boolean> DownloadAndVerifySize() {
@@ -654,7 +806,7 @@ public class Document : ABetterClassDispose, IDocument {
 			};
 
 			webClient.DownloadProgressChanged += ( _, args ) => fileCopyData.DataCopied?.Report( fileCopyData with {
-				BytesCopied = ( UInt64 ) args.BytesReceived
+				BytesCopied = ( UInt64 )args.BytesReceived
 			} );
 
 			$"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} started.".Verbose();
@@ -698,7 +850,7 @@ public class Document : ABetterClassDispose, IDocument {
 				return null;
 			}
 
-			using var crc32 = new CRC32( ( UInt32 ) optimal, ( UInt32 ) optimal );
+			using var crc32 = new CRC32( ( UInt32 )optimal, ( UInt32 )optimal );
 
 			await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
 
@@ -746,7 +898,7 @@ public class Document : ABetterClassDispose, IDocument {
 				}
 			}
 
-			using var crc32 = new CRC32( ( UInt32 ) size.Value, ( UInt32 ) size.Value );
+			using var crc32 = new CRC32( ( UInt32 )size.Value, ( UInt32 )size.Value );
 
 			//TODO Would BufferedStream be any faster here?
 			var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, size.Value, FileOptions.SequentialScan );
@@ -898,17 +1050,17 @@ public class Document : ABetterClassDispose, IDocument {
 
 		try {
 			if ( !source.IsWellFormedOriginalString() ) {
-				return ( new Exception( $"Could not use source Uri '{source}'." ), null );
+				return (new Exception( $"Could not use source Uri '{source}'." ), null);
 			}
 
 			using var webClient = new WebClient(); //from what I've read, Dispose should NOT be being called on a WebClient???
 
 			await webClient.DownloadFileTaskAsync( source, this.FullPath ).ConfigureAwait( false );
 
-			return ( null, webClient.ResponseHeaders );
+			return (null, webClient.ResponseHeaders);
 		}
 		catch ( Exception exception ) {
-			return ( exception, null );
+			return (exception, null);
 		}
 	}
 
@@ -969,7 +1121,7 @@ public class Document : ABetterClassDispose, IDocument {
 	public UInt64? GetLength() {
 		var info = new FileInfo( this.FullPath );
 		info.Refresh();
-		return info.Exists ? ( UInt64 ) info.Length : null;
+		return info.Exists ? ( UInt64 )info.Length : null;
 	}
 
 	public virtual void GetObjectData( SerializationInfo info, StreamingContext context ) => info.AddValue( nameof( this.FullPath ), this.FullPath, typeof( String ) );
@@ -990,8 +1142,15 @@ public class Document : ABetterClassDispose, IDocument {
 		return size switch {
 			null => null,
 			>= MaximumBufferSize => MaximumBufferSize,
-			var _ => ( Int32 ) size
+			var _ => ( Int32 )size
 		};
+	}
+
+	/// <summary>Synchronous version.</summary>
+	public UInt64? GetSize() {
+		var info = new FileInfo( this.FullPath );
+		info.Refresh();
+		return ( UInt64? )info.Length;
 	}
 
 	/// <summary>HarkerHash (hash-by-addition)</summary>
@@ -1073,7 +1232,7 @@ public class Document : ABetterClassDispose, IDocument {
 	public async PooledValueTask<UInt64?> Length( CancellationToken cancellationToken ) {
 		var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
-		return info.Exists ? ( UInt64? ) info.Length : default( UInt64? );
+		return info.Exists ? ( UInt64? )info.Length : default( UInt64? );
 	}
 
 	/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
@@ -1100,7 +1259,7 @@ public class Document : ABetterClassDispose, IDocument {
 
 		var bytesLeft = size.Value;
 
-		var filelength = ( Int32 ) size.Value; //will we EVER have an image (or whatever) larger than Int32? (answer: yes)
+		var filelength = ( Int32 )size.Value; //will we EVER have an image (or whatever) larger than Int32? (answer: yes)
 		this.Buffer = new Byte[ filelength ];
 
 		var offset = 0;
@@ -1109,6 +1268,7 @@ public class Document : ABetterClassDispose, IDocument {
 		await using var _ = stream.ConfigureAwait( false );
 
 		if ( !stream.CanRead ) {
+
 			//throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
 			return Status.Exception;
 		}
@@ -1149,7 +1309,7 @@ public class Document : ABetterClassDispose, IDocument {
 				ZeroToOne bob;
 				progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 
-				return ( Status.Bad, default( T? ) );
+				return (Status.Bad, default( T? ));
 			}
 
 			progress?.Report( ++i / maxsteps );
@@ -1165,7 +1325,7 @@ public class Document : ABetterClassDispose, IDocument {
 
 				progress?.Report( ++i / maxsteps );
 
-				return ( Status.Success, run );
+				return (Status.Success, run);
 			}
 			finally {
 				progress?.Report( ++i / maxsteps );
@@ -1179,7 +1339,7 @@ public class Document : ABetterClassDispose, IDocument {
 			exception.Log();
 		}
 
-		return ( Status.Exception, default( T? ) );
+		return (Status.Exception, default( T? ));
 	}
 
 	/// <summary>
@@ -1315,7 +1475,7 @@ public class Document : ABetterClassDispose, IDocument {
 
 	/// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
 	[NeedsTesting]
-	public StreamReader StreamReader() => new(File.OpenRead( this.FullPath ));
+	public StreamReader StreamReader() => new( File.OpenRead( this.FullPath ) );
 
 	/// <summary>
 	///     Open the file for writing and return a <see cref="StreamWriter" />.
@@ -1332,7 +1492,7 @@ public class Document : ABetterClassDispose, IDocument {
 				return default( StreamWriter? );
 			}
 
-			return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.Unicode, ( Int32 ) bufferSize, false );
+			return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.Unicode, ( Int32 )bufferSize, false );
 		}
 		catch ( Exception exception ) {
 			exception.Log();
@@ -1373,6 +1533,7 @@ public class Document : ABetterClassDispose, IDocument {
 			catch ( DirectoryNotFoundException ) { }
 			catch ( PathTooLongException ) { }
 			catch ( IOException ) {
+
 				// IOException is thrown when the file is in use by any process.
 				await Task.Delay( delayBetweenRetries, cancellationToken ).ConfigureAwait( false );
 			}
@@ -1398,7 +1559,7 @@ public class Document : ABetterClassDispose, IDocument {
 		}
 
 		if ( !destination.IsWellFormedOriginalString() ) {
-			return ( new InvalidOperationException( $"Destination address '{destination.OriginalString}' is not well formed." ), null );
+			return (new InvalidOperationException( $"Destination address '{destination.OriginalString}' is not well formed." ), null);
 		}
 
 		try {
@@ -1406,162 +1567,11 @@ public class Document : ABetterClassDispose, IDocument {
 
 			await webClient.UploadFileTaskAsync( destination, this.FullPath ).ConfigureAwait( false );
 
-			return ( null, webClient.ResponseHeaders );
+			return (null, webClient.ResponseHeaders);
 		}
 		catch ( Exception exception ) {
-			return ( exception, null );
+			return (exception, null);
 		}
-	}
-
-	private CancellationToken GetCancelToken() {
-		this.CancellationTokenSource ??= new CancellationTokenSource();
-		return this.CancellationTokenSource.Token;
-	}
-
-	private void ReleaseWriterStream() {
-		using ( this.WriterStream ) {
-			this.WriterStream = null;
-		}
-	}
-
-	/// <summary>this seems to work great!</summary>
-	/// <param name="address"></param>
-	/// <param name="fileName"></param>
-	/// <param name="progress"></param>
-	[NeedsTesting]
-	public static async PooledValueTask<WebClient> DownloadFileTaskAsync(
-		Uri address,
-		String fileName,
-		IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
-	) {
-		if ( address is null ) {
-			throw new ArgumentEmptyException( nameof( address ) );
-		}
-
-		if ( String.IsNullOrWhiteSpace( fileName ) ) {
-			throw new NullException( nameof( fileName ) );
-		}
-
-		var tcs = new TaskCompletionSource<Object?>( address, TaskCreationOptions.RunContinuationsAsynchronously );
-
-		void CompletedHandler( Object? cs, AsyncCompletedEventArgs ce ) {
-			if ( ce.UserState != tcs ) {
-				return;
-			}
-
-			if ( ce.Error != null ) {
-				tcs.TrySetException( ce.Error );
-			}
-			else if ( ce.Cancelled ) {
-				tcs.TrySetCanceled();
-			}
-			else {
-				tcs.TrySetResult( null );
-			}
-		}
-
-		void ProgressChangedHandler( Object? ps, DownloadProgressChangedEventArgs? pe ) {
-			if ( pe?.UserState == tcs ) {
-				progress?.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
-			}
-		}
-
-		var webClient = new WebClient();
-
-		try {
-			webClient.DownloadFileCompleted += CompletedHandler;
-			webClient.DownloadProgressChanged += ProgressChangedHandler;
-			webClient.DownloadFileAsync( address, fileName, tcs );
-
-			await tcs.Task.ConfigureAwait( false );
-		}
-		finally {
-			webClient.DownloadFileCompleted -= CompletedHandler;
-			webClient.DownloadProgressChanged -= ProgressChangedHandler;
-		}
-
-		return webClient;
-	}
-
-	/// <summary>
-	///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
-	///     <para>To compare the contents of two <see cref="Document" /> use <see cref="IDocument.SameContent" />.</para>
-	///     <para>
-	///         To quickly compare the contents of two <see cref="Document" /> use <see cref="CRC32" />,
-	///         <see cref="HarkerHash32" />, <see cref="HarkerHash64" />, or
-	///         <see cref="CRC64" /> .
-	///     </para>
-	/// </summary>
-	/// <param name="left"></param>
-	/// <param name="right"></param>
-	[NeedsTesting]
-	public static Boolean Equals( IDocument? left, IDocument? right ) {
-		if ( left is null || right is null ) {
-			return false;
-		}
-
-		if ( ReferenceEquals( left, right ) ) {
-			return true;
-		}
-
-		return left.FullPath.Is( right.FullPath ); //&& left.Size() == right.Size();
-	}
-
-	[NeedsTesting]
-	public static IDocument GetTempDocument( String? extension = null ) {
-		if ( String.IsNullOrEmpty( extension ) ) {
-			extension = Guid.NewGuid().ToString();
-		}
-
-		extension = extension.TrimLeading( ".", StringComparison.OrdinalIgnoreCase );
-
-		return new Document( Folder.GetTempFolder(), $"{Guid.NewGuid()}.{extension}" );
-	}
-
-	/// <summary>Pull a new <see cref="FileInfo" /> for the <paramref name="document" />.</summary>
-	/// <param name="document"></param>
-	/// <exception cref="ArgumentEmptyException"></exception>
-	/// <exception cref="FileNotFoundException"></exception>
-	[NeedsTesting]
-	public static implicit operator FileInfo( Document document ) => ToFileInfo( document ).AsValueTask().AsTask().Result;
-
-	/// <summary>
-	///     <para>Compares the file names (case sensitive) and file sizes for inequality.</para>
-	/// </summary>
-	/// <param name="left"></param>
-	/// <param name="right"></param>
-	[NeedsTesting]
-	public static Boolean operator !=( Document? left, IDocument? right ) => !Equals( left, right );
-
-	/// <summary>
-	///     <para>Compares the file names (case sensitive) and file sizes for equality.</para>
-	/// </summary>
-	/// <param name="left"></param>
-	/// <param name="right"></param>
-	[NeedsTesting]
-	public static Boolean operator ==( Document? left, IDocument? right ) => Equals( left, right );
-
-	[NeedsTesting]
-	public static async PooledValueTask<FileInfo> ToFileInfo( Document document ) {
-		if ( document is null ) {
-			throw new ArgumentEmptyException( nameof( document ) );
-		}
-
-		return await Task.Run( () => {
-			                 var info = new FileInfo( document.FullPath );
-
-			                 info.Refresh();
-
-			                 return info;
-		                 } )
-		                 .ConfigureAwait( false );
-	}
-
-	/// <summary>Synchronous version.</summary>
-	public UInt64? GetSize() {
-		var info = new FileInfo( this.FullPath );
-		info.Refresh();
-		return ( UInt64? ) info.Length;
 	}
 
 	/*
@@ -1617,5 +1627,4 @@ public class Document : ABetterClassDispose, IDocument {
 		return ( webClient, destination.Exists() && destination.Size() == this.Size() );
 	}
 	*/
-
 }
