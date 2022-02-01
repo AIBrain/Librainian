@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ArgumentEmptyException.cs" last formatted on 2022-12-22 at 3:51 AM by Protiguous.
+// File "ArgumentEmptyException.cs" last formatted on 2022-12-22 at 5:16 AM by Protiguous.
 
 namespace Librainian.Exceptions;
 
