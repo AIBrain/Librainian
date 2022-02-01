@@ -10,20 +10,20 @@
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
-//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-//
+// ====================================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ThreadingExtensions.cs" last formatted on 2022-12-22 at 5:21 PM by Protiguous.
+// File "ThreadingExtensions.cs" last formatted on 2022-12-22 at 5:10 AM by Protiguous.
 
 #nullable enable
 
@@ -104,44 +104,26 @@ public static class ThreadingExtensions {
 			return 0;
 		}
 
-		var sizeInBytes = obj.GetSizeOfPrimitive();
-
-		if ( sizeInBytes.Any() ) {
-			return sizeInBytes;
-		}
+		var sizeInBytes = 0UL;
 
 		var fields = obj.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
 
 		foreach ( var value in from field in fields select field.GetValue( obj ) ) {
 			switch ( value ) {
-				case Array array:
-					foreach ( var o in array ) {
-						sizeInBytes += CalcSizeInBytes( o );
-					}
+				case IEnumerable<T> enumerable: {
+					sizeInBytes = enumerable.Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
 
 					continue;
-				case IList list:
-					foreach ( var o in list ) {
-						sizeInBytes += CalcSizeInBytes( o );
-					}
+				}
+				case IEnumerable enumerable: {
+					sizeInBytes = enumerable.Cast<Object?>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
 
 					continue;
-				case IDictionary dictionary:
-					foreach ( DictionaryEntry o in dictionary ) {
-						sizeInBytes += CalcSizeInBytes( o.Key );
-						sizeInBytes += CalcSizeInBytes( o.Value );
-					}
-
-					continue;
-				case IEnumerable enumerable:
-					foreach ( var o in enumerable ) {
-						sizeInBytes += CalcSizeInBytes( o );
-					}
-
-					continue;
-				default:
-					sizeInBytes += value.CalcSizeInBytes();
+				}
+				default: {
+					sizeInBytes += value.GetSizeOfAnyPrimitives();
 					break;
+				}
 			}
 		}
 
@@ -207,24 +189,30 @@ public static class ThreadingExtensions {
 		return maxPortThreads;
 	}
 
-	public static UInt64 GetSizeOfPrimitive<T>( this T? obj ) =>
-		( UInt64 )( obj switch {
-			Boolean => sizeof( Boolean ),
-			Byte => sizeof( Byte ),
-			SByte => sizeof( SByte ),
-			Char => sizeof( Char ),
-			Int16 => sizeof( Int16 ),
-			UInt16 => sizeof( UInt16 ),
-			Int32 => sizeof( Int32 ),
-			UInt32 => sizeof( UInt32 ),
-			Int64 => sizeof( Int64 ),
-			UInt64 => sizeof( UInt64 ),
-			Single => sizeof( Single ),
-			Double => sizeof( Double ),
-			Decimal => sizeof( Decimal ),
-			String s => sizeof( Char ) * s.Length, { } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
-			var _ => 0
-		} );
+	public static UInt64 GetSizeOfAnyPrimitives<T>( this T? obj ) {
+		unsafe {
+			return ( UInt64 )( obj switch {
+				Boolean => sizeof( Boolean ),
+				Byte => sizeof( Byte ),
+				SByte => sizeof( SByte ),
+				Char => sizeof( Char ),
+				Int16 => sizeof( Int16 ),
+				UInt16 => sizeof( UInt16 ),
+				Int32 => sizeof( Int32 ),
+				UInt32 => sizeof( UInt32 ),
+				Int64 => sizeof( Int64 ),
+				UInt64 => sizeof( UInt64 ),
+				Single => sizeof( Single ),
+				Double => sizeof( Double ),
+				Decimal => sizeof( Decimal ),
+				String s => sizeof( Char ) * s.Length,
+				IntPtr => sizeof( nint ), //BUG or correct?
+				UIntPtr => sizeof( nint ), //BUG or correct?
+				{ } => sizeof( void* ), //BUG or correct?
+				var _ => sizeof( void* ) //BUG or correct?
+			} );
+		}
+	}
 
 	/// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
 	/// <typeparam name="T"></typeparam>
