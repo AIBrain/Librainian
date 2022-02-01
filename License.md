@@ -12,13 +12,13 @@ If you want to use any of our code in a commercial project, you must contact Pro
 Use of any Librainian source code, nuget package, or dll will incur a usage fee of 1 bitcoin per month per package.
 Please send payments via Bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 
-====================================================================
+
 Disclaimer:  Usage of the source code or binaries is AS-IS.
     No warranties are expressed, implied, or given.
     We are NOT responsible for Anything You Do With Our Code.
     We are NOT responsible for Anything You Do With Our Executables.
     We are NOT responsible for Anything You Do With Your Computer.
-====================================================================
+
 
 Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 For business inquiries, please contact me at Protiguous@Protiguous.com.

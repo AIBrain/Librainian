@@ -31,6 +31,7 @@
 
 namespace TestBigDecimal.Collections;
 
+using System.Linq;
 using Librainian.Collections.Lists;
 using Librainian.Maths;
 using NUnit.Framework;
@@ -140,12 +141,12 @@ public static class ConcurrentListTests {
 
 		//var list2 = new ConcurrentList<String>();
 
-		using var concurrentList = new ConcurrentList<Thread>( Threads );
+		using var threads = new ConcurrentList<Thread>( Threads );
 
 		var added = 0L;
 		var removed = 0L;
 
-		Parallel.ForEach( concurrentList.AsParallel(), thread => {
+		Parallel.ForEach( threads.AsParallel().AsUnordered(), thread => {
 			thread?.Start();
 
 			(var add, var rem) = AddManyProductsRemoveRandom( list1 );
@@ -153,7 +154,7 @@ public static class ConcurrentListTests {
 			Interlocked.Add( ref removed, rem );
 		} );
 
-		Parallel.ForEach( concurrentList.AsParallel(), thread => thread?.Join() );
+		Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
 
 		Assert.That( added + removed, Is.EqualTo( Threads ) );
 	}

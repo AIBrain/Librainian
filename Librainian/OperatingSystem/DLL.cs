@@ -31,9 +31,9 @@ using System;
 
 public static class DLL {
 
-	public const String advapi32 = "advapi32.dll";
+	public const String Advapi32 = "advapi32.dll";
 
-	public const String coredll = "coredll.dll";
+	public const String CoreDLL = "coredll.dll";
 
 	public const String GDI32 = "gdi32.dll";
 

@@ -219,7 +219,7 @@ public static class PriNativeMethods {
 	[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetThreadErrorMode", ExactSpelling = false, SetLastError = true )]
 	private static extern Boolean SetErrorMode_Win7AndNewer( Int32 newMode, out Int32 oldMode );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
+	[DllImport( DLL.Advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean AdjustTokenPrivileges(
 		[In] SafeTokenHandle TokenHandle,
 		[In] Boolean DisableAllPrivileges,
@@ -236,7 +236,7 @@ public static class PriNativeMethods {
 	[return: MarshalAs( UnmanagedType.Bool )]
 	public static extern Boolean CopyFile( String src, String dst, [MarshalAs( UnmanagedType.Bool )] Boolean failIfExists );
 
-	[DllImport( DLL.coredll, BestFitMapping = false, SetLastError = true )]
+	[DllImport( DLL.CoreDLL, BestFitMapping = false, SetLastError = true )]
 	[return: MarshalAs( UnmanagedType.Bool )]
 	public static extern Boolean CopyFileEx(
 		String lpExistingFileName,
@@ -285,7 +285,7 @@ public static class PriNativeMethods {
 		IntPtr hTemplateFile
 	);
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
+	[DllImport( DLL.Advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 	public static extern Boolean DecryptFile( String path, Int32 reservedMustBeZero );
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
@@ -305,7 +305,7 @@ public static class PriNativeMethods {
 	);
 	*/
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
+	[DllImport( DLL.Advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 	public static extern Boolean EncryptFile( String path );
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
@@ -383,11 +383,11 @@ public static class PriNativeMethods {
 		return result == 0 ? $"Unknown error: {filesAndFoldersErrorsCode}" : sb.ToString();
 	}
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "GetSecurityDescriptorLength", CallingConvention = CallingConvention.Winapi, SetLastError = true,
+	[DllImport( DLL.Advapi32, BestFitMapping = false, EntryPoint = "GetSecurityDescriptorLength", CallingConvention = CallingConvention.Winapi, SetLastError = true,
 		ExactSpelling = true, CharSet = CharSet.Unicode )]
 	public static extern DWORD GetSecurityDescriptorLength( IntPtr byteArray );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "GetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
+	[DllImport( DLL.Advapi32, BestFitMapping = false, EntryPoint = "GetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
 		ExactSpelling = true, CharSet = CharSet.Unicode )]
 	public static extern DWORD GetSecurityInfoByName(
 		String name,
@@ -403,7 +403,7 @@ public static class PriNativeMethods {
 	[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 	public static extern IntPtr LocalFree( IntPtr handle );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "LookupPrivilegeValueW", CharSet = CharSet.Auto, SetLastError = true )]
+	[DllImport( DLL.Advapi32, BestFitMapping = false, EntryPoint = "LookupPrivilegeValueW", CharSet = CharSet.Auto, SetLastError = true )]
 	public static extern Boolean LookupPrivilegeValue( [In] String lpSystemName, [In] String lpName, [In][Out] ref LUID Luid );
 
 	public static Int32 MakeHRFromErrorCode( FilesAndFoldersErrors filesAndFoldersErrorsCode ) => unchecked(( Int32 )0x80070000 | ( Int32 )filesAndFoldersErrorsCode);
@@ -452,7 +452,7 @@ public static class PriNativeMethods {
 		IntPtr lpReserved
 	);
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
+	[DllImport( DLL.Advapi32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
 	public static extern Boolean RevertToSelf();
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
@@ -507,15 +507,15 @@ public static class PriNativeMethods {
 	[return: MarshalAs( UnmanagedType.Bool )]
 	public static extern Boolean SetFileTime( IntPtr hFile, Int64 creationTime, Int64 lastAccessTime, Int64 lastWriteTime );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "SetSecurityInfo", CallingConvention = CallingConvention.Winapi, SetLastError = true, ExactSpelling = true,
+	[DllImport( DLL.Advapi32, BestFitMapping = false, EntryPoint = "SetSecurityInfo", CallingConvention = CallingConvention.Winapi, SetLastError = true, ExactSpelling = true,
 		CharSet = CharSet.Unicode )]
 	public static extern DWORD SetSecurityInfoByHandle( SafeHandle handle, DWORD objectType, DWORD securityInformation, Byte[] owner, Byte[] group, Byte[] dacl, Byte[] sacl );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "SetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
+	[DllImport( DLL.Advapi32, BestFitMapping = false, EntryPoint = "SetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
 		ExactSpelling = true, CharSet = CharSet.Unicode )]
 	public static extern DWORD SetSecurityInfoByName( String name, DWORD objectType, DWORD securityInformation, Byte[] owner, Byte[] group, Byte[] dacl, Byte[] sacl );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
+	[DllImport( DLL.Advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean SetThreadToken( [In] IntPtr Thread, [In] SafeTokenHandle Token );
 
 	/// <summary>

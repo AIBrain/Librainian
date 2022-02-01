@@ -32,6 +32,7 @@
 namespace TestBigDecimal.Maths;
 
 using System;
+using System.Diagnostics;
 using Librainian.Measurement.Time;
 using NUnit.Framework;
 
@@ -40,6 +41,7 @@ using NUnit.Framework;
 ///     cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates.Tests/DateSpanTests.cs" />
 /// </summary>
 [TestFixture]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 public class DateSpanTests {
 
 	[Test]

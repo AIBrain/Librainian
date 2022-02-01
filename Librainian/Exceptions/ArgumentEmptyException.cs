@@ -10,20 +10,20 @@
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
-//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-//
+// ====================================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ArgumentEmptyException.cs" last formatted on 2022-12-22 at 5:15 PM by Protiguous.
+// File "ArgumentEmptyException.cs" last formatted on 2022-12-22 at 3:51 AM by Protiguous.
 
 namespace Librainian.Exceptions;
 
@@ -32,7 +32,7 @@ using System.Runtime.Serialization;
 using Logging;
 using Parsing;
 
-/// <summary>Throw when the (string) parameter is null, empty, or whitespace.</summary>
+/// <summary>Logs exception when the (string) parameter is null, empty, or whitespace.</summary>
 [Serializable]
 public class ArgumentEmptyException : ArgumentNullException {
 
@@ -51,6 +51,12 @@ public class ArgumentEmptyException : ArgumentNullException {
 
 	public ArgumentEmptyException( String? paramName, Exception? innerException ) : base( CannotBeEmpty( paramName ), innerException ) {
 		CannotBeEmpty( paramName ).DebugLine();
+		this.Log( BreakOrDontBreak.Break );
+	}
+
+	public ArgumentEmptyException( String? paramName, String? message ) : base( paramName, message ) {
+		CannotBeEmpty( paramName ).DebugLine();
+		message.DebugLine();
 		this.Log( BreakOrDontBreak.Break );
 	}
 

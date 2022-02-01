@@ -10,20 +10,20 @@
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
-//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
-//
+// ====================================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Duration.cs" last formatted on 2022-12-22 at 5:18 PM by Protiguous.
+// File "Duration.cs" last formatted on 2022-12-22 at 5:10 AM by Protiguous.
 
 namespace Librainian.Measurement.Time;
 
@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using ExtendedNumerics;
+using ExtendedNumerics.Helpers;
 using Extensions;
 using Newtonsoft.Json;
 using Utilities;

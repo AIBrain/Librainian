@@ -30,6 +30,7 @@ namespace Librainian.Measurement.Physics;
 using System;
 using System.Diagnostics;
 using ExtendedNumerics;
+using ExtendedNumerics.Helpers;
 using Extensions;
 
 /// <summary>

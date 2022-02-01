@@ -23,30 +23,14 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "WebClientWithTimeout.cs" last formatted on 2022-12-22 at 7:20 AM by Protiguous.
+// File "HttpClientWithTimeout.cs" last formatted on 2022-12-22 at 4:02 AM by Protiguous.
 
 namespace Librainian.Internet;
 
 using System;
-using System.Net;
+using System.Net.Http;
 
-public class WebClientWithTimeout : WebClient {
+public class HttpClientWithTimeout : HttpClient {
 
-	public WebClientWithTimeout() : this( Internet.UnderlyingDownloader.Forever ) {
-	}
-
-	public WebClientWithTimeout( TimeSpan timeout ) => this.Timeout = timeout;
-
-	/// <summary>The <see cref="WebRequest" /> instance.</summary>
-	public WebRequest? Request { get; private set; }
-
-	public TimeSpan Timeout { get; set; }
-
-	protected override WebRequest GetWebRequest( Uri address ) {
-		this.Request = base.GetWebRequest( address );
-
-		this.Request.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
-
-		return this.Request;
-	}
+	public HttpClientWithTimeout( TimeSpan timeout ) => this.Timeout = timeout;
 }

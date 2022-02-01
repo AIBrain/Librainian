@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Numerics;
 using Exceptions;
 using ExtendedNumerics;
+using ExtendedNumerics.Helpers;
 using Newtonsoft.Json;
 
 [JsonObject]
