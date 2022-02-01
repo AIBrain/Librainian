@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ThreadingExtensions.cs" last formatted on 2022-12-22 at 5:10 AM by Protiguous.
+// File "ThreadingExtensions.cs" last formatted on 2022-12-22 at 6:01 AM by Protiguous.
 
 #nullable enable
 
@@ -154,6 +154,21 @@ public static class ThreadingExtensions {
 		return tcs.Task.GetAwaiter();
 	}
 
+	public static TaskAwaiter<Boolean> GetAwaiter( this Action action ) {
+		var tcs = new TaskCompletionSource<Boolean>();
+		try {
+			action();
+
+			tcs.TrySetResult( true );
+		}
+		catch ( Exception exception ) {
+			tcs.TrySetResult( false );
+			exception.Log();
+		}
+
+		return tcs.Task.GetAwaiter();
+	}
+
 	/// <summary>Asynchronously wait until cancellation is requested.</summary>
 	/// <param name="cancellationToken"></param>
 	public static TaskAwaiter GetAwaiter( this CancellationToken cancellationToken ) {
@@ -229,7 +244,7 @@ public static class ThreadingExtensions {
 
 	/// <summary>
 	///     Repeat the <paramref name="action" /><paramref name="times" />.
-	///     <para>Swallows <see cref="Exception" />.</para>
+	///     <para>Swallows all exceptions.</para>
 	/// </summary>
 	/// <param name="times"></param>
 	/// <param name="action"></param>
@@ -277,8 +292,9 @@ public static class ThreadingExtensions {
 	/// </summary>
 	/// <param name="action"></param>
 	/// <param name="counter"></param>
+	/// <param name="useTryCatch"></param>
 	public static void RepeatAction( this Action action, Int32 counter, Boolean useTryCatch ) =>
-		Parallel.For( 1, counter, i => {
+		Parallel.For( 1, counter, _ => {
 			if ( useTryCatch ) {
 				try {
 					action();
@@ -294,7 +310,7 @@ public static class ThreadingExtensions {
 
 	/// <summary>
 	///     Run each <see cref="Action" />, optionally in parallel (defaults to true), optionally printing feedback through an
-	///     action.
+	///     <see cref="Action" />.
 	/// </summary>
 	/// <param name="actions"></param>
 	/// <param name="output"></param>
@@ -310,7 +326,7 @@ public static class ThreadingExtensions {
 		}
 
 		if ( inParallel ) {
-			var result = Parallel.ForEach( actions.AsParallel(), action => action() );
+			var result = Parallel.ForEach( actions.AsParallel().AsUnordered(), action => action() );
 
 			return result.IsCompleted;
 		}
