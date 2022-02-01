@@ -163,7 +163,7 @@ public class Device /*: IComparable<Device>*/ {
 
 	/// <summary>Gets a value indicating whether this device is a USB device.</summary>
 	public virtual Boolean IsUsb() {
-		this.isUsb ??= this.GetClass().ToUpper().Contains( "USB" );
+		this.isUsb ??= this.GetClass().Contains( "USB", StringComparison.OrdinalIgnoreCase );
 
 		if ( this.isUsb != true ) {
 			this.isUsb = this.Parent()?.IsUsb();
