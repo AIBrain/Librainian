@@ -4,10 +4,19 @@
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Controls\ListBoxNoFlicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Controls\QuestionBox.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Controls\ScrollingRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Internet\WebClientWithTimeout.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Threading\BackgroundThread.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

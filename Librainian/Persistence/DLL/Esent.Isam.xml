@@ -417,7 +417,7 @@
 			</summary>
 			<param name="key">The key of the element to validate.</param>
 			<param name="value">The value of the element to validate.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				key must be of type System.String;key
 				or
 				value must be of type ColumnDefinition;value
@@ -1113,7 +1113,7 @@
 				Performs additional custom processes when validating a value.
 			</summary>
 			<param name="value">The object to validate.</param>
-			<exception cref="T:System.ArgumentException">value must be of type ConditionalColumn;value</exception>
+			<exception cref="T:System.NullException">value must be of type ConditionalColumn;value</exception>
 		</member>
 		<member name="M:Microsoft.Database.Isam.ConditionalColumnCollection.CheckReadOnly">
 			<summary>
@@ -1171,7 +1171,7 @@
 				A <see cref="T:Microsoft.Database.Isam.UnicodeIndexFlags" /> value equivalent to
 				<paramref name="options" />.
 			</returns>
-			<exception cref="T:System.ArgumentException">CompareOptions.Ordinal is not supported;compareOptions</exception>
+			<exception cref="T:System.NullException">CompareOptions.Ordinal is not supported;compareOptions</exception>
 		</member>
 		<member
 			name="M:Microsoft.Database.Isam.Converter.MapFlagsFromUnicodeIndexFlags(Microsoft.Database.Isam.UnicodeIndexFlags)">
@@ -1811,7 +1811,7 @@
 				The byte value of the key for the index entry
 				at the current position of a cursor.
 			</returns>
-			<exception cref="T:System.ArgumentException">the provided key must have a key segment per key column on the current index or it must contain a prefix or wildcard;key</exception>
+			<exception cref="T:System.NullException">the provided key must have a key segment per key column on the current index or it must contain a prefix or wildcard;key</exception>
 		</member>
 		<member name="M:Microsoft.Database.Isam.Cursor.SetLowerLimit">
 			<summary>
@@ -2207,7 +2207,7 @@
 				The <see cref="T:Microsoft.Isam.Esent.Interop.JET_coltyp" /> equivalent of
 				<paramref name="columnDefinition" />.
 			</returns>
-			<exception cref="T:System.ArgumentException">Cannot map this type to a native column type</exception>
+			<exception cref="T:System.NullException">Cannot map this type to a native column type</exception>
 		</member>
 		<member
 			name="M:Microsoft.Database.Isam.DatabaseCommon.IndexKeyFromIndexDefinition(Microsoft.Database.Isam.IndexDefinition)">
@@ -2475,7 +2475,7 @@
 			</summary>
 			<param name="key">The key of the element to validate.</param>
 			<param name="value">The value of the element to validate.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				key must be of type System.String;key
 				or
 				value must be of type FieldValueCollection;value
@@ -2627,7 +2627,7 @@
 				Performs additional custom processes when validating a value.
 			</summary>
 			<param name="value">The object to validate.</param>
-			<exception cref="T:System.ArgumentException">value must be of type  + Type +  or of type  + typeof(System.DBNull);value</exception>
+			<exception cref="T:System.NullException">value must be of type  + Type +  or of type  + typeof(System.DBNull);value</exception>
 		</member>
 		<member name="M:Microsoft.Database.Isam.FieldValueCollection.CheckReadOnly">
 			<summary>
@@ -2800,7 +2800,7 @@
 			</summary>
 			<param name="key">The key of the element to validate.</param>
 			<param name="value">The value of the element to validate.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				key must be of type System.String;key
 				or
 				value must be of type IndexDefinition;value
@@ -3677,7 +3677,7 @@
 				Performs additional custom processes when validating a value.
 			</summary>
 			<param name="value">The object to validate.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				value must be of type KeySegment;value
 				or
 				value cannot be a prefix if the key already contains a prefix;value
@@ -3885,7 +3885,7 @@
 				Performs additional custom processes when validating a value.
 			</summary>
 			<param name="value">The object to validate.</param>
-			<exception cref="T:System.ArgumentException">value must be of type KeyColumn;value</exception>
+			<exception cref="T:System.NullException">value must be of type KeyColumn;value</exception>
 		</member>
 		<member name="M:Microsoft.Database.Isam.KeyColumnCollection.CheckReadOnly">
 			<summary>
@@ -4795,7 +4795,7 @@
 			</summary>
 			<param name="key">The key of the element to validate.</param>
 			<param name="value">The value of the element to validate.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				key must be of type System.String;key
 				or
 				value must be of type TableDefinition;value
@@ -5199,7 +5199,7 @@
 			<exception cref="T:Microsoft.Isam.Esent.Interop.EsentTableDuplicateException">
 				Thrown when the table definition overlaps with an already existing table.
 			</exception>
-			<exception cref="T:System.ArgumentException">A MaxKeyLength &gt; 255 is not supported for indices over a temporary table on this version of the database engine.;tableDefinition</exception>
+			<exception cref="T:System.NullException">A MaxKeyLength &gt; 255 is not supported for indices over a temporary table on this version of the database engine.;tableDefinition</exception>
 		</member>
 		<member name="M:Microsoft.Database.Isam.TemporaryDatabase.DropTable(System.String)">
 			<summary>
@@ -5283,7 +5283,7 @@
 				Validates the table definition.
 			</summary>
 			<param name="tableDefinition">The table definition.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				Illegal name for a temporary table.;tableDefinition
 				or
 				Illegal TableType for a temporary table.;tableDefinition
@@ -5486,7 +5486,7 @@
 			</summary>
 			<param name="key">The key of the element to validate.</param>
 			<param name="value">The value of the element to validate.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				key must be of type System.String;key
 				or
 				value must be of type TempTableHandle;value

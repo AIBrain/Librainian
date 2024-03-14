@@ -1,10 +1,16 @@
 ﻿[*.cs]
 
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = suggestion
+
+# IDE0034: Simplify 'default' expression
+csharp_prefer_simple_default_expression = false
+
 # IDE0055: Fix formatting
 dotnet_diagnostic.ide0055.severity = none
 
 # IDE0065: Misplaced using directive
-csharp_using_directive_placement = inside_namespace:silent
+csharp_using_directive_placement = inside_namespace:error
 
 # IDE0003: Remove qualification
 dotnet_style_qualification_for_event = true:warning
@@ -70,7 +76,7 @@ dotnet_diagnostic.cs8620.severity = warning
 dotnet_diagnostic.ide0060.severity = none
 
 # CA1834: Consider using 'StringBuilder.Append(char)' when applicable
-dotnet_diagnostic.ca1834.severity = warning
+dotnet_diagnostic.ca1834.severity = error
 
 # IDE0079: Remove unnecessary suppression
 dotnet_diagnostic.ide0079.severity = none
@@ -87,11 +93,11 @@ csharp_style_var_for_built_in_types = true:error
 csharp_style_var_when_type_is_apparent = true:error
 dotnet_diagnostic.cs8597.severity = error
 dotnet_diagnostic.cs8605.severity = error
-dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:error
-dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary:error
-dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary:error
+dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:none
+dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary:none
+dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary:none
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
-file_header_template = Copyright © Protiguous. All Rights Reserved.\n\nThis entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.\n\nAll source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)\n\nAny unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.\nIf you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).\nIf you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.\n\nDonations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com\n\n====================================================================\nDisclaimer:  Usage of the source code or binaries is AS-IS.\nNo warranties are expressed, implied, or given.\nWe are NOT responsible for Anything You Do With Our Code.\nWe are NOT responsible for Anything You Do With Our Executables.\nWe are NOT responsible for Anything You Do With Your Computer.\n====================================================================\n\nContact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).\nFor business inquiries, please contact me at Protiguous@Protiguous.com.\nOur software can be found at "https://Protiguous.Software/"\nOur GitHub address is "https://github.com/Protiguous".\n\nFile "{fileName}" last touched on $CURRENT_YEAR$-$CREATED_MONTH$-$CREATED_DAY$ at $CURRENT_TIME$ by Protiguous.
+file_header_template = Copyright © Protiguous. All Rights Reserved.\n\nThis entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.\n\nAll source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)\n\nAny unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.\nIf you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).\nIf you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.\n\nDonations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com\n\n====================================================================\nDisclaimer:  Usage of the source code or binaries is AS-IS.\nNo warranties are expressed, implied, or given.\nWe are NOT responsible for Anything You Do With Our Code.\nWe are NOT responsible for Anything You Do With Our Executables.\nWe are NOT responsible for Anything You Do With Your Computer.\n====================================================================\n\nContact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).\nFor business inquiries, please contact me at Protiguous@Protiguous.com.\nOur software can be found at "https://Protiguous.com/Software/"\nOur GitHub address is "https://github.com/Protiguous".\n\nFile "$FILENAME$" last formatted on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 # ReSharper properties
 resharper_align_linq_query = true
@@ -173,7 +179,7 @@ resharper_arrange_this_qualifier_highlighting = error
 resharper_assignment_in_conditional_expression_highlighting = error
 resharper_assignment_is_fully_discarded_highlighting = error
 resharper_async_iterator_invocation_without_await_foreach_highlighting = error
-resharper_auto_property_can_be_made_get_only_global_highlighting = error
+resharper_auto_property_can_be_made_get_only_global_highlighting = suggestion
 resharper_base_object_equals_is_object_equals_highlighting = error
 resharper_by_ref_argument_is_volatile_field_highlighting = error
 resharper_check_namespace_highlighting = error
@@ -193,7 +199,7 @@ resharper_convert_to_compound_assignment_highlighting = suggestion
 resharper_convert_to_lambda_expression_highlighting = error
 resharper_convert_to_lambda_expression_when_possible_highlighting = error
 resharper_convert_to_static_class_highlighting = error
-resharper_convert_to_using_declaration_highlighting = error
+resharper_convert_to_using_declaration_highlighting = suggestion
 resharper_co_variant_array_conversion_highlighting = error
 resharper_empty_general_catch_clause_highlighting = none
 resharper_enumerable_sum_in_explicit_unchecked_context_highlighting = error
@@ -214,8 +220,8 @@ resharper_join_null_check_with_usage_highlighting = error
 resharper_join_null_check_with_usage_when_possible_highlighting = error
 resharper_localizable_element_highlighting = none
 resharper_loop_can_be_partly_converted_to_query_highlighting = hint
-resharper_member_can_be_made_static_global_highlighting = suggestion
-resharper_member_can_be_made_static_local_highlighting = suggestion
+resharper_member_can_be_made_static_global_highlighting = error
+resharper_member_can_be_made_static_local_highlighting = error
 resharper_member_can_be_private_global_highlighting = none
 resharper_member_can_be_private_local_highlighting = none
 resharper_merge_conditional_expression_highlighting = error
@@ -243,7 +249,7 @@ resharper_redundant_string_interpolation_highlighting = error
 resharper_redundant_to_string_call_highlighting = error
 resharper_redundant_type_arguments_of_method_highlighting = error
 resharper_redundant_unsafe_context_highlighting = error
-resharper_redundant_using_directive_highlighting = error
+resharper_redundant_using_directive_highlighting = suggestion
 resharper_reference_equals_with_value_type_highlighting = error
 resharper_remove_constructor_invocation_highlighting = warning
 resharper_replace_with_simple_assignment_false_highlighting = error
@@ -311,10 +317,75 @@ dotnet_diagnostic.CA1829.severity = error
 # IDE0058: Expression value is never used
 dotnet_diagnostic.IDE0058.severity = silent
 
+# RCS1036: Remove redundant empty line.
+dotnet_diagnostic.RCS1036.severity = silent
+
+# RCS1244: Simplify 'default' expression.
+dotnet_diagnostic.RCS1244.severity = none
+
+# RCS1123: Add parentheses when necessary.
+dotnet_diagnostic.RCS1123.severity = silent
+
+# RCS1079: Throwing of new NotImplementedException.
+dotnet_diagnostic.RCS1079.severity = none
+
+# RCS1080: Use 'Count/Length' property instead of 'Any' method.
+dotnet_diagnostic.RCS1080.severity = none
+
+# RCS1124: Inline local variable.
+dotnet_diagnostic.RCS1124.severity = none
+
+# TODO: TODO
+dotnet_diagnostic.TODO.severity = none
+
+# CA1401: P/Invokes should not be visible
+dotnet_diagnostic.CA1401.severity = none
+
+# AsyncFixer01: Unnecessary async/await usage
+dotnet_diagnostic.AsyncFixer01.severity = none
+
+# RCS1138: Add summary to documentation comment.
+dotnet_diagnostic.RCS1138.severity = silent
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = suggestion
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = error
+
+# RCS1213: Remove unused member declaration.
+dotnet_diagnostic.RCS1213.severity = none
+csharp_style_prefer_null_check_over_type_check=true:error
+dotnet_diagnostic.CA1805.severity=error
+dotnet_diagnostic.IDE0039.severity=suggestion
+dotnet_diagnostic.IDE0054.severity=suggestion
+dotnet_diagnostic.IDE0062.severity=suggestion
+dotnet_diagnostic.IDE0063.severity=suggestion
+dotnet_diagnostic.IDE0071.severity=suggestion
+dotnet_diagnostic.IDE0082.severity=error
+dotnet_diagnostic.IDE0083.severity=error
+dotnet_diagnostic.IDE0090.severity=suggestion
+dotnet_diagnostic.IDE0120.severity=error
+dotnet_diagnostic.IDE0150.severity=error
+dotnet_diagnostic.IDE0160.severity=error
+dotnet_diagnostic.IDE0161.severity=error
+dotnet_diagnostic.IDE1005.severity=error
+dotnet_diagnostic.IDE2000.severity=suggestion
+dotnet_diagnostic.IDE2003.severity=suggestion
+
+# CA1806: Do not ignore method results
+dotnet_diagnostic.CA1806.severity = none
+
+# IDE0160: Convert to block scoped namespace
+csharp_style_namespace_declarations = file_scoped
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab
 tab_width = 4
+
+# Default severity for analyzer diagnostics with category 'Simplification'
+dotnet_analyzer_diagnostic.category-Simplification.severity = silent
 
 [*.{asax,ascx,aspx,axaml,cshtml,css,htm,html,js,jsx,master,paml,razor,skin,ts,tsx,vb,xaml,xamlx,xoml}]
 indent_style = space
@@ -328,3 +399,17 @@ tab_width = 2
 
 # IDE0033: Use explicitly provided tuple name
 dotnet_style_explicit_tuple_names = true
+
+# IDE0046: Convert to conditional expression
+dotnet_style_prefer_conditional_expression_over_return = false
+
+# IDE0046: Convert to conditional expression
+dotnet_diagnostic.IDE0046.severity = silent
+
+# IDE0047: Remove unnecessary parentheses
+dotnet_diagnostic.IDE0047.severity = none
+
+[*.{cs,vb}]
+dotnet_style_prefer_is_null_check_over_reference_equality_method=true:error
+dotnet_diagnostic.IDE0070.severity=error
+dotnet_diagnostic.CA2242.severity=error
