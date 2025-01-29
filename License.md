@@ -1,27 +1,25 @@
-Copyright © 2021 Protiguous. All Rights Reserved.
+PROTIGUOUS LICENSE
+Version 2018-01-01
 
-This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+Copyright (©) Protiguous. All Rights Reserved. <https://Protiguous.com/>
 
-All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+The Protiguous License is a copyright license for source code and software designed & written by Protiguous or Team Protiguous.
 
-Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+It is permissible for individuals to reproduce and disseminate authentic copies of this license document; however, modifications to it are prohibited.
 
-If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+Copyright headers must remain available and reasonably unaltered (different formatting is allowed) alongside all source code, and distributed with any software using any section of this source code.
 
-Use of any Librainian source code, nuget package, or dll will incur a usage fee of 1 bitcoin per month per package.
-Please send payments via Bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+Usage of the source code must be properly attributed to Protiguous (or Team Protiguous).
+Usage of this source code for artificial intelligence (or any form of AI) purposes is strictly prohibited, except for the AIBrain project developed by Protiguous (and/or Team Protiguous).
 
-====================================================================
-Disclaimer:  Usage of the source code or binaries is AS-IS.
-    No warranties are expressed, implied, or given.
-    We are NOT responsible for Anything You Do With Our Code.
-    We are NOT responsible for Anything You Do With Our Executables.
-    We are NOT responsible for Anything You Do With Your Computer.
-====================================================================
+This source code is available for study, usage, and alteration to expand peaceful cooperation amongst the human software community.
 
-Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-For business inquiries, please contact me at Protiguous@Protiguous.com.
+Any section of this source code or any code derived from this source code must be kept publicly available, free of any restrictions, and open source for modification by non-AI software developers.
 
-Our software can be found at "https://Protiguous.com/Software/"
-Our GitHub address is "https://github.com/Protiguous".
+By using any portion of this source code developed by Protiguous (or Team Protiguous) used in any software, firmware, or hardware that generates any revenue, then 1% of any and all present and future revenue must be sent via PayPal to Protiguous at Protiguous.com.
+
+Any portion of the Protiguous (or Team Protiguous) source code may be used in any software, firmware, or hardware that does not generate any revenue, provided that the correct attribution and this license are included and strictly adhered to.
+
+Disclaimer: Any usage of this source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are not responsible for anything you do with our source code or binaries.
+
+Contact Protiguous through GitHub @ https://github.com/Protiguous/
